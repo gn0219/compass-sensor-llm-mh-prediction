@@ -1,0 +1,189 @@
+# Reasoning Methods and Output Constraints Configuration
+# Defines different reasoning approaches and output formatting
+
+metadata:
+  name: "Reasoning & Output Configuration"
+  version: "1.0"
+  description: "Templates for reasoning instructions and output constraints"
+
+# ============================================================================
+# REASONING METHODS
+# ============================================================================
+reasoning_methods:
+  # -------------------------
+  # 1. Direct Prediction
+  # -------------------------
+  direct:
+    name: "Direct"
+    description: "Immediate prediction without explicit reasoning steps"
+    instruction: |
+      Based on the behavioral data provided, make your prediction.
+    
+    output_format: |
+      Please provide your prediction in the following JSON format:
+      {
+        "Prediction": {
+          "Anxiety": "Low Risk" or "High Risk",
+          "Depression": "Low Risk" or "High Risk"
+        },
+        "Reasoning": "Brief explanation of your prediction"
+      }
+  
+  # -------------------------
+  # 2. Chain-of-Thought (CoT)
+  # -------------------------
+  cot:
+    name: "Chain-of-Thought"
+    description: "Step-by-step reasoning process"
+    instruction: |
+      Please think step-by-step about the behavioral patterns and provide your 
+      reasoning before making a prediction.
+      
+      Follow these steps:
+      1. **Observe Patterns**: Identify key behavioral features and their values
+      2. **Compare to Clinical Knowledge**: Relate patterns to known indicators
+      3. **Assess Risk Factors**: Evaluate presence of risk/protective factors
+      4. **Make Prediction**: Provide final risk assessment
+    
+    output_format: |
+      Please provide your response in the following JSON format:
+      {
+        "Step1_ObservePatterns": "Description of observed behavioral patterns",
+        "Step2_CompareToExamples": "How these patterns compare to the examples",
+        "Step3_IdentifyRiskFactors": "Key risk or protective factors identified",
+        "Step4_MakePrediction": "Final reasoning and prediction",
+        "Prediction": {
+          "Anxiety": "Low Risk" or "High Risk",
+          "Depression": "Low Risk" or "High Risk"
+        }
+      }
+  
+  # -------------------------
+  # 3. Tree-of-Thoughts (ToT)
+  # -------------------------
+  tot:
+    name: "Tree-of-Thoughts"
+    description: "Explore multiple reasoning paths"
+    instruction: |
+      Please explore multiple possible interpretations of the behavioral data 
+      before making your final prediction.
+      
+      For each condition (Anxiety and Depression), consider:
+      1. **Path A - High Risk Hypothesis**: What evidence supports high risk?
+      2. **Path B - Low Risk Hypothesis**: What evidence supports low risk?
+      3. **Evaluate Paths**: Which interpretation is more strongly supported?
+      4. **Final Decision**: Make your prediction based on the strongest path
+    
+    output_format: |
+      Please provide your response in the following JSON format:
+      {
+        "Anxiety_Analysis": {
+          "HighRiskEvidence": "Evidence supporting high risk",
+          "LowRiskEvidence": "Evidence supporting low risk",
+          "Evaluation": "Which is stronger and why",
+          "Prediction": "Low Risk" or "High Risk"
+        },
+        "Depression_Analysis": {
+          "HighRiskEvidence": "Evidence supporting high risk",
+          "LowRiskEvidence": "Evidence supporting low risk",
+          "Evaluation": "Which is stronger and why",
+          "Prediction": "Low Risk" or "High Risk"
+        },
+        "Prediction": {
+          "Anxiety": "Low Risk" or "High Risk",
+          "Depression": "Low Risk" or "High Risk"
+        }
+      }
+  
+  # -------------------------
+  # 4. Self-Consistency
+  # -------------------------
+  self_consistency:
+    name: "Self-Consistency"
+    description: "Generate multiple reasoning paths and aggregate"
+    instruction: |
+      Please provide THREE independent reasoning chains that consider the 
+      behavioral data from different perspectives.
+    
+    output_format: |
+      Please provide your response in the following JSON format:
+      {
+        "Reasoning_Path_1": {
+          "Perspective": "Focus on sleep and activity patterns",
+          "Analysis": "Your analysis",
+          "Prediction": {"Anxiety": "X", "Depression": "Y"}
+        },
+        "Reasoning_Path_2": {
+          "Perspective": "Focus on social engagement patterns",
+          "Analysis": "Your analysis",
+          "Prediction": {"Anxiety": "X", "Depression": "Y"}
+        },
+        "Reasoning_Path_3": {
+          "Perspective": "Focus on mobility and location patterns",
+          "Analysis": "Your analysis",
+          "Prediction": {"Anxiety": "X", "Depression": "Y"}
+        },
+        "Final_Prediction": {
+          "Anxiety": "Low Risk" or "High Risk",
+          "Depression": "Low Risk" or "High Risk",
+          "Confidence": "Explanation of consistency across paths"
+        }
+      }
+
+# Output constraints
+output_constraints:
+  header: "## Guidelines"
+  do_header: "\n**DO:**"
+  do:
+    - "Focus on the normalized feature values and their interpretation"
+    - "Consider temporal patterns (7-day history vs daily/time-of-day)"
+    - "Account for missing data appropriately"
+    - "Reference specific features in your reasoning"
+    - "Compare patterns to clinical knowledge and examples"
+    - "Provide clear, evidence-based reasoning"
+    - "Use the exact output format specified"
+  
+  dont_header: "\n**DON'T:**"
+  dont:
+    - "Don't make assumptions beyond the provided data"
+    - "Don't ignore missing values (NaN) - acknowledge data limitations"
+    - "Don't predict 'Medium Risk' - only Low Risk or High Risk"
+    - "Don't provide probabilities or confidence scores unless requested"
+    - "Don't reference external information not in the prompt"
+    - "Don't use overly technical jargon - keep explanations clear"
+  
+  # Response format requirements
+  format_requirements:
+    response_type: "json"
+    ensure_parseable: true
+    prediction_format: "Must be exactly 'Low Risk' or 'High Risk'"
+    required_fields:
+      - "Prediction"
+      - "Anxiety"
+      - "Depression"
+  
+  # Reasoning quality guidelines
+  reasoning_quality:
+    - "Be specific: cite actual feature values"
+    - "Be balanced: consider both risk and protective factors"
+    - "Be evidence-based: link observations to clinical knowledge"
+    - "Be concise: focus on the most relevant patterns"
+
+# ============================================================================
+# TASK COMPLETION PROMPT
+# ============================================================================
+task_completion:
+  header: "## Your Prediction Task"
+  instruction: |
+    Now, please analyze the following user's behavioral data and provide your 
+    prediction for their anxiety and depression risk levels.
+  
+  data_header: "### User Data to Predict"
+  
+  reminder: |
+    Remember to:
+    - Consider all available features
+    - Follow the specified reasoning method
+    - Use the exact output format required
+    - Provide clear, evidence-based reasoning
+

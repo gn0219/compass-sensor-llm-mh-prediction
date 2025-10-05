@@ -1,0 +1,79 @@
+# In-Context Learning (ICL) Template Configuration
+# Defines how examples are presented to the model
+
+metadata:
+  name: "ICL Examples Configuration"
+  version: "1.0"
+  description: "Templates for presenting in-context learning examples"
+
+# ============================================================================
+# ICL SECTION HEADER
+# ============================================================================
+section_header:
+  title: "## Examples"
+  introduction: |
+    Here are some examples of previous assessments to help guide your prediction:
+
+# ============================================================================
+# EXAMPLE FORMATTING
+# ============================================================================
+example_format:
+  # Template for each individual example
+  header: "### Example {example_number}"
+  
+  # Should include labels in examples?
+  include_labels: true
+  
+  # Format for presenting user data
+  user_info_format: |
+    **User:** {user_id}
+    **Date:** {date}
+  
+  # Format for feature presentation
+  feature_format: "table"  # Options: "table", "list", "json"
+  
+  # Format for labels (ground truth)
+  label_format: |
+    **Assessment:**
+    - Anxiety: {anxiety_label}
+    - Depression: {depression_label}
+  
+  # Optional: Brief clinical note for each example
+  include_clinical_note: false
+  clinical_note_format: |
+    **Clinical Note:** {note}
+
+# ============================================================================
+# ICL STRATEGIES
+# ============================================================================
+strategies:
+  personalized:
+    description: "Use examples from the same user's history"
+    example_selection: "same_user"
+    n_examples: 3
+    temporal_constraint: "previous_timepoints_only"
+  
+  generalized:
+    description: "Use examples from different users"
+    example_selection: "diverse_users"
+    n_examples: 5
+    diversity_metric: "behavioral_similarity"
+  
+  hybrid:
+    description: "Mix of personal and general examples"
+    example_selection: "mixed"
+    n_examples: 4
+    ratio_personal_to_general: "1:1"
+  
+  zero_shot:
+    description: "No examples provided"
+    example_selection: "none"
+    n_examples: 0
+
+# ============================================================================
+# EXAMPLE SEPARATOR
+# ============================================================================
+separator:
+  between_examples: "\n---\n"
+  after_examples: "\n\n"
+

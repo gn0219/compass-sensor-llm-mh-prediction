@@ -1,0 +1,33 @@
+{
+    "globem": {
+        "fctci": {
+            "user_id": "pid",
+            "date": "date",
+            "feature_set": [
+                "f_loc:phone_locations_doryab_totaldistance:allday",
+                "f_loc:phone_locations_doryab_timeathome:allday",
+                "f_loc:phone_locations_doryab_locationentropy:allday",
+                "f_screen:phone_screen_rapids_sumdurationunlock:allday",
+                "f_screen:phone_screen_rapids_avgdurationunlock:allday",
+                "f_call:phone_calls_rapids_incoming_sumduration:allday",
+                "f_call:phone_calls_rapids_outgoing_sumduration:allday",
+                "f_blue:phone_bluetooth_doryab_uniquedevicesothers:allday",
+                "f_steps:fitbit_steps_intraday_rapids_sumsteps:allday",
+                "f_steps:fitbit_steps_intraday_rapids_countepisodesedentarybout:allday",
+                "f_steps:fitbit_steps_intraday_rapids_sumdurationsedentarybout:allday",
+                "f_steps:fitbit_steps_intraday_rapids_countepisodeactivebout:allday",
+                "f_steps:fitbit_steps_intraday_rapids_sumdurationactivebout:allday",
+                "f_slp:fitbit_sleep_intraday_rapids_sumdurationasleepunifiedmain:allday",
+                "f_slp:fitbit_sleep_intraday_rapids_sumdurationawakeunifiedmain:allday"
+            ],
+            "labels": [
+                "phq4_anxiety_EMA",
+                "phq4_depression_EMA"
+            ],
+            "threshold": {
+                "phq4_anxiety_EMA": 2,
+                "phq4_depression_EMA": 2
+            }
+        }
+    }
+}

@@ -1,0 +1,164 @@
+# Prompt Configuration Presets
+# This file defines common experimental configurations
+
+presets:
+  # -------------------------
+  # Standard Configurations
+  # -------------------------
+  baseline:
+    name: "Baseline (Zero-shot + Direct)"
+    icl_strategy: "zero_shot"
+    reasoning_method: "direct"
+    include_constraints: true
+    description: "Simplest configuration for baseline comparison"
+  
+  standard:
+    name: "Standard (Generalized ICL + CoT)"
+    icl_strategy: "generalized"
+    reasoning_method: "cot"
+    include_constraints: true
+    description: "Standard configuration with CoT reasoning"
+  
+  personalized:
+    name: "Personalized (Personal ICL + CoT)"
+    icl_strategy: "personalized"
+    reasoning_method: "cot"
+    include_constraints: true
+    description: "Uses user's own history for context"
+  
+  # -------------------------
+  # Ablation Study Configurations
+  # -------------------------
+  ablation_icl:
+    name: "ICL Ablation Study"
+    description: "Compare different ICL strategies"
+    configurations:
+      - icl_strategy: "zero_shot"
+        reasoning_method: "cot"
+        label: "No ICL"
+      
+      - icl_strategy: "generalized"
+        reasoning_method: "cot"
+        label: "General ICL"
+      
+      - icl_strategy: "personalized"
+        reasoning_method: "cot"
+        label: "Personal ICL"
+      
+      - icl_strategy: "hybrid"
+        reasoning_method: "cot"
+        label: "Hybrid ICL"
+  
+  ablation_reasoning:
+    name: "Reasoning Method Ablation"
+    description: "Compare different reasoning methods"
+    configurations:
+      - icl_strategy: "generalized"
+        reasoning_method: "direct"
+        label: "Direct"
+      
+      - icl_strategy: "generalized"
+        reasoning_method: "cot"
+        label: "Chain-of-Thought"
+      
+      - icl_strategy: "generalized"
+        reasoning_method: "tot"
+        label: "Tree-of-Thoughts"
+      
+      - icl_strategy: "generalized"
+        reasoning_method: "self_consistency"
+        label: "Self-Consistency"
+  
+  # -------------------------
+  # High-Performance Configurations
+  # -------------------------
+  best_performance:
+    name: "Best Performance"
+    icl_strategy: "hybrid"
+    reasoning_method: "tot"
+    include_constraints: true
+    description: "Configuration optimized for best accuracy"
+  
+  best_efficiency:
+    name: "Best Efficiency"
+    icl_strategy: "zero_shot"
+    reasoning_method: "direct"
+    include_constraints: false
+    description: "Configuration optimized for speed and cost"
+  
+  # -------------------------
+  # Research Configurations
+  # -------------------------
+  research_interpretability:
+    name: "Interpretability Focus"
+    icl_strategy: "generalized"
+    reasoning_method: "cot"
+    include_constraints: true
+    description: "Focuses on explainable predictions"
+    additional_instructions: |
+      Pay special attention to providing clear, interpretable explanations
+      that clinicians can understand and verify.
+  
+  research_robustness:
+    name: "Robustness Testing"
+    icl_strategy: "self_consistency"
+    reasoning_method: "self_consistency"
+    include_constraints: true
+    description: "Tests prediction consistency"
+    additional_instructions: |
+      Provide multiple independent reasoning paths to assess
+      prediction stability and confidence.
+
+# -------------------------
+# Model-Specific Configurations
+# -------------------------
+model_specific:
+  gpt-4o:
+    name: "GPT-4o Optimized"
+    recommended_config: "best_performance"
+    notes: "Can handle complex reasoning and long context"
+  
+  gpt-4o-mini:
+    name: "GPT-4o-mini Optimized"
+    recommended_config: "standard"
+    notes: "Good balance of performance and cost"
+  
+  gpt-3.5-turbo:
+    name: "GPT-3.5-turbo Optimized"
+    recommended_config: "baseline"
+    notes: "Simpler prompts work better; avoid complex reasoning"
+
+# -------------------------
+# Experimental Configurations
+# -------------------------
+experiments:
+  exp_minimal_context:
+    name: "Minimal Context Experiment"
+    icl_strategy: "zero_shot"
+    reasoning_method: "direct"
+    include_constraints: false
+    description: "Test with minimal prompt content"
+    hypothesis: "Can model predict without extensive context?"
+  
+  exp_max_context:
+    name: "Maximum Context Experiment"
+    icl_strategy: "hybrid"
+    reasoning_method: "self_consistency"
+    include_constraints: true
+    description: "Test with maximum prompt content"
+    hypothesis: "Does more context always improve accuracy?"
+  
+  exp_feature_focus:
+    name: "Feature Focus Experiment"
+    icl_strategy: "generalized"
+    reasoning_method: "cot"
+    include_constraints: true
+    feature_emphasis:
+      - "sleep"
+      - "location"
+      - "social"
+    description: "Focus on specific feature categories"
+    additional_instructions: |
+      Pay particular attention to sleep patterns, location mobility,
+      and social interaction features in your analysis.
+

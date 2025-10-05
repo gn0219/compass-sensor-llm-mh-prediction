@@ -1,0 +1,22 @@
+# Core dependencies
+pandas>=2.0.0
+numpy>=1.24.0
+scikit-learn>=1.3.0
+pyyaml>=6.0
+python-dotenv>=1.0.0
+
+# LLM Providers
+openai>=1.0.0              # Required for OpenAI models (GPT)
+anthropic>=0.25.0          # Optional: for Claude models
+google-generativeai>=0.3.0 # Optional: for Gemini models
+ollama>=0.1.0              # Optional: for on-device models
+
+# Statistical Analysis
+scipy>=1.11.0
+statsmodels>=0.14.0
+
+# Development
+pytest>=7.4.0
+pytest-cov>=4.1.0
+black>=23.0.0
+pylint>=2.17.0
