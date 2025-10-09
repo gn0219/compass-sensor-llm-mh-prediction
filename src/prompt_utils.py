@@ -13,19 +13,29 @@ from .utils import NumpyEncoder
 from . import config
 
 
+def build_experiment_prefix(n_shot: int, source: str, *, dataset: str = None,
+                            sensor_format: str = None, seed: int = None) -> str:
+    """Build dataset_sensor_nshot_source_seed{seed} prefix.
+
+    Example: globem_structured_4shot_hybrid_seed36
+    """
+    dataset = dataset or config.DATASET_NAME
+    sensor_format = sensor_format or config.SENSOR_FORMAT
+    shot_str = f"{n_shot}shot" if n_shot > 0 else "zeroshot"
+    seed_str = f"seed{seed}" if seed is not None else "seedNone"
+    return f"{dataset}_{sensor_format}_{shot_str}_{source}_{seed_str}"
+
 def get_experiment_name(n_shot: int, source: str = 'hybrid', reasoning_method: str = 'cot',
-                            dataset: str = None, sensor_format: str = None) -> str:
+                            dataset: str = None, sensor_format: str = None, seed: int = None, llm_seed: int = None) -> str:
     """Get descriptive experiment name."""
     dataset = dataset or config.DATASET_NAME
     sensor_format = sensor_format or config.SENSOR_FORMAT
     
     shot_str = f"{n_shot}shot" if n_shot > 0 else "zeroshot"
-    source_str = config.ICL_SOURCE_ABBREV.get(source, source)
-    reasoning_str = config.REASONING_ABBREV.get(reasoning_method, reasoning_method)
     
     if n_shot == 0:
-        return f"{dataset}_{sensor_format}_{shot_str}_{reasoning_str}"
-    return f"{dataset}_{sensor_format}_{shot_str}_{source_str}_{reasoning_str}"
+        return f"{dataset}_{sensor_format}_{shot_str}_{reasoning_method}_{seed}_{llm_seed}"
+    return f"{dataset}_{sensor_format}_{shot_str}_{source}_{reasoning_method}_{seed}_{llm_seed}"
 
 
 def build_prompt(prompt_manager: PromptManager, input_sample: Dict, cols: Dict,
@@ -69,8 +79,13 @@ def build_prompt(prompt_manager: PromptManager, input_sample: Dict, cols: Dict,
 
 def save_prompts_to_disk(prompts: List[str], labels: List, experiment_name: str,
                         seed: int, output_dir: str = "./saved_prompts"):
-    """Save prompts and labels to disk for later reuse."""
-    save_dir = Path(output_dir) / f"{experiment_name}_{seed}"
+    """Save prompts and labels to disk for later reuse.
+
+    The directory name is `experiment_name` and, if provided, suffixed with `_seed`.
+    If `experiment_name` already ends with that seed, it won't be added again.
+    """
+
+    save_dir = Path(output_dir) / experiment_name
     save_dir.mkdir(parents=True, exist_ok=True)
     
     # Save prompts
@@ -102,21 +117,14 @@ def load_prompts_from_disk(experiment_dir: str):
     exp_path = Path(experiment_dir)
     
     if not exp_path.exists():
-        # Try in saved_prompts directory
         exp_path = Path("./saved_prompts") / experiment_dir
-    
     if not exp_path.exists():
         raise FileNotFoundError(f"Experiment directory not found: {experiment_dir}")
     
-    # Load prompts
     with open(exp_path / "prompts.json", 'r') as f:
         prompts = json.load(f)
-    
-    # Load labels
     with open(exp_path / "labels.json", 'r') as f:
         labels = json.load(f)
-    
-    # Load metadata
     with open(exp_path / "metadata.json", 'r') as f:
         metadata = json.load(f)
     

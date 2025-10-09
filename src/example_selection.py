@@ -82,7 +82,7 @@ def select_icl_examples(
         examples = personal_examples + general_examples
     
     else:
-        raise ValueError(f"Invalid source: {source}. Must be 'personalization', 'generalization', or 'hybrid'")
+        raise ValueError(f"Invalid source: {source}. Must be 'personalized', 'generalized', or 'hybrid'")
     
     return examples
 

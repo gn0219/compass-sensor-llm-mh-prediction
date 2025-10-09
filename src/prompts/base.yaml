@@ -5,7 +5,7 @@ metadata:
   name: "Mental Health Prediction - Base"
   version: "1.0"
   description: "Standard prompt template for anxiety and depression prediction from sensor data"
-  author: "Research Team"
+  author: "KAIST ICLab - Gyuna Kim"
 
 # Prompt structure
 structure:

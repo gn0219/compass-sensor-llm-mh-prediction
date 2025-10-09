@@ -29,7 +29,7 @@ DEFAULT_THRESHOLDS = {
 DEFAULT_N_SHOT = 5
 
 # Default ICL source strategy
-DEFAULT_ICL_SOURCE = 'hybrid'  # Options: 'personalization', 'generalization', 'hybrid'
+DEFAULT_ICL_SOURCE = 'hybrid'  # Options: 'personalized', 'generalized', 'hybrid'
 
 # ICL example selection method
 DEFAULT_SELECTION_METHOD = 'random'  # Options: 'random', 'similarity' (not implemented)
@@ -105,21 +105,6 @@ DATASET_NAME = 'globem'
 # Sensor-to-text format
 SENSOR_FORMAT = 'structured'  # Options: 'structured', 'narrative'
 
-# Reasoning method abbreviations
-REASONING_ABBREV = {
-    'direct': 'direct',
-    'cot': 'cot',
-    'tot': 'tot',
-    'self_consistency': 'sc'
-}
-
-# ICL source abbreviations
-ICL_SOURCE_ABBREV = {
-    'personalization': 'personalized',
-    'generalization': 'generalized',
-    'hybrid': 'hybrid'
-}
-
 # ============================================================================
 # FEATURE NAMES MAPPING
 # ============================================================================
@@ -157,4 +142,3 @@ COST_DECIMAL_PLACES = 6
 
 # Console output width
 CONSOLE_WIDTH = 80
-

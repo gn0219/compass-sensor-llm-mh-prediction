@@ -38,7 +38,7 @@ class LLMClient:
     MODELS = {
         'gpt-5': 'openai',
         'gpt-5-nano': 'openai',
-        'claude-3-5-sonnet': 'anthropic',
+        'claude-4.0-sonnet': 'anthropic',
         'gemini-2.5-pro': 'google',
         'llama-3.1-8b': 'ollama',
         'mistral-7b': 'ollama',

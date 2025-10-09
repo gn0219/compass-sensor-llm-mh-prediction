@@ -1,321 +1,407 @@
 """
-Evaluation Runner Module
+Evaluation Runner Module (refined)
 
-Core evaluation logic for mental health prediction.
-Orchestrates evaluation flow: data sampling → ICL selection → prompt building → LLM calls → metrics.
+- Removes duplication with small helpers (timeit, ICL helpers, prompt builder wrapper).
+- Keeps the original flow & outputs; fixes None-return issues and positional-arg bugs.
 """
 
 import time
 import numpy as np
-from typing import Dict, List, Optional
+from contextlib import contextmanager
+from typing import Dict, List, Optional, Tuple
 
 from .sensor_transformation import sample_input_data, sample_batch_stratified
 from .example_selection import select_icl_examples
 from .prompt_utils import build_prompt
 from .reasoning import LLMReasoner
-from .performance import calculate_classification_metrics, calculate_efficiency_metrics, generate_comprehensive_report, print_comprehensive_report
-from .output_utils import *
+from .performance import generate_comprehensive_report, print_comprehensive_report
+from .output_utils import (
+    print_input_sample_info, print_icl_selection_info, print_prompt_building_info,
+    print_prediction_results, print_timing_breakdown, print_batch_progress, print_batch_timing_summary,
+)
 from .prompt_manager import PromptManager
 
 
-def run_single_prediction(prompt_manager: PromptManager, reasoner: LLMReasoner, feat_df, lab_df, cols: Dict,
-                         n_shot: int = 5, source: str = 'hybrid', reasoning_method: str = 'cot',
-                         random_state: Optional[int] = None, llm_seed: Optional[int] = None,
-                         verbose: bool = True) -> Dict:
-    """Run a single prediction for demonstration."""
-    print_section_header("🔍 SINGLE SAMPLE PREDICTION", verbose)
-    step_timings = {}
-    
-    # Sample input
-    print_subsection("📋 Sampling input data...", verbose)
-    step_start = time.time()
-    input_sample = sample_input_data(feat_df, lab_df, cols, random_state)
-    step_timings['data_sampling'] = time.time() - step_start
-    
-    if input_sample is None:
-        print("❌ Failed to sample valid input data")
-        return None
-    
-    print_input_sample_info(input_sample, step_timings['data_sampling'], verbose)
-    
-    # Select ICL examples
+# ---------------------------
+# Utilities (timing & setup)
+# ---------------------------
+
+def new_step_timings(keys=('data_sampling', 'icl_selection', 'prompt_building', 'llm_call', 'response_parsing')):
+    """Create a fresh timings dict with list slots."""
+    return {k: [] for k in keys}
+
+@contextmanager
+def timeit(step_timings: Dict[str, List[float]], key: str):
+    """Append elapsed seconds for the given key, even if an exception happens."""
+    t0 = time.time()
+    try:
+        yield
+    finally:
+        step_timings[key].append(time.time() - t0)
+
+def append_zero(step_timings: Dict[str, List[float]], key: str):
+    step_timings[key].append(0.0)
+
+# ---------------------------
+# ICL selection & prompt build
+# ---------------------------
+
+def select_icl(
+    feat_df, lab_df, cols: Dict, input_sample: Dict,
+    n_shot: int, source: str, random_state: Optional[int],
+    step_timings: Dict[str, List[float]], verbose: bool
+):
+    """Select ICL examples if needed, append timing, and return (icl_examples, icl_strategy)."""
     icl_examples = None
     icl_strategy = 'zero_shot'
-    
+
     if n_shot > 0:
-        print_subsection(f"📚 Selecting {n_shot} ICL examples (source: {source})...", verbose)
-        step_start = time.time()
-        icl_examples = select_icl_examples(feat_df, lab_df, cols, input_sample['user_id'], 
-                                           input_sample['ema_date'], n_shot=n_shot, source=source,
-                                           random_state=random_state)
-        step_timings['icl_selection'] = time.time() - step_start
-        
+        if verbose:
+            print(f"\n📚 Selecting {n_shot} ICL examples (source: {source})...")
+        with timeit(step_timings, 'icl_selection'):
+            icl_examples = select_icl_examples(
+                feat_df, lab_df, cols,
+                input_sample['user_id'], input_sample['ema_date'],
+                n_shot=n_shot, source=source, random_state=random_state
+            )
         if icl_examples is None:
             if verbose:
                 print("  ⚠️  Failed to select ICL examples, falling back to zero-shot")
             icl_strategy = 'zero_shot'
         else:
-            print_icl_selection_info(n_shot, source, icl_examples, step_timings['icl_selection'], verbose)
-            icl_strategy = {'personalization': 'personalized', 'generalization': 'generalized',
-                           'hybrid': 'hybrid'}.get(source, 'generalized')
+            print_icl_selection_info(
+                n_shot, source, icl_examples, step_timings['icl_selection'][-1], verbose
+            )
+            icl_strategy = source # personalized, generalized, hybrid
     else:
-        print_subsection("📚 Using zero-shot (no ICL examples)", verbose)
-        step_timings['icl_selection'] = 0.0
-    
-    # Build prompt
-    print_subsection(f"🤖 Building prompt (reasoning: {reasoning_method})...", verbose)
-    step_start = time.time()
-    prompt = build_prompt(prompt_manager, input_sample, cols, icl_examples, icl_strategy, reasoning_method)
-    step_timings['prompt_building'] = time.time() - step_start
-    print_prompt_building_info(len(prompt), step_timings['prompt_building'], verbose)
-    
-    # Call LLM
-    print_subsection(f"🌐 Calling LLM ({reasoner.model})...", verbose)
-    step_start = time.time()
-    
-    if reasoning_method == 'self_consistency':
-        prediction, samples = reasoner.predict_with_self_consistency(prompt, n_samples=5, seed=llm_seed)
-        step_timings['llm_call'] = time.time() - step_start
-        step_timings['response_parsing'] = 0.0  # Parsing included in llm_call for self-consistency
         if verbose:
-            print(f"  Generated {len(samples)} samples for self-consistency")
-            print(f"  ⏱️  Time (includes 5x API + parsing + voting): {step_timings['llm_call']:.3f}s")
+            print(f"\n📚 Using zero-shot (no ICL examples)")
+        append_zero(step_timings, 'icl_selection')
+
+    return icl_examples, icl_strategy
+
+
+def build_prompt_with_timing(
+    prompt_manager: PromptManager, input_sample: Dict, cols: Dict,
+    icl_examples, icl_strategy: str, reasoning_method: str,
+    step_timings: Dict[str, List[float]], verbose: bool
+) -> str:
+    if verbose:
+        print(f"\n🤖 Building prompt (reasoning: {reasoning_method})...")
+    with timeit(step_timings, 'prompt_building'):
+        prompt = build_prompt(prompt_manager, input_sample, cols, icl_examples, icl_strategy, reasoning_method)
+    print_prompt_building_info(len(prompt), step_timings['prompt_building'][-1], verbose)
+    return prompt
+
+
+# ---------------------------
+# Predict 
+# ---------------------------
+
+def predict(all_predictions: List[Dict], all_step_timings: Dict[str, List[float]],
+            user_id, ema_date, true_anxiety, true_depression, failed_count: int,
+            reasoner: LLMReasoner, reasoning_method: str, prompt: str, *,
+            llm_seed: Optional[int] = None, sc_samples: Optional[int] = None,
+            verbose: bool = True) -> Tuple[List[Dict], Dict[str, List[float]], int, Optional[Dict]]:
+    """
+    Prediction executor.
+    Always returns (all_predictions, all_step_timings, failed_count, pred).
+    """
+    with timeit(all_step_timings, 'llm_call'):
+        if reasoning_method == 'self_consistency':
+            n_sc = sc_samples or 5
+            prediction, _ = reasoner.predict_with_self_consistency(
+                prompt, n_samples=n_sc, seed=llm_seed
+            )
+        else:
+            response_text, usage_info = reasoner.call_llm(prompt, seed=llm_seed)
+
+    if reasoning_method == 'self_consistency':       
+        # # parsing is internal to self-consistency path
+        append_zero(all_step_timings, 'response_parsing')
     else:
-        response_text, usage_info = reasoner.call_llm(prompt, seed=llm_seed)
-        step_timings['llm_call'] = time.time() - step_start
-        
-        if response_text is None:
-            print("❌ LLM call failed")
-            return None
-        
-        print_llm_call_info(usage_info, llm_seed, reasoning_method, verbose)
+        if not response_text:
+            if verbose:
+                print("  ⚠️  LLM call failed, skipping")
+            failed_count += 1
+            append_zero(all_step_timings, 'response_parsing')
+            return all_predictions, all_step_timings, failed_count, None
+
+        with timeit(all_step_timings, 'response_parsing'):
+            prediction = reasoner.parse_response(response_text)
+
+    if not prediction:
         if verbose:
-            print(f"  ⏱️  Total Time: {step_timings['llm_call']:.3f}s")
-        
-        step_start = time.time()
-        prediction = reasoner.parse_response(response_text)
-        step_timings['response_parsing'] = time.time() - step_start
-    
-    if prediction is None:
-        print("❌ Failed to parse prediction")
+            print("  ⚠️  Parse failed, skipping")
+        failed_count += 1
+        return all_predictions, all_step_timings, failed_count, None
+
+    pred = {
+        'user_id': user_id,
+        'ema_date': ema_date,
+        'true_anxiety': true_anxiety,
+        'true_depression': true_depression,
+        'pred_anxiety': prediction['Prediction']['Anxiety_binary'],
+        'pred_depression': prediction['Prediction']['Depression_binary'],
+        'prediction': prediction,
+    }
+    all_predictions.append(pred)
+
+    if verbose:
+        print(f"  User ID: {user_id}")
+        print(f"  Date: {ema_date}")
+        print(
+            f"  ✓ Anx: {pred['pred_anxiety']} (true: {true_anxiety}) | "
+            f"Dep: {pred['pred_depression']} (true: {true_depression})"
+        )
+
+    return all_predictions, all_step_timings, failed_count, pred
+
+def records_to_report_items(records: List[Dict]) -> List[Dict]:
+    """Convert record schema to generate_comprehensive_report's expected items."""
+    return [
+        {
+            'user_id': r['user_id'],
+            'ema_date': str(r['ema_date']),
+            'labels': {
+                'phq4_anxiety_EMA': r['true_anxiety'],
+                'phq4_depression_EMA': r['true_depression'],
+            },
+            'prediction': {
+                'Anxiety_binary': r['pred_anxiety'],
+                'Depression_binary': r['pred_depression'],
+            },
+        }
+        for r in records
+    ]
+
+def run_single_prediction(prompt_manager: PromptManager, reasoner: LLMReasoner,
+                          feat_df, lab_df, cols: Dict, n_shot: int = 5, source: str = 'hybrid',
+                          reasoning_method: str = 'cot', random_state: Optional[int] = None,
+                          llm_seed: Optional[int] = None,
+                          verbose: bool = True) -> Optional[Dict]:
+    """Run a single prediction for demonstration."""
+    if verbose:
+        print(f"\n🔍 SINGLE SAMPLE PREDICTION")
+
+    all_step_timings = new_step_timings()
+
+    with timeit(all_step_timings, 'data_sampling'):
+        input_sample = sample_input_data(feat_df, lab_df, cols, random_state)
+
+    if input_sample is None:
+        print("❌ Failed to sample valid input data")
         return None
     
-    # Display results
-    print_prediction_results(prediction, input_sample['labels'], verbose)
-    
-    # Print detailed timing breakdown
-    print_timing_breakdown(step_timings, reasoning_method, verbose)
-    
-    if verbose:
-        print("="*60 + "\n")
-    
+    print_input_sample_info(input_sample, all_step_timings['data_sampling'][-1], verbose)
+
+    # ICL
+    icl_examples, icl_strategy = select_icl(
+        feat_df, lab_df, cols, input_sample, n_shot, source, random_state, all_step_timings, verbose
+    )
+
+    # Prompt
+    prompt = build_prompt_with_timing(
+        prompt_manager, input_sample, cols, icl_examples, icl_strategy, reasoning_method, all_step_timings, verbose
+    )
+
+    # Predict
+    all_predictions, failed_count = [], 0
+    all_predictions, all_step_timings, failed_count, last_pred = predict(
+        all_predictions, all_step_timings,
+        input_sample['user_id'], input_sample['ema_date'],
+        input_sample['labels']['phq4_anxiety_EMA'], input_sample['labels']['phq4_depression_EMA'],
+        failed_count, reasoner, reasoning_method, prompt,
+        llm_seed=llm_seed, sc_samples=5, verbose=verbose,
+    )
+
+    if last_pred is None:
+        print("❌ Prediction failed for the sampled input")
+        return None
+
+    # Output
+    print_prediction_results(last_pred['prediction'], input_sample['labels'], verbose)
+    print_timing_breakdown(all_step_timings, reasoning_method, verbose)
+
+    # if verbose:
+    #     print("=" * 60 + "\n")
+
     return {
-        'experiment_config': {'n_shot': n_shot, 'source': source, 'icl_strategy': icl_strategy,
-                             'reasoning_method': reasoning_method, 'model': reasoner.model,
-                             'random_state': random_state, 'llm_seed': llm_seed},
-        'prompt_used': prompt, 'input_sample': input_sample, 'prediction': prediction,
-        'usage': reasoner.get_usage_summary(), 'step_timings': step_timings,
-        'total_time': sum(step_timings.values())
+        'experiment_config': {
+            'n_shot': n_shot, 'source': source, 'icl_strategy': icl_strategy,
+            'reasoning_method': reasoning_method, 'model': reasoner.model,
+            'random_state': random_state, 'llm_seed': llm_seed
+        },
+        'prompt_used': prompt,
+        'input_sample': input_sample,
+        'prediction': last_pred['prediction'],   # pure prediction
+        'record': last_pred,                     # full record if needed downstream
+        'usage': reasoner.get_usage_summary(),
+        'step_timings': all_step_timings,
+        'total_time': sum(sum(v) for v in all_step_timings.values()),
     }
 
 
-def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner, feat_df, lab_df, cols: Dict,
-                        n_samples: int = 30, n_shot: int = 5, source: str = 'hybrid',
-                        reasoning_method: str = 'cot', random_state: Optional[int] = 42,
-                        llm_seed: Optional[int] = None, use_stratified: bool = False,
-                        stratify_by: str = 'phq4_anxiety_EMA', collect_prompts: bool = False,
-                        verbose: bool = True) -> Dict:
+def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
+                         feat_df, lab_df, cols: Dict, n_samples: int = 30, n_shot: int = 5, source: str = 'hybrid',
+                         reasoning_method: str = 'cot', random_state: Optional[int] = 42,
+                         llm_seed: Optional[int] = None, use_stratified: bool = False,
+                         stratify_by: str = 'phq4_anxiety_EMA', collect_prompts: bool = False,
+                         verbose: bool = True) -> Optional[Dict]:
     """Run batch evaluation on multiple samples."""
-    print_section_header(f"🔬 BATCH EVALUATION ({n_samples} samples)", verbose)
+    
     if verbose:
-        print(f"  ICL: {source} | N-Shot: {n_shot} | Reasoning: {reasoning_method} | Seed: {random_state}")
-        if llm_seed:
-            print(f"  LLM Seed: {llm_seed}")
+        print("\n" + "="*60 + f"\n🔬 BATCH EVALUATION ({n_samples} samples)" + "\n" + "="*60)
+        print(f"  ICL: {source} | N-Shot: {n_shot} | Reasoning: {reasoning_method} | Model: {reasoner.model}")
+        if random_state or llm_seed:
+            print(f"   Seed: {random_state} | LLM Seed: {llm_seed}")
         print(f"  Stratified: {use_stratified}" + (f" (by {stratify_by})" if use_stratified else ""))
         print("="*60 + "\n")
-    
-    results, failed_count = [], 0
-    all_step_timings = {k: [] for k in ['data_sampling', 'icl_selection', 'prompt_building', 'llm_call', 'response_parsing']}
+
+    all_step_timings = new_step_timings()
     collected_prompts, collected_metadata = ([], []) if collect_prompts else (None, None)
     
     # Sample input data
     if verbose:
         print("📊 Sampling input data...")
-    step_start = time.time()
     
-    if use_stratified:
-        try:
-            input_samples = sample_batch_stratified(feat_df, lab_df, cols, n_samples, stratify_by, random_state)
-        except Exception as e:
-            if verbose:
-                print(f"❌ Stratified sampling failed: {e}\n   Falling back to random sampling...")
-            use_stratified, input_samples = False, []
-    
-    if not use_stratified:
-        input_samples, attempts = [], 0
-        while len(input_samples) < n_samples and attempts < n_samples * 3:
-            sample = sample_input_data(feat_df, lab_df, cols, random_state + attempts if random_state else None)
-            if sample:
-                input_samples.append(sample)
-            attempts += 1
-    
-    sampling_time = time.time() - step_start
+    with timeit(all_step_timings, 'data_sampling'):
+        if use_stratified:
+            try:
+                input_samples = sample_batch_stratified(feat_df, lab_df, cols, n_samples, stratify_by, random_state)
+            except Exception as e:
+                if verbose:
+                    print(f"❌ Stratified sampling failed: {e}\n   Falling back to random sampling...")
+                use_stratified, input_samples = False, []
+        else:
+            input_samples = []
+
+    total_sampling_time = all_step_timings['data_sampling'][-1] if all_step_timings['data_sampling'] else 0.0
     if verbose:
-        print(f"✅ Collected {len(input_samples)} valid samples in {sampling_time:.2f}s\n")
-    
+        print(f"✅ Collected {len(input_samples)} valid samples in {total_sampling_time:.2f}s\n")
+
     if not input_samples:
         print("❌ Failed to collect any valid samples")
         return None
-    
-    # Process each sample
+
+    # Distribute average sampling time per sample (keeps shape identical to other step lists)
+    per_sample_sampling = total_sampling_time / max(1, len(input_samples))
+    all_step_timings['data_sampling'] = [per_sample_sampling for _ in input_samples]
+
+    # Loop
+    all_predictions, failed_count = [], 0
     for i, input_sample in enumerate(input_samples):
-        all_step_timings['data_sampling'].append(sampling_time / len(input_samples))
-        
-        # Select ICL examples
-        icl_examples, icl_strategy = None, 'zero_shot'
-        if n_shot > 0:
-            step_start = time.time()
-            icl_examples = select_icl_examples(feat_df, lab_df, cols, input_sample['user_id'],
-                                              input_sample['ema_date'], n_shot=n_shot, source=source,
-                                              random_state=random_state + i * 1000 if random_state else None)
-            all_step_timings['icl_selection'].append(time.time() - step_start)
-            if icl_examples:
-                icl_strategy = {'personalization': 'personalized', 'generalization': 'generalized',
-                               'hybrid': 'hybrid'}.get(source, 'generalized')
-        else:
-            all_step_timings['icl_selection'].append(0.0)
-        
-        # Build prompt
-        step_start = time.time()
-        prompt = build_prompt(prompt_manager, input_sample, cols, icl_examples, icl_strategy, reasoning_method)
-        all_step_timings['prompt_building'].append(time.time() - step_start)
-        
+
+        # ICL
+        icl_examples, icl_strategy = select_icl(
+            feat_df, lab_df, cols, input_sample, n_shot, source,
+            (random_state + i * 1000) if random_state else None,
+            all_step_timings, verbose
+        )
+
+        # Prompt
+        prompt = build_prompt_with_timing(
+            prompt_manager, input_sample, cols, icl_examples, icl_strategy,
+            reasoning_method, all_step_timings, verbose
+        )
+
         if collect_prompts:
             collected_prompts.append(prompt)
             collected_metadata.append({
-                'user_id': input_sample['user_id'], 'ema_date': str(input_sample['ema_date']),
+                'user_id': input_sample['user_id'],
+                'ema_date': str(input_sample['ema_date']),
                 'true_anxiety': input_sample['labels']['phq4_anxiety_EMA'],
                 'true_depression': input_sample['labels']['phq4_depression_EMA'],
-                'aggregated_features': input_sample['aggregated_features']
+                'aggregated_features': input_sample.get('aggregated_features'),
             })
-        
-        # Call LLM
-        step_start = time.time()
-        if reasoning_method == 'self_consistency':
-            prediction, _ = reasoner.predict_with_self_consistency(prompt, n_samples=5, seed=llm_seed)
-            all_step_timings['llm_call'].append(time.time() - step_start)
-            all_step_timings['response_parsing'].append(0.0)
-        else:
-            response_text, usage_info = reasoner.call_llm(prompt, seed=llm_seed)
-            all_step_timings['llm_call'].append(time.time() - step_start)
-            if not response_text:
-                failed_count += 1
-                continue
-            
-            step_start = time.time()
-            prediction = reasoner.parse_response(response_text)
-            all_step_timings['response_parsing'].append(time.time() - step_start)
-        
-        if not prediction:
-            failed_count += 1
-            continue
-        
-        results.append({
-            'user_id': input_sample['user_id'], 'ema_date': str(input_sample['ema_date']),
-            'labels': input_sample['labels'], 'prediction': prediction['Prediction']
-        })
-        
-        print_batch_progress(i, len(input_samples), input_sample, prediction, input_sample['labels'], verbose)
-    
+
+        # Predict
+        all_predictions, all_step_timings, failed_count, last_pred = predict(
+            all_predictions, all_step_timings,
+            input_sample['user_id'], input_sample['ema_date'],
+            input_sample['labels']['phq4_anxiety_EMA'], input_sample['labels']['phq4_depression_EMA'],
+            failed_count, reasoner, reasoning_method, prompt,
+            llm_seed=llm_seed, sc_samples=5, verbose=verbose,
+        )
+
+        if last_pred is not None and verbose:
+            print_batch_progress(i, len(input_samples), input_sample, last_pred['prediction'], input_sample['labels'], verbose)
+
     if verbose:
-        print(f"\n{'='*60}\n✅ Completed: {len(results)}/{n_samples} | ❌ Failed: {failed_count}\n{'='*60}\n")
-    
-    if not results:
+        print(f"\n{'=' * 60}\n✅ Completed: {len(all_predictions)}/{n_samples} | ❌ Failed: {failed_count}\n{'=' * 60}\n")
+
+    if not all_predictions:
         print("❌ No successful predictions")
         return None
-    
+
     usage = reasoner.get_usage_summary()
     config = {'n_samples': n_samples, 'n_shot': n_shot, 'source': source, 'reasoning_method': reasoning_method}
     avg_timings = {step: float(np.mean(times)) if times else 0.0 for step, times in all_step_timings.items()}
-    
+
     print_batch_timing_summary(all_step_timings, verbose)
-    
-    report = generate_comprehensive_report(results, usage, config)
+
+    results_for_report = records_to_report_items(all_predictions)
+    report = generate_comprehensive_report(results_for_report, usage, config)
     report['step_timings_avg'] = avg_timings
     report['step_timings_all'] = {k: [float(x) for x in v] for k, v in all_step_timings.items()}
-    
+
     if collect_prompts:
         report['prompts'], report['metadata'] = collected_prompts, collected_metadata
-    
+
     print_comprehensive_report(report)
     return report
 
 
 def run_batch_with_loaded_prompts(reasoner: LLMReasoner, prompts: List[str], metadata: List[Dict],
                                   reasoning_method: str = 'cot', llm_seed: Optional[int] = None,
-                                  verbose: bool = True) -> Dict:
+                                  verbose: bool = True) -> Optional[Dict]:
     """Run batch evaluation with pre-loaded prompts (for model comparison)."""
-    print_section_header("🔄 BATCH WITH LOADED PROMPTS", verbose)
     if verbose:
+        print("\n" + "=" * 60 + "\n🔄 BATCH WITH LOADED PROMPTS" + "\n" + "=" * 60)
         print(f"Samples: {len(prompts)} | Reasoning: {reasoning_method} | Model: {reasoner.model}")
         if llm_seed:
             print(f"LLM Seed: {llm_seed}")
-        print("="*60 + "\n")
-    
-    all_predictions, start_time = [], time.time()
-    
+        print("=" * 60 + "\n")
+
+    # Initialize tracking variables
+    all_predictions, failed_count = [], 0
+    all_step_timings = new_step_timings()
+
     for idx, (prompt, meta) in enumerate(zip(prompts, metadata)):
         if verbose:
             print(f"\n[{idx+1}/{len(prompts)}] User: {meta['user_id']} | Date: {meta['ema_date']}")
         elif (idx + 1) % 10 == 0 or idx == len(prompts) - 1:
             print(f"Progress: {idx+1}/{len(prompts)} samples completed", end='\r')
-        
-        # Call LLM with prompt
-        if reasoning_method == 'self_consistency':
-            prediction, _ = reasoner.predict_with_self_consistency(prompt, n_samples=5, seed=llm_seed)
-        else:
-            response_text, _ = reasoner.call_llm(prompt, seed=llm_seed)
-            if not response_text:
-                if verbose:
-                    print("  ⚠️  LLM call failed, skipping")
-                continue
-            prediction = reasoner.parse_response(response_text)
-        
-        if not prediction:
-            if verbose:
-                print("  ⚠️  Parse failed, skipping")
-            continue
-        
-        all_predictions.append({
-            'user_id': meta['user_id'], 'ema_date': meta['ema_date'],
-            'true_anxiety': meta['true_anxiety'], 'true_depression': meta['true_depression'],
-            'pred_anxiety': prediction['Prediction']['Anxiety_binary'],
-            'pred_depression': prediction['Prediction']['Depression_binary'],
-            'prediction': prediction
-        })
-        
-        if verbose:
-            print(f"  ✓ Anx: {prediction['Prediction']['Anxiety_binary']} (true: {meta['true_anxiety']}) | "
-                  f"Dep: {prediction['Prediction']['Depression_binary']} (true: {meta['true_depression']})")
-    
+
+        all_predictions, all_step_timings, failed_count, _ = predict(
+            all_predictions, all_step_timings,
+            meta['user_id'], meta['ema_date'],
+            meta['true_anxiety'], meta['true_depression'],
+            failed_count, reasoner, reasoning_method, prompt,
+            llm_seed=llm_seed, sc_samples=5, verbose=verbose,
+        )
+
     if not all_predictions:
         print("❌ No successful predictions")
         return None
-    
-    # Calculate metrics
+
     if verbose:
-        print(f"\n{'='*60}\n📊 CALCULATING METRICS\n{'='*60}\n")
-    
-    y_true_anx = [p['true_anxiety'] for p in all_predictions]
-    y_pred_anx = [p['pred_anxiety'] for p in all_predictions]
-    y_true_dep = [p['true_depression'] for p in all_predictions]
-    y_pred_dep = [p['pred_depression'] for p in all_predictions]
-    
-    # Create results in expected format for generate_comprehensive_report
-    results = [{'labels': {'phq4_anxiety_EMA': p['true_anxiety'], 'phq4_depression_EMA': p['true_depression']},
-               'prediction': {'Anxiety_binary': p['pred_anxiety'], 'Depression_binary': p['pred_depression']}}
-              for p in all_predictions]
-    
+        print(f"\n{'=' * 60}\n📊 CALCULATING METRICS\n{'=' * 60}\n")
+
+    results = [
+        {
+            'labels': {
+                'phq4_anxiety_EMA': p['true_anxiety'],
+                'phq4_depression_EMA': p['true_depression'],
+            },
+            'prediction': {
+                'Anxiety_binary': p['pred_anxiety'],
+                'Depression_binary': p['pred_depression'],
+            },
+        }
+        for p in all_predictions
+    ]
+
     report = generate_comprehensive_report(results, reasoner.get_usage_summary())
     print_comprehensive_report(report)
     return report

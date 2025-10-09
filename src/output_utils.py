@@ -8,18 +8,18 @@ Provides consistent formatting for console output.
 from typing import Dict, List
 
 
-def print_section_header(title: str, verbose: bool = True):
-    """Print a section header."""
-    if verbose:
-        print("\n" + "="*60)
-        print(title)
-        print("="*60)
+# def print_section_header(title: str, verbose: bool = True):
+#     """Print a section header."""
+#     if verbose:
+#         print("\n" + "="*60 + title + "\n" + "="*60)
+#         print(title)
+#         print("="*60)
 
 
-def print_subsection(title: str, verbose: bool = True):
-    """Print a subsection header."""
-    if verbose:
-        print(f"\n{title}")
+# def print_subsection(title: str, verbose: bool = True):
+#     """Print a subsection header."""
+#     if verbose:
+#         print(f"\n{title}")
 
 
 def print_input_sample_info(input_sample: Dict, timing: float, verbose: bool = True):
@@ -74,12 +74,10 @@ def print_prediction_results(prediction: Dict, true_labels: Dict, verbose: bool 
     if not verbose:
         return
     
-    print_section_header("📊 PREDICTION RESULTS", verbose)
+    print(f"\n📊 PREDICTION RESULTS")
     print(f"\n🎯 Predictions:")
-    print(f"  Anxiety:    {prediction['Prediction']['Anxiety']} "
-          f"(binary: {prediction['Prediction']['Anxiety_binary']})")
-    print(f"  Depression: {prediction['Prediction']['Depression']} "
-          f"(binary: {prediction['Prediction']['Depression_binary']})")
+    print(f"  Anxiety:    {prediction['Prediction']['Anxiety_binary']}")
+    print(f"  Depression: {prediction['Prediction']['Depression_binary']}")
     
     print(f"\n✅ Ground Truth:")
     print(f"  Anxiety:    {true_labels['phq4_anxiety_EMA']}")
@@ -99,27 +97,40 @@ def print_timing_breakdown(step_timings: Dict, reasoning_method: str, verbose: b
     if not verbose:
         return
     
-    total_time = sum(step_timings.values())
+    # Sum the last timing for each step (since step_timings values are lists)
+    total_time = sum(times[-1] if times else 0.0 for times in step_timings.values())
     print(f"\n⏱️  DETAILED TIMING BREAKDOWN")
     print("-" * 60)
-    print(f"  1. Data Sampling:      {step_timings.get('data_sampling', 0):.3f}s  "
-          f"({step_timings.get('data_sampling', 0)/total_time*100:.1f}%)")
-    print(f"  2. ICL Selection:      {step_timings.get('icl_selection', 0):.3f}s  "
-          f"({step_timings.get('icl_selection', 0)/total_time*100:.1f}%)")
-    print(f"  3. Prompt Building:    {step_timings.get('prompt_building', 0):.3f}s  "
-          f"({step_timings.get('prompt_building', 0)/total_time*100:.1f}%)")
+    
+    # Helper function to get timing safely
+    def get_timing(key):
+        times = step_timings.get(key, [])
+        return times[-1] if times else 0.0
+    
+    data_sampling_time = get_timing('data_sampling')
+    icl_selection_time = get_timing('icl_selection')
+    prompt_building_time = get_timing('prompt_building')
+    llm_call_time = get_timing('llm_call')
+    response_parsing_time = get_timing('response_parsing')
+    
+    print(f"  1. Data Sampling:      {data_sampling_time:.3f}s  "
+          f"({data_sampling_time/total_time*100:.1f}%)")
+    print(f"  2. ICL Selection:      {icl_selection_time:.3f}s  "
+          f"({icl_selection_time/total_time*100:.1f}%)")
+    print(f"  3. Prompt Building:    {prompt_building_time:.3f}s  "
+          f"({prompt_building_time/total_time*100:.1f}%)")
     
     if reasoning_method == 'self_consistency':
-        print(f"  4. LLM Call:           {step_timings.get('llm_call', 0):.3f}s  "
-              f"({step_timings.get('llm_call', 0)/total_time*100:.1f}%) *includes parsing + voting")
-        print(f"  5. Response Parsing:   {step_timings.get('response_parsing', 0):.3f}s  (included above)")
+        print(f"  4. LLM Call:           {llm_call_time:.3f}s  "
+              f"({llm_call_time/total_time*100:.1f}%) *includes parsing + voting")
+        print(f"  5. Response Parsing:   {response_parsing_time:.3f}s  (included above)")
     else:
-        print(f"  4. LLM Call:           {step_timings.get('llm_call', 0):.3f}s  "
-              f"({step_timings.get('llm_call', 0)/total_time*100:.1f}%)")
-        print(f"  5. Response Parsing:   {step_timings.get('response_parsing', 0):.3f}s  "
-              f"({step_timings.get('response_parsing', 0)/total_time*100:.1f}%)")
+        print(f"  4. LLM Call:           {llm_call_time:.3f}s  "
+              f"({llm_call_time/total_time*100:.1f}%)")
+        print(f"  5. Response Parsing:   {response_parsing_time:.3f}s  "
+              f"({response_parsing_time/total_time*100:.1f}%)")
     
-    print(f"  {'─' * 58}")
+    print(f"  {'─' * 60}")
     print(f"  TOTAL:                 {total_time:.3f}s")
 
 
