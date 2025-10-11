@@ -164,7 +164,7 @@ def sample_input_data(feat_df: pd.DataFrame, lab_df: pd.DataFrame, cols: Dict,
 
 def sample_batch_stratified(feat_df: pd.DataFrame, lab_df: pd.DataFrame, cols: Dict, n_samples: int,
                             stratify_by: str = 'phq4_anxiety_EMA', random_state: Optional[int] = None,
-                            max_attempts: int = 1000) -> List[Dict]:
+                            max_attempts: int = 5000) -> List[Dict]:
     """Sample a batch of data points with stratified sampling."""
     if random_state is not None:
         rng = np.random.RandomState(random_state)
@@ -234,7 +234,7 @@ def sample_batch_stratified(feat_df: pd.DataFrame, lab_df: pd.DataFrame, cols: D
             class_samples_collected += 1
             attempts += 1
     
-    if len(collected_samples) < n_samples * 0.8:
+    if len(collected_samples) < n_samples * 0.75:
         raise ValueError(f"Could not collect enough valid samples. Requested: {n_samples}, Collected: {len(collected_samples)}")
     
     print(f"✅ Successfully collected {len(collected_samples)} stratified samples")

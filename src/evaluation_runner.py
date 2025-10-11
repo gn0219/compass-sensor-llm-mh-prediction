@@ -48,8 +48,8 @@ def append_zero(step_timings: Dict[str, List[float]], key: str):
 
 def select_icl(
     feat_df, lab_df, cols: Dict, input_sample: Dict,
-    n_shot: int, source: str, random_state: Optional[int],
-    step_timings: Dict[str, List[float]], verbose: bool
+    n_shot: int, source: str, selection: str, random_state: Optional[int],
+    step_timings: Dict[str, List[float]], verbose: bool, beta: float = 0.0
 ):
     """Select ICL examples if needed, append timing, and return (icl_examples, icl_strategy)."""
     icl_examples = None
@@ -57,12 +57,17 @@ def select_icl(
 
     if n_shot > 0:
         if verbose:
-            print(f"\n📚 Selecting {n_shot} ICL examples (source: {source})...")
+            msg = f"\n📚 Selecting {n_shot} ICL examples (source: {source}, selection: {selection}"
+            if selection == 'diversity' and beta > 0:
+                msg += f", β={beta}"
+            msg += ")..."
+            print(msg)
         with timeit(step_timings, 'icl_selection'):
             icl_examples = select_icl_examples(
                 feat_df, lab_df, cols,
                 input_sample['user_id'], input_sample['ema_date'],
-                n_shot=n_shot, source=source, random_state=random_state
+                n_shot=n_shot, source=source, selection=selection,
+                random_state=random_state, target_sample=input_sample, beta=beta
             )
         if icl_examples is None:
             if verbose:
@@ -177,9 +182,9 @@ def records_to_report_items(records: List[Dict]) -> List[Dict]:
 
 def run_single_prediction(prompt_manager: PromptManager, reasoner: LLMReasoner,
                           feat_df, lab_df, cols: Dict, n_shot: int = 5, source: str = 'hybrid',
-                          reasoning_method: str = 'cot', random_state: Optional[int] = None,
-                          llm_seed: Optional[int] = None,
-                          verbose: bool = True) -> Optional[Dict]:
+                          selection: str = 'random', reasoning_method: str = 'cot', 
+                          random_state: Optional[int] = None, llm_seed: Optional[int] = None,
+                          beta: float = 0.0, verbose: bool = True) -> Optional[Dict]:
     """Run a single prediction for demonstration."""
     if verbose:
         print(f"\n🔍 SINGLE SAMPLE PREDICTION")
@@ -197,7 +202,7 @@ def run_single_prediction(prompt_manager: PromptManager, reasoner: LLMReasoner,
 
     # ICL
     icl_examples, icl_strategy = select_icl(
-        feat_df, lab_df, cols, input_sample, n_shot, source, random_state, all_step_timings, verbose
+        feat_df, lab_df, cols, input_sample, n_shot, source, selection, random_state, all_step_timings, verbose, beta
     )
 
     # Prompt
@@ -228,7 +233,7 @@ def run_single_prediction(prompt_manager: PromptManager, reasoner: LLMReasoner,
 
     return {
         'experiment_config': {
-            'n_shot': n_shot, 'source': source, 'icl_strategy': icl_strategy,
+            'n_shot': n_shot, 'source': source, 'selection': selection, 'icl_strategy': icl_strategy,
             'reasoning_method': reasoning_method, 'model': reasoner.model,
             'random_state': random_state, 'llm_seed': llm_seed
         },
@@ -244,15 +249,15 @@ def run_single_prediction(prompt_manager: PromptManager, reasoner: LLMReasoner,
 
 def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
                          feat_df, lab_df, cols: Dict, n_samples: int = 30, n_shot: int = 5, source: str = 'hybrid',
-                         reasoning_method: str = 'cot', random_state: Optional[int] = 42,
-                         llm_seed: Optional[int] = None, use_stratified: bool = False,
+                         selection: str = 'random', reasoning_method: str = 'cot', random_state: Optional[int] = 42,
+                         llm_seed: Optional[int] = None, beta: float = 0.0, use_stratified: bool = False,
                          stratify_by: str = 'phq4_anxiety_EMA', collect_prompts: bool = False,
                          verbose: bool = True) -> Optional[Dict]:
     """Run batch evaluation on multiple samples."""
     
     if verbose:
         print("\n" + "="*60 + f"\n🔬 BATCH EVALUATION ({n_samples} samples)" + "\n" + "="*60)
-        print(f"  ICL: {source} | N-Shot: {n_shot} | Reasoning: {reasoning_method} | Model: {reasoner.model}")
+        print(f"  ICL: {source} | Selection: {selection} | N-Shot: {n_shot} | Reasoning: {reasoning_method} | Model: {reasoner.model}")
         if random_state or llm_seed:
             print(f"   Seed: {random_state} | LLM Seed: {llm_seed}")
         print(f"  Stratified: {use_stratified}" + (f" (by {stratify_by})" if use_stratified else ""))
@@ -272,17 +277,49 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
             except Exception as e:
                 if verbose:
                     print(f"❌ Stratified sampling failed: {e}\n   Falling back to random sampling...")
-                use_stratified, input_samples = False, []
-        else:
+                use_stratified = False
+        
+        if not use_stratified:
+            # Non-stratified random sampling
+            from .sensor_transformation import sample_input_data
             input_samples = []
+            rng = np.random.RandomState(random_state) if random_state else np.random.RandomState()
+            max_attempts = n_samples * 20  # Try up to 20x the requested samples
+            attempts = 0
+            
+            while len(input_samples) < n_samples and attempts < max_attempts:
+                # Randomly sample from label dataframe
+                idx = rng.choice(len(lab_df))
+                row = lab_df.iloc[idx]
+                user_id = row[cols['user_id']]
+                ema_date = row[cols['date']]
+                
+                from .sensor_transformation import aggregate_7day_features, check_missing_ratio
+                agg_feats = aggregate_7day_features(feat_df, user_id, ema_date, cols)
+                
+                if agg_feats is not None and check_missing_ratio(agg_feats):
+                    labels = row[cols['labels']].to_dict()
+                    input_samples.append({
+                        'aggregated_features': agg_feats,
+                        'labels': labels,
+                        'user_id': user_id,
+                        'ema_date': ema_date
+                    })
+                
+                attempts += 1
+            
+            if len(input_samples) < n_samples * 0.75:
+                if verbose:
+                    print(f"⚠️  Warning: Only collected {len(input_samples)}/{n_samples} samples")
+            
+            if len(input_samples) == 0:
+                if verbose:
+                    print("❌ Could not collect any valid samples")
+                return None
 
     total_sampling_time = all_step_timings['data_sampling'][-1] if all_step_timings['data_sampling'] else 0.0
     if verbose:
         print(f"✅ Collected {len(input_samples)} valid samples in {total_sampling_time:.2f}s\n")
-
-    if not input_samples:
-        print("❌ Failed to collect any valid samples")
-        return None
 
     # Distribute average sampling time per sample (keeps shape identical to other step lists)
     per_sample_sampling = total_sampling_time / max(1, len(input_samples))
@@ -294,9 +331,9 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
 
         # ICL
         icl_examples, icl_strategy = select_icl(
-            feat_df, lab_df, cols, input_sample, n_shot, source,
+            feat_df, lab_df, cols, input_sample, n_shot, source, selection,
             (random_state + i * 1000) if random_state else None,
-            all_step_timings, verbose
+            all_step_timings, verbose, beta
         )
 
         # Prompt
@@ -335,7 +372,7 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
         return None
 
     usage = reasoner.get_usage_summary()
-    config = {'n_samples': n_samples, 'n_shot': n_shot, 'source': source, 'reasoning_method': reasoning_method}
+    config = {'n_samples': n_samples, 'n_shot': n_shot, 'source': source, 'selection': selection, 'reasoning_method': reasoning_method}
     avg_timings = {step: float(np.mean(times)) if times else 0.0 for step, times in all_step_timings.items()}
 
     print_batch_timing_summary(all_step_timings, verbose)

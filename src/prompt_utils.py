@@ -14,16 +14,34 @@ from . import config
 
 
 def build_experiment_prefix(n_shot: int, source: str, *, dataset: str = None,
-                            sensor_format: str = None, seed: int = None) -> str:
-    """Build dataset_sensor_nshot_source_seed{seed} prefix.
+                            sensor_format: str = None, selection: str = None, 
+                            beta: float = None, seed: int = None) -> str:
+    """Build dataset_sensor_nshot_source_selection_seed{seed} prefix.
 
-    Example: globem_structured_4shot_hybrid_seed36
+    Examples:
+        - globem_structured_5shot_generalized_diversity00_seed50  (diversity with beta=0.0)
+        - globem_structured_5shot_generalized_diversity02_seed50  (diversity with beta=0.2)
+        - globem_structured_5shot_personalized_temporal_seed42    (temporal selection)
+        - globem_structured_5shot_hybrid_similarity_seed42        (similarity selection)
+        - globem_structured_5shot_hybrid_random_seed42            (random selection)
     """
     dataset = dataset or config.DATASET_NAME
     sensor_format = sensor_format or config.SENSOR_FORMAT
     shot_str = f"{n_shot}shot" if n_shot > 0 else "zeroshot"
     seed_str = f"seed{seed}" if seed is not None else "seedNone"
-    return f"{dataset}_{sensor_format}_{shot_str}_{source}_{seed_str}"
+    
+    # Build selection string
+    if selection and selection != 'random':
+        if selection == 'diversity' and beta is not None:
+            # Format beta as integer percentage (0.0 -> 00, 0.1 -> 01, 0.2 -> 02, 0.3 -> 03, etc.)
+            beta_str = f"{int(beta * 10):02d}"
+            selection_str = f"{selection}{beta_str}"
+        else:
+            selection_str = selection
+    else:
+        selection_str = selection or 'random'
+    
+    return f"{dataset}_{sensor_format}_{shot_str}_{source}_{selection_str}_{seed_str}"
 
 def get_experiment_name(n_shot: int, source: str = 'hybrid', reasoning_method: str = 'cot',
                             dataset: str = None, sensor_format: str = None, seed: int = None, llm_seed: int = None) -> str:

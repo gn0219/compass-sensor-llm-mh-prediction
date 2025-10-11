@@ -34,6 +34,10 @@ def main():
     parser.add_argument('--n_shot', type=int, default=5)
     parser.add_argument('--source', type=str, default='hybrid',
                        choices=['personalized', 'generalized', 'hybrid'])
+    parser.add_argument('--selection', type=str, default='random',
+                       choices=['random', 'similarity', 'temporal', 'diversity'])
+    parser.add_argument('--beta', type=float, default=0.0,
+                       help='Label balance penalty for diversity selection (0.0=no penalty, 0.1-0.3=recommended)')
     parser.add_argument('--reasoning', type=str, default='cot',
                        choices=['direct', 'cot', 'tot', 'sc'])
     parser.add_argument('--model', type=str, default='gpt-5-nano',
@@ -58,7 +62,7 @@ def main():
     print("="*60)
     print(f"  Mode: {args.mode} | Model: {args.model}")
     if not args.load_prompts:
-        print(f"  ICL: {args.source} | N-Shot: {args.n_shot} | Reasoning: {args.reasoning}")
+        print(f"  ICL: {args.source} | Selection: {args.selection} | N-Shot: {args.n_shot} | Reasoning: {args.reasoning}")
     if args.seed:
         print(f"  Random Seed: {args.seed}")
     if args.load_prompts:
@@ -92,14 +96,17 @@ def main():
     print("  ✓ Ready")
     
     model_name = args.model.replace('/', '_').replace('-', '_').replace('.', '_')
-    # Common prefix per spec
-    exp_prefix = build_experiment_prefix(args.n_shot, args.source, seed=args.seed)
+    # Common prefix per spec - include selection and beta
+    # Always pass beta for diversity, even if 0.0 (to distinguish diversity00, diversity01, etc.)
+    exp_prefix = build_experiment_prefix(args.n_shot, args.source, selection=args.selection, 
+                                        beta=args.beta if args.selection == 'diversity' else None, 
+                                        seed=args.seed)
     # Run evaluation
     if args.mode == 'single':
         result = run_single_prediction(
             prompt_manager, reasoner, feat_df, lab_df, cols, n_shot=args.n_shot,
-            source=args.source, reasoning_method=args.reasoning, random_state=args.seed,
-            llm_seed=args.llm_seed, verbose=args.verbose
+            source=args.source, selection=args.selection, reasoning_method=args.reasoning,
+            random_state=args.seed, llm_seed=args.llm_seed, beta=args.beta, verbose=args.verbose
         )
         
         if result:
@@ -129,11 +136,14 @@ def main():
         else:
             result = run_batch_evaluation(
                 prompt_manager, reasoner, feat_df, lab_df, cols, n_samples=args.n_samples,
-                n_shot=args.n_shot, source=args.source, reasoning_method=args.reasoning,
-                random_state=args.seed, llm_seed=args.llm_seed, use_stratified=args.stratified,
-                stratify_by=args.stratify_by, collect_prompts=args.save_prompts, verbose=args.verbose
+                n_shot=args.n_shot, source=args.source, selection=args.selection,
+                reasoning_method=args.reasoning, random_state=args.seed, llm_seed=args.llm_seed,
+                beta=args.beta, use_stratified=args.stratified, stratify_by=args.stratify_by,
+                collect_prompts=args.save_prompts, verbose=args.verbose
             )
-            exp_prefix = build_experiment_prefix(args.n_shot, args.source, seed=args.seed)
+            exp_prefix = build_experiment_prefix(args.n_shot, args.source, selection=args.selection,
+                                                beta=args.beta if args.selection == 'diversity' else None,
+                                                seed=args.seed)
             
         if result:
             os.makedirs(args.output_dir, exist_ok=True)

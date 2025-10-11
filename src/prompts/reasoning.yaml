@@ -98,7 +98,7 @@ reasoning_methods:
   # -------------------------
   # 4. Self-Consistency
   # -------------------------
-  self_consistency:
+  sc:
     name: "Self-Consistency"
     description: "Generate multiple reasoning paths and aggregate"
     instruction: |
@@ -123,7 +123,7 @@ reasoning_methods:
           "Analysis": "Your analysis",
           "Prediction": {"Anxiety": "X", "Depression": "Y"}
         },
-        "Final_Prediction": {
+        "Prediction": {
           "Anxiety": "Low Risk" or "High Risk",
           "Depression": "Low Risk" or "High Risk",
           "Confidence": "Explanation of consistency across paths"

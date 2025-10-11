@@ -61,7 +61,10 @@ class LLMClient:
         self.client = None
         self.usage_stats = {
             'total_tokens': 0, 'prompt_tokens': 0, 'completion_tokens': 0,
-            'total_latency': 0.0, 'total_cost': 0.0, 'num_requests': 0
+            'total_latency': 0.0, 'total_cost': 0.0, 'num_requests': 0,
+            # Per-request metrics for standard deviation calculation
+            'latencies': [], 'costs': [], 'prompt_tokens_list': [], 
+            'completion_tokens_list': [], 'total_tokens_list': []
         }
         self._gpt5_warning_shown = False  # Track if we've shown GPT-5 warnings
         self._initialize_client()
@@ -204,13 +207,20 @@ class LLMClient:
         }
     
     def _update_stats(self, pt: int, ct: int, total: int, latency: float, cost: float):
-        """Update cumulative usage statistics."""
+        """Update cumulative usage statistics and individual request metrics."""
         self.usage_stats['prompt_tokens'] += pt
         self.usage_stats['completion_tokens'] += ct
         self.usage_stats['total_tokens'] += total
         self.usage_stats['total_latency'] += latency
         self.usage_stats['total_cost'] += cost
         self.usage_stats['num_requests'] += 1
+        
+        # Track individual values for standard deviation
+        self.usage_stats['latencies'].append(latency)
+        self.usage_stats['costs'].append(cost)
+        self.usage_stats['prompt_tokens_list'].append(pt)
+        self.usage_stats['completion_tokens_list'].append(ct)
+        self.usage_stats['total_tokens_list'].append(total)
     
     def get_usage_summary(self) -> Dict:
         """Get summary of API usage and costs."""
@@ -226,5 +236,8 @@ class LLMClient:
         """Reset usage statistics."""
         self.usage_stats = {
             'total_tokens': 0, 'prompt_tokens': 0, 'completion_tokens': 0,
-            'total_latency': 0.0, 'total_cost': 0.0, 'num_requests': 0
+            'total_latency': 0.0, 'total_cost': 0.0, 'num_requests': 0,
+            # Per-request metrics for standard deviation calculation
+            'latencies': [], 'costs': [], 'prompt_tokens_list': [], 
+            'completion_tokens_list': [], 'total_tokens_list': []
         }

@@ -118,15 +118,16 @@ def calculate_classification_metrics(y_true: List[int], y_pred: List[int], targe
 
 
 def calculate_efficiency_metrics(usage_stats: Dict) -> Dict:
-    """Calculate efficiency metrics from API usage statistics."""
+    """Calculate efficiency metrics from API usage statistics with standard deviations."""
     num_requests = usage_stats.get('num_requests', 0)
     
     if num_requests == 0:
         return {
-            'latency': {'avg_seconds': 0, 'total_seconds': 0, 'per_sample_seconds': 0},
-            'cost': {'total_usd': 0, 'per_request_usd': 0, 'per_sample_usd': 0},
-            'throughput': {'tokens_per_second': 0, 'samples_per_minute': 0, 'requests_per_minute': 0},
-            'tokens': {'total': 0, 'prompt': 0, 'completion': 0, 'avg_per_request': 0}
+            'latency': {'avg_seconds': 0, 'std_seconds': 0, 'total_seconds': 0},
+            'cost': {'total_usd': 0, 'per_sample_usd': 0, 'per_sample_std': 0},
+            'throughput': {'tokens_per_second': 0, 'samples_per_minute': 0},
+            'tokens': {'total': 0, 'prompt': 0, 'completion': 0, 'avg_per_request': 0, 'std_per_request': 0,
+                      'prompt_avg': 0, 'prompt_std': 0, 'completion_avg': 0, 'completion_std': 0}
         }
     
     total_latency = usage_stats.get('total_latency', 0)
@@ -135,8 +136,16 @@ def calculate_efficiency_metrics(usage_stats: Dict) -> Dict:
     prompt_tokens = usage_stats.get('prompt_tokens', 0)
     completion_tokens = usage_stats.get('completion_tokens', 0)
     
+    # Get per-request lists for standard deviation calculation
+    latencies = usage_stats.get('latencies', [])
+    costs = usage_stats.get('costs', [])
+    total_tokens_list = usage_stats.get('total_tokens_list', [])
+    prompt_tokens_list = usage_stats.get('prompt_tokens_list', [])
+    completion_tokens_list = usage_stats.get('completion_tokens_list', [])
+    
     # Latency metrics
     avg_latency = total_latency / num_requests
+    std_latency = float(np.std(latencies)) if len(latencies) > 1 else 0.0
     
     # Throughput
     tokens_per_second = total_tokens / total_latency if total_latency > 0 else 0
@@ -145,20 +154,42 @@ def calculate_efficiency_metrics(usage_stats: Dict) -> Dict:
     
     # Cost breakdown
     cost_per_request = total_cost / num_requests
+    std_cost = float(np.std(costs)) if len(costs) > 1 else 0.0
 
-    # token metrics
+    # Token metrics
     avg_tokens_per_request = total_tokens / num_requests
+    std_tokens = float(np.std(total_tokens_list)) if len(total_tokens_list) > 1 else 0.0
+    avg_prompt = float(np.mean(prompt_tokens_list)) if prompt_tokens_list else 0.0
+    std_prompt = float(np.std(prompt_tokens_list)) if len(prompt_tokens_list) > 1 else 0.0
+    avg_completion = float(np.mean(completion_tokens_list)) if completion_tokens_list else 0.0
+    std_completion = float(np.std(completion_tokens_list)) if len(completion_tokens_list) > 1 else 0.0
     
     return {
-        'latency': {'avg_seconds': float(avg_latency), 'total_seconds': float(total_latency), 
-                   'per_sample_seconds': float(avg_latency)},
-        'cost': {'total_usd': float(total_cost), 'per_request_usd': float(cost_per_request), 
-                'per_sample_usd': float(cost_per_request)},
-        'throughput': {'tokens_per_second': float(tokens_per_second), 
-                      'samples_per_minute': float(samples_per_minute),
-                      'requests_per_minute': float(samples_per_minute)},
-        'tokens': {'total': int(total_tokens), 'prompt': int(prompt_tokens), 
-                  'completion': int(completion_tokens), 'avg_per_request': float(avg_tokens_per_request)}
+        'latency': {
+            'avg_seconds': float(avg_latency), 
+            'std_seconds': float(std_latency),
+            'total_seconds': float(total_latency)
+        },
+        'cost': {
+            'total_usd': float(total_cost), 
+            'per_sample_usd': float(cost_per_request),
+            'per_sample_std': float(std_cost)
+        },
+        'throughput': {
+            'tokens_per_second': float(tokens_per_second), 
+            'samples_per_minute': float(samples_per_minute)
+        },
+        'tokens': {
+            'total': int(total_tokens), 
+            'prompt': int(prompt_tokens), 
+            'completion': int(completion_tokens), 
+            'avg_per_request': float(avg_tokens_per_request),
+            'std_per_request': float(std_tokens),
+            'prompt_avg': float(avg_prompt),
+            'prompt_std': float(std_prompt),
+            'completion_avg': float(avg_completion),
+            'completion_std': float(std_completion)
+        }
     }
 
 
@@ -237,28 +268,25 @@ def print_comprehensive_report(report: Dict):
     
     print("\n⏱️  LATENCY")
     print("-" * 80)
-    print(f"  Average:       {efficiency['latency']['avg_seconds']:.2f} seconds")
+    print(f"  Average:       {efficiency['latency']['avg_seconds']:.2f} ± {efficiency['latency']['std_seconds']:.2f} seconds")
     print(f"  Total:         {efficiency['latency']['total_seconds']:.2f} seconds")
-    print(f"  Per Sample:    {efficiency['latency']['per_sample_seconds']:.2f} seconds")
     
     print("\n💰 COST")
     print("-" * 80)
     print(f"  Total:         ${efficiency['cost']['total_usd']:.4f}")
-    print(f"  Per Request:   ${efficiency['cost']['per_request_usd']:.6f}")
-    print(f"  Per Sample:    ${efficiency['cost']['per_sample_usd']:.6f}")
+    print(f"  Per Sample:    ${efficiency['cost']['per_sample_usd']:.6f} ± ${efficiency['cost']['per_sample_std']:.6f}")
     
     print("\n🚀 THROUGHPUT")
     print("-" * 80)
     print(f"  Tokens/Second:     {efficiency['throughput']['tokens_per_second']:.2f}")
     print(f"  Samples/Minute:    {efficiency['throughput']['samples_per_minute']:.2f}")
-    print(f"  Requests/Minute:   {efficiency['throughput']['requests_per_minute']:.2f}")
     
     print("\n🔢 TOKENS")
     print("-" * 80)
     print(f"  Total:         {efficiency['tokens']['total']:,}")
-    print(f"  Prompt:        {efficiency['tokens']['prompt']:,}")
-    print(f"  Completion:    {efficiency['tokens']['completion']:,}")
-    print(f"  Avg/Request:   {efficiency['tokens']['avg_per_request']:.0f}")
+    print(f"  Prompt:        {efficiency['tokens']['prompt']:,} (avg: {efficiency['tokens']['prompt_avg']:.0f} ± {efficiency['tokens']['prompt_std']:.0f})")
+    print(f"  Completion:    {efficiency['tokens']['completion']:,} (avg: {efficiency['tokens']['completion_avg']:.0f} ± {efficiency['tokens']['completion_std']:.0f})")
+    print(f"  Avg/Request:   {efficiency['tokens']['avg_per_request']:.0f} ± {efficiency['tokens']['std_per_request']:.0f}")
     
     print("\n" + "="*80 + "\n")
 
@@ -338,15 +366,30 @@ def export_comprehensive_report(report: Dict, base_filepath: str):
     class_df.to_csv(class_path)
     print(f"✅ Classification metrics saved: {class_path}")
     
-    # Efficiency CSV
+    # Efficiency CSV with standard deviations
     efficiency = report['cost_efficiency']
     eff_data = {
-        'Metric': ['Avg Latency (s)', 'Total Latency (s)', 'Total Cost ($)', 'Cost per Sample ($)',
-                  'Tokens/Second', 'Samples/Minute', 'Total Tokens', 'Prompt Tokens', 'Completion Tokens'],
-        'Value': [efficiency['latency']['avg_seconds'], efficiency['latency']['total_seconds'],
-                 efficiency['cost']['total_usd'], efficiency['cost']['per_sample_usd'],
-                 efficiency['throughput']['tokens_per_second'], efficiency['throughput']['samples_per_minute'],
-                 efficiency['tokens']['total'], efficiency['tokens']['prompt'], efficiency['tokens']['completion']]
+        'Metric': [
+            'Avg Latency (s)', 'Std Latency (s)', 'Total Latency (s)', 
+            'Total Cost ($)', 'Cost per Sample ($)', 'Std Cost per Sample ($)',
+            'Tokens/Second', 'Samples/Minute', 
+            'Total Tokens', 'Avg Tokens per Request', 'Std Tokens per Request',
+            'Prompt Tokens (Total)', 'Prompt Tokens (Avg)', 'Prompt Tokens (Std)',
+            'Completion Tokens (Total)', 'Completion Tokens (Avg)', 'Completion Tokens (Std)'
+        ],
+        'Value': [
+            efficiency['latency']['avg_seconds'], efficiency['latency']['std_seconds'], 
+            efficiency['latency']['total_seconds'],
+            efficiency['cost']['total_usd'], efficiency['cost']['per_sample_usd'], 
+            efficiency['cost']['per_sample_std'],
+            efficiency['throughput']['tokens_per_second'], efficiency['throughput']['samples_per_minute'],
+            efficiency['tokens']['total'], efficiency['tokens']['avg_per_request'], 
+            efficiency['tokens']['std_per_request'],
+            efficiency['tokens']['prompt'], efficiency['tokens']['prompt_avg'], 
+            efficiency['tokens']['prompt_std'],
+            efficiency['tokens']['completion'], efficiency['tokens']['completion_avg'], 
+            efficiency['tokens']['completion_std']
+        ]
     }
     eff_df = pd.DataFrame(eff_data)
     eff_path = f"{base_filepath}_efficiency.csv"
@@ -362,8 +405,9 @@ def compare_experiments(reports: List[Dict], names: Optional[List[str]] = None) 
     comparison_data = {
         'Metric': ['--- Classification ---', 'Anxiety Accuracy', 'Anxiety F1', 'Depression Accuracy', 
                   'Depression F1', 'Overall Accuracy', 'Overall F1',
-                  '--- Efficiency ---', 'Avg Latency (s)', 'Total Cost ($)', 'Cost per Sample ($)',
-                  'Tokens/Second', 'Samples/Minute', 'Total Tokens']
+                  '--- Efficiency ---', 'Avg Latency (s)', 'Std Latency (s)', 
+                  'Total Cost ($)', 'Cost per Sample ($)', 'Std Cost per Sample ($)',
+                  'Tokens/Second', 'Samples/Minute', 'Total Tokens', 'Avg Tokens/Request', 'Std Tokens/Request']
     }
     
     for name, report in zip(names, reports):
@@ -380,11 +424,15 @@ def compare_experiments(reports: List[Dict], names: Optional[List[str]] = None) 
             f"{class_perf['overall']['f1_score']:.4f}",
             '---',
             f"{efficiency['latency']['avg_seconds']:.2f}",
+            f"{efficiency['latency']['std_seconds']:.2f}",
             f"${efficiency['cost']['total_usd']:.4f}",
             f"${efficiency['cost']['per_sample_usd']:.6f}",
+            f"${efficiency['cost']['per_sample_std']:.6f}",
             f"{efficiency['throughput']['tokens_per_second']:.2f}",
             f"{efficiency['throughput']['samples_per_minute']:.2f}",
-            f"{efficiency['tokens']['total']:,}"
+            f"{efficiency['tokens']['total']:,}",
+            f"{efficiency['tokens']['avg_per_request']:.0f}",
+            f"{efficiency['tokens']['std_per_request']:.0f}"
         ]
     
     return pd.DataFrame(comparison_data)
