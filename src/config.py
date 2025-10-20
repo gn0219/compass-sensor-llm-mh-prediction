@@ -28,6 +28,11 @@ DEFAULT_AGGREGATION_MODE = 'statistics'
 # Useful for personalized ICL where early samples have limited history
 USE_ADAPTIVE_WINDOW = True
 
+# Feature normalization
+# If True, normalize features to [-1, 1] range per user using z-score normalization
+# Uses only historical data before prediction timepoint to prevent data leakage
+NORMALIZE_FEATURES = True
+
 # Test set filtering: skip if you want all samples (not recommended for personalized ICL)
 FILTER_TESTSET_BY_HISTORY = True
 

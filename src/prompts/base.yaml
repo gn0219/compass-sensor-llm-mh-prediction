@@ -21,30 +21,26 @@ structure:
 # Role definition
 role:
   description: |
-    You are an expert clinical psychologist and data scientist specializing in 
-    mental health assessment using digital phenotyping data.
+    You are an expert clinical psychologist and data scientist specializing in mental health assessment using digital phenotyping data.
 
 # Task definition
 task:
   objective: |
-    Predict mental health risk levels (anxiety and depression) from
-    smartphone and wearable sensor-derived behavioral features.
+    Predict mental health risk levels (anxiety and depression) from smartphone and wearable sensor-derived behavioral features.
   
   targets_header: "**Prediction Targets:**"
   output_targets:
     - name: "Anxiety"
       classes: ["Low Risk", "High Risk"]
-      threshold: "PHQ-4 anxiety score >= 2"
+      threshold: "PHQ-4 anxiety score > 2"
     - name: "Depression"
       classes: ["Low Risk", "High Risk"]
-      threshold: "PHQ-4 depression score >= 2"
+      threshold: "PHQ-4 depression score > 2"
 
 # Context definition
 context:
   background: |
-    Behavioral patterns from smartphones and wearables can serve as digital
-    biomarkers for mental health conditions. Use these cues only as mapping
-    guidance for the provided features.
+    Behavioral patterns from smartphones and wearables can serve as digital biomarkers for mental health conditions. Use these cues only as mapping guidance for the provided features.
   
   clinical_header: "**Clinical Associations:**"
   clinical_associations:
@@ -77,22 +73,16 @@ context:
   features_header: "**Feature Categories:**"
   feature_categories:
     - name: "Sleep"
-      prefix: "f_slp"
       description: "Sleep duration, efficiency, bedtime, wake time"
     - name: "Calls"
-      prefix: "f_call"
       description: "Incoming/outgoing call counts, duration, contacts"
     - name: "Bluetooth"
-      prefix: "f_blue"
       description: "Unique devices detected (proxy for social proximity)"
     - name: "Screen"
-      prefix: "f_screen"
       description: "Unlock count, duration (digital engagement)"
     - name: "Steps"
-      prefix: "f_steps"
       description: "Step counts, activity bouts (physical activity)"
     - name: "Location"
-      prefix: "f_loc"
       description: "Distance, home time, entropy (mobility patterns)"
 
 # Important notes

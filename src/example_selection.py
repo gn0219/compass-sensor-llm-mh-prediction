@@ -163,7 +163,7 @@ def _sample_from_pool(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dict,
             'window_days': config.AGGREGATION_WINDOW_DAYS,
             'aggregation_mode': config.DEFAULT_AGGREGATION_MODE,
             'use_immediate_window': config.USE_IMMEDIATE_WINDOW,
-            'immediate_days': config.IMMEDIATE_WINDOW_DAYS,
+            'immediate_window_days': config.IMMEDIATE_WINDOW_DAYS,
             'adaptive_window': config.USE_ADAPTIVE_WINDOW
         }
     
@@ -208,7 +208,7 @@ def _random_selection(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dict,
             'window_days': config.AGGREGATION_WINDOW_DAYS,
             'aggregation_mode': config.DEFAULT_AGGREGATION_MODE,
             'use_immediate_window': config.USE_IMMEDIATE_WINDOW,
-            'immediate_days': config.IMMEDIATE_WINDOW_DAYS,
+            'immediate_window_days': config.IMMEDIATE_WINDOW_DAYS,
             'adaptive_window': config.USE_ADAPTIVE_WINDOW
         }
     
@@ -236,7 +236,7 @@ def _random_selection(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dict,
             window_days=agg_params['window_days'],
             mode=agg_params['aggregation_mode'],
             use_immediate_window=agg_params['use_immediate_window'],
-            immediate_days=agg_params['immediate_days'],
+            immediate_window_days=agg_params['immediate_window_days'],
             adaptive_window=agg_params['adaptive_window']
         )
         
@@ -278,7 +278,7 @@ def _similarity_selection(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: D
             'window_days': config.AGGREGATION_WINDOW_DAYS,
             'aggregation_mode': config.DEFAULT_AGGREGATION_MODE,
             'use_immediate_window': config.USE_IMMEDIATE_WINDOW,
-            'immediate_days': config.IMMEDIATE_WINDOW_DAYS,
+            'immediate_window_days': config.IMMEDIATE_WINDOW_DAYS,
             'adaptive_window': config.USE_ADAPTIVE_WINDOW
         }
     
@@ -344,7 +344,7 @@ def _temporal_selection(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dic
             'window_days': config.AGGREGATION_WINDOW_DAYS,
             'aggregation_mode': config.DEFAULT_AGGREGATION_MODE,
             'use_immediate_window': config.USE_IMMEDIATE_WINDOW,
-            'immediate_days': config.IMMEDIATE_WINDOW_DAYS,
+            'immediate_window_days': config.IMMEDIATE_WINDOW_DAYS,
             'adaptive_window': config.USE_ADAPTIVE_WINDOW
         }
     
@@ -369,7 +369,7 @@ def _temporal_selection(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dic
             window_days=agg_params['window_days'],
             mode=agg_params['aggregation_mode'],
             use_immediate_window=agg_params['use_immediate_window'],
-            immediate_days=agg_params['immediate_days'],
+            immediate_window_days=agg_params['immediate_window_days'],
             adaptive_window=agg_params['adaptive_window']
         )
         
@@ -417,7 +417,7 @@ def _diversity_selection(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Di
             'window_days': config.AGGREGATION_WINDOW_DAYS,
             'aggregation_mode': config.DEFAULT_AGGREGATION_MODE,
             'use_immediate_window': config.USE_IMMEDIATE_WINDOW,
-            'immediate_days': config.IMMEDIATE_WINDOW_DAYS,
+            'immediate_window_days': config.IMMEDIATE_WINDOW_DAYS,
             'adaptive_window': config.USE_ADAPTIVE_WINDOW
         }
     
@@ -663,7 +663,7 @@ def _build_candidate_pool(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: D
             'window_days': config.AGGREGATION_WINDOW_DAYS,
             'aggregation_mode': config.DEFAULT_AGGREGATION_MODE,
             'use_immediate_window': config.USE_IMMEDIATE_WINDOW,
-            'immediate_days': config.IMMEDIATE_WINDOW_DAYS,
+            'immediate_window_days': config.IMMEDIATE_WINDOW_DAYS,
             'adaptive_window': config.USE_ADAPTIVE_WINDOW
         }
     
@@ -687,7 +687,7 @@ def _build_candidate_pool(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: D
             window_days=agg_params['window_days'],
             mode=agg_params['aggregation_mode'],
             use_immediate_window=agg_params['use_immediate_window'],
-            immediate_days=agg_params['immediate_days'],
+            immediate_window_days=agg_params['immediate_window_days'],
             adaptive_window=agg_params['adaptive_window']
         )
         

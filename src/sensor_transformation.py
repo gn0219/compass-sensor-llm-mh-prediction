@@ -12,7 +12,10 @@ from typing import Optional, Tuple, List, Dict
 from datetime import timedelta
 from scipy import stats as scipy_stats
 
-from . import config
+try:
+    from . import config
+except ImportError:
+    import config
 
 # Suppress specific warnings
 warnings.filterwarnings('ignore', message='Mean of empty slice', category=RuntimeWarning)
@@ -30,8 +33,8 @@ def binarize_labels(df: pd.DataFrame, labels: List[str], thresholds: Dict[str, i
 def load_globem_data(institution: str = 'INS-W_2', target: str = 'fctci',
                     use_cols_path: str = './config/use_cols.json') -> Tuple[pd.DataFrame, pd.DataFrame, Dict]:
     """Load GLOBEM dataset with feature and label data."""
-    feat_path = f'/home/iclab/compass/dataset/Globem/{institution}/FeatureData/rapids.csv'
-    lab_path = f'/home/iclab/compass/dataset/Globem/{institution}/SurveyData/ema.csv'
+    feat_path = f'../dataset/Globem/{institution}/FeatureData/rapids.csv'
+    lab_path = f'../dataset/Globem/{institution}/SurveyData/ema.csv'
     
     feat_df = pd.read_csv(feat_path, low_memory=False)
     lab_df = pd.read_csv(lab_path)
@@ -57,10 +60,82 @@ def load_globem_data(institution: str = 'INS-W_2', target: str = 'fctci',
     return feat_df, lab_df, cols
 
 
+def calculate_normalization_params(feat_df: pd.DataFrame, user_id: str, ema_date: pd.Timestamp,
+                                   cols: Dict) -> Dict[str, Dict[str, float]]:
+    """
+    Calculate normalization parameters (mean, std) for a user based on ALL their historical data
+    before the prediction date. This prevents data leakage.
+    
+    Args:
+        feat_df: Feature dataframe
+        user_id: User identifier
+        ema_date: Target date for prediction (only use data before this)
+        cols: Column configuration
+    
+    Returns:
+        Dictionary mapping feature names to {'mean': float, 'std': float}
+    """
+    # Get ALL user data before the prediction date
+    user_historical = feat_df[
+        (feat_df[cols['user_id']] == user_id) & 
+        (feat_df[cols['date']] < ema_date)
+    ].copy()
+    
+    if len(user_historical) == 0:
+        return {}
+    
+    norm_params = {}
+    for feat in cols['feature_set']:
+        if feat in user_historical.columns:
+            values = user_historical[feat].values
+            
+            # Calculate mean and std from historical data
+            # Use nanmean/nanstd to handle missing values
+            if np.all(np.isnan(values)) or len(values) == 0:
+                # If all missing, can't normalize - will skip this feature
+                norm_params[feat] = {'mean': 0.0, 'std': 1.0}
+            else:
+                mean_val = np.nanmean(values)
+                std_val = np.nanstd(values)
+                
+                # Avoid division by zero - if std is 0 or very small, set to 1
+                if std_val < 1e-10 or np.isnan(std_val):
+                    std_val = 1.0
+                
+                norm_params[feat] = {'mean': float(mean_val), 'std': float(std_val)}
+    
+    return norm_params
+
+
+def normalize_values(values: np.ndarray, mean: float, std: float, clip_range: Tuple[float, float] = (-3, 3)) -> np.ndarray:
+    """
+    Normalize values using z-score normalization and clip to range.
+    
+    Args:
+        values: Array of values to normalize
+        mean: Mean for normalization
+        std: Standard deviation for normalization
+        clip_range: Range to clip normalized values (default: -3 to 3 std, which maps roughly to [-1, 1] after scaling)
+    
+    Returns:
+        Normalized and clipped array
+    """
+    # Z-score normalization
+    normalized = (values - mean) / std
+    
+    # Clip to range to handle outliers
+    normalized = np.clip(normalized, clip_range[0], clip_range[1])
+    
+    # # Scale to approximately [-1, 1] range (clip_range of [-3, 3] becomes [-1, 1])
+    # normalized = normalized / 3.0
+    
+    return normalized
+
+
 def aggregate_window_features(feat_df: pd.DataFrame, user_id: str, ema_date: pd.Timestamp,
                              cols: Dict, window_days: int = None, mode: str = None,
-                             use_immediate_window: bool = None, immediate_days: int = None,
-                             adaptive_window: bool = None) -> Optional[Dict]:
+                             use_immediate_window: bool = None, immediate_window_days: int = None,
+                             adaptive_window: bool = None, normalize: bool = None) -> Optional[Dict]:
     """
     Aggregate sensor features from window_days before EMA date.
     
@@ -72,8 +147,9 @@ def aggregate_window_features(feat_df: pd.DataFrame, user_id: str, ema_date: pd.
         window_days: Number of days for aggregation window (default: from config)
         mode: Aggregation mode ('array' or 'statistics') (default: from config)
         use_immediate_window: Whether to include immediate window statistics (default: from config)
-        immediate_days: Number of days for immediate window (must be < window_days) (default: from config)
+        immediate_window_days: Number of days for immediate window (must be < window_days) (default: from config)
         adaptive_window: If True, use all available data when window_days exceeds available history (default: from config)
+        normalize: Whether to normalize features to [-1, 1] range per user (default: from config)
     
     Returns:
         Dictionary with aggregated features or None if insufficient data
@@ -85,10 +161,12 @@ def aggregate_window_features(feat_df: pd.DataFrame, user_id: str, ema_date: pd.
         mode = config.DEFAULT_AGGREGATION_MODE
     if use_immediate_window is None:
         use_immediate_window = config.USE_IMMEDIATE_WINDOW
-    if immediate_days is None:
-        immediate_days = config.IMMEDIATE_WINDOW_DAYS
+    if immediate_window_days is None:
+        immediate_window_days = config.IMMEDIATE_WINDOW_DAYS
     if adaptive_window is None:
         adaptive_window = config.USE_ADAPTIVE_WINDOW
+    if normalize is None:
+        normalize = getattr(config, 'NORMALIZE_FEATURES', True)  # Default to True
     
     start_date = ema_date - timedelta(days=window_days)
     
@@ -104,6 +182,22 @@ def aggregate_window_features(feat_df: pd.DataFrame, user_id: str, ema_date: pd.
     # Sort by date for chronological ordering
     user_feats = user_feats.sort_values(cols['date'])
     
+    # Calculate normalization parameters if requested
+    norm_params = {}
+    if normalize:
+        norm_params = calculate_normalization_params(feat_df, user_id, ema_date, cols)
+        
+        # Normalize the window data
+        for feat in cols['feature_set']:
+            if feat in user_feats.columns and feat in norm_params:
+                mean_val = norm_params[feat]['mean']
+                std_val = norm_params[feat]['std']
+                
+                # Apply normalization to the feature values
+                user_feats[feat] = normalize_values(
+                    user_feats[feat].values, mean_val, std_val
+                )
+    
     # Adaptive window: adjust window_days based on actual available data
     actual_window_days = window_days
     if adaptive_window and len(user_feats) < window_days:
@@ -116,29 +210,30 @@ def aggregate_window_features(feat_df: pd.DataFrame, user_id: str, ema_date: pd.
         actual_window_days = max(len(user_feats), actual_days)
         
         # Also adjust immediate_window if needed
-        if use_immediate_window and immediate_days >= actual_window_days:
+        if use_immediate_window and immediate_window_days >= actual_window_days:
             # If immediate window is >= actual window, just use statistics mode without immediate
             use_immediate_window = False
     
     if mode == 'array':
-        return _aggregate_as_array(user_feats, user_id, ema_date, cols, actual_window_days)
+        return _aggregate_as_array(user_feats, user_id, ema_date, cols, actual_window_days, normalize)
     elif mode == 'statistics':
         return _aggregate_as_statistics(
             user_feats, user_id, ema_date, cols, actual_window_days,
-            use_immediate_window, immediate_days
+            use_immediate_window, immediate_window_days, normalize
         )
     else:
         raise ValueError(f"Unknown aggregation mode: {mode}")
 
 
 def _aggregate_as_array(user_feats: pd.DataFrame, user_id: str, ema_date: pd.Timestamp,
-                       cols: Dict, window_days: int) -> Dict:
+                       cols: Dict, window_days: int, normalize: bool = False) -> Dict:
     """Aggregate features as raw arrays (Option 1)."""
     result = {
         'user_id': user_id,
         'ema_date': ema_date,
         'aggregation_mode': 'array',
         'window_days': window_days,
+        'normalized': normalize,
         'features': {}
     }
     
@@ -177,7 +272,7 @@ def _calculate_slope(values: np.ndarray) -> float:
 
 def _aggregate_as_statistics(user_feats: pd.DataFrame, user_id: str, ema_date: pd.Timestamp,
                              cols: Dict, window_days: int, use_immediate_window: bool,
-                             immediate_days: int) -> Dict:
+                             immediate_window_days: int, normalize: bool = False) -> Dict:
     """Aggregate features as statistical summaries (Option 2)."""
     result = {
         'user_id': user_id,
@@ -185,7 +280,8 @@ def _aggregate_as_statistics(user_feats: pd.DataFrame, user_id: str, ema_date: p
         'aggregation_mode': 'statistics',
         'window_days': window_days,
         'use_immediate_window': use_immediate_window,
-        'immediate_days': immediate_days if use_immediate_window else None,
+        'immediate_window_days': immediate_window_days if use_immediate_window else None,
+        'normalized': normalize,
         'features': {}
     }
     
@@ -207,14 +303,14 @@ def _aggregate_as_statistics(user_feats: pd.DataFrame, user_id: str, ema_date: p
             feat_stats[f'slope_{window_days}'] = round(_calculate_slope(values), 4)
         
         # Immediate window statistics if requested
-        if use_immediate_window and immediate_days < window_days:
+        if use_immediate_window and immediate_window_days < window_days:
             # Split into immediate (recent) and previous windows
-            immediate_values = values[-immediate_days:]
-            previous_values = values[:-immediate_days]
+            immediate_values = values[-immediate_window_days:]
+            previous_values = values[:-immediate_window_days]
             
             # Raw values for immediate window
             immediate_list = [round(v, 2) if pd.notna(v) else None for v in immediate_values]
-            feat_stats[f'last_{immediate_days}'] = immediate_list
+            feat_stats[f'last_{immediate_window_days}'] = immediate_list
             
             # Delta: mean of immediate vs mean of previous
             if len(previous_values) > 0 and not np.all(np.isnan(previous_values)):
@@ -223,11 +319,11 @@ def _aggregate_as_statistics(user_feats: pd.DataFrame, user_id: str, ema_date: p
                 
                 if pd.notna(prev_mean) and pd.notna(immediate_mean):
                     delta = immediate_mean - prev_mean
-                    feat_stats[f'delta_last{immediate_days}_vs_prev{window_days-immediate_days}'] = round(delta, 2)
+                    feat_stats[f'delta_last{immediate_window_days}_vs_prev{window_days-immediate_window_days}'] = round(delta, 2)
                 else:
-                    feat_stats[f'delta_last{immediate_days}_vs_prev{window_days-immediate_days}'] = None
+                    feat_stats[f'delta_last{immediate_window_days}_vs_prev{window_days-immediate_window_days}'] = None
             else:
-                feat_stats[f'delta_last{immediate_days}_vs_prev{window_days-immediate_days}'] = None
+                feat_stats[f'delta_last{immediate_window_days}_vs_prev{window_days-immediate_window_days}'] = None
         
         result['features'][feat] = feat_stats
     
@@ -306,36 +402,38 @@ def features_to_text(agg_feats, cols: Dict, include_stats: bool = True) -> str:
     text = ""
     
     # Legacy DataFrame format
-    if isinstance(agg_feats, pd.DataFrame):
-        if include_stats:
-            feature_groups = {}
-            for col in agg_feats.columns:
-                if col not in [cols['user_id'], cols['date']]:
-                    for feat in cols['feature_set']:
-                        if col.startswith(feat):
-                            if feat not in feature_groups:
-                                feature_groups[feat] = {}
-                            stat_type = col.replace(feat + '_', '')
-                            feature_groups[feat][stat_type] = agg_feats[col].iloc[0]
-                            break
+    # if isinstance(agg_feats, pd.DataFrame):
+    #     if include_stats:
+    #         feature_groups = {}
+    #         for col in agg_feats.columns:
+    #             if col not in [cols['user_id'], cols['date']]:
+    #                 for feat in cols['feature_set']:
+    #                     if col.startswith(feat):
+    #                         if feat not in feature_groups:
+    #                             feature_groups[feat] = {}
+    #                         stat_type = col.replace(feat + '_', '')
+    #                         feature_groups[feat][stat_type] = agg_feats[col].iloc[0]
+    #                         break
             
-            for feat_name, stats in feature_groups.items():
-                simple_name = _simplify_feature_name(feat_name)
-                text += f"  - {simple_name}:\n"
-                for stat, value in stats.items():
-                    if value is not None and pd.notna(value):
-                        text += f"    * {stat}: {value:.2f}\n"
-                    else:
-                        text += f"    * {stat}: missing\n"
+    #         for feat_name, stats in feature_groups.items():
+    #             simple_name = _simplify_feature_name(feat_name)
+    #             text += f"  - {simple_name}:\n"
+    #             for stat, value in stats.items():
+    #                 if value is not None and pd.notna(value):
+    #                     text += f"    * {stat}: {value:.2f}\n"
+    #                 else:
+    #                     text += f"    * {stat}: missing\n"
     
     # New Dict format
-    elif isinstance(agg_feats, dict) and 'features' in agg_feats:
+    if isinstance(agg_feats, dict) and 'features' in agg_feats:
         mode = agg_feats.get('aggregation_mode', 'unknown')
+        normalized = agg_feats.get('normalized', False)
+        norm_note = " (normalized to [-3, 3] per user)" if normalized else ""
         
         if mode == 'array':
             # Array format
             window_days = agg_feats.get('window_days', 'N')
-            text += f"(Daily values over {window_days} days, [day1, day2, ..., day{window_days}])\n\n"
+            text += f"(Daily values over {window_days} days{norm_note}, [day1, day2, ..., day{window_days}])\n\n"
             
             for feat_name, values in agg_feats['features'].items():
                 simple_name = _simplify_feature_name(feat_name)
@@ -352,12 +450,12 @@ def features_to_text(agg_feats, cols: Dict, include_stats: bool = True) -> str:
             # Statistics format
             window_days = agg_feats.get('window_days', 'N')
             use_immediate = agg_feats.get('use_immediate_window', False)
-            immediate_days = agg_feats.get('immediate_days', 0)
+            immediate_window_days = agg_feats.get('immediate_window_days', 7)
             
             if use_immediate:
-                text += f"(Statistics over {window_days} days, with recent {immediate_days}-day window)\n\n"
+                text += f"(Statistics over {window_days} days{norm_note}, with recent {immediate_window_days}-day window)\n\n"
             else:
-                text += f"(Statistics over {window_days} days)\n\n"
+                text += f"(Statistics over {window_days} days{norm_note})\n\n"
             
             for feat_name, feat_stats in agg_feats['features'].items():
                 simple_name = _simplify_feature_name(feat_name)

@@ -28,8 +28,8 @@ class PromptManager:
         with open(filepath, 'r', encoding='utf-8') as f:
             return yaml.safe_load(f)
     
-    def get_base_prompt(self) -> str:
-        """Construct the base prompt (Role + Task + Context)."""
+    def get_task_instructions(self) -> str:
+        """Construct the task instructions (Role + Task only)."""
         t = self.base_template
         parts = [t['structure']['title']]
         
@@ -43,9 +43,13 @@ class PromptManager:
             parts.append(f"- **{target['name']}**: {' or '.join(target['classes'])} (threshold: {target['threshold']})")
         parts.append("")
         
-        # Context section
+        return "\n".join(parts)
+    
+    def get_context_section(self) -> str:
+        """Construct the context section only."""
+        t = self.base_template
         ctx = t['context']
-        parts.extend([t['structure']['sections'][2]['header'], ctx['background'].strip(), ""])
+        parts = [t['structure']['sections'][2]['header'], ctx['background'].strip(), ""]
         
         # Clinical associations
         for condition, info in ctx['clinical_associations'].items():
@@ -57,7 +61,7 @@ class PromptManager:
         # Feature categories
         parts.append(ctx['features_header'])
         for cat in ctx['feature_categories']:
-            parts.append(f"- **{cat['name']}** (`{cat['prefix']}`): {cat['description']}")
+            parts.append(f"- **{cat['name']}**: {cat['description']}")
         parts.append("")
         
         # Notes
@@ -67,6 +71,10 @@ class PromptManager:
         parts.append("")
         
         return "\n".join(parts)
+    
+    def get_base_prompt(self) -> str:
+        """Construct the base prompt (Role + Task + Context). Kept for backward compatibility."""
+        return self.get_task_instructions() + self.get_context_section()
     
     def get_icl_section(self, strategy: str = "generalized", custom_header: str = None) -> Dict[str, Any]:
         """Get ICL configuration for a specific strategy."""
@@ -187,35 +195,48 @@ class PromptManager:
         
         Returns:
             Complete formatted prompt
+        
+        Prompt order:
+        1. Task Instructions (Role + Task)
+        2. Context
+        3. Examples (if provided)
+        4. Input Data (User Data)
+        5. Output Indicators (Reasoning Method, Guidelines, Output Format)
         """
         parts = []
         
-        # 1. Base prompt (Role + Task + Context)
-        parts.append(self.get_base_prompt())
+        # 1. Task Instructions (Role + Task)
+        parts.append(self.get_task_instructions())
         
-        # 2. ICL examples (if provided)
+        # 2. Context
+        parts.append(self.get_context_section())
+        
+        # 3. ICL examples (if provided)
         if icl_examples:
             parts.append(self.format_icl_examples(icl_examples, icl_strategy))
         
-        # 3. Reasoning instruction
+        # 4. Input data (User Data to Predict)
+        task_completion = self.reasoning_template['task_completion']
+        parts.append(task_completion['header'])
+        parts.append(task_completion['instruction'].strip())
+        parts.append("")
+        parts.append(task_completion['data_header'] + "\n")
+        parts.append(input_data_text)
+        parts.append("")
+        
+        # 5. Output Indicators
         reasoning = self.get_reasoning_instruction(reasoning_method)
+        
+        # 5a. Reasoning method
         parts.append(f"## Reasoning Method: {reasoning['name']}")
         parts.append(reasoning['instruction'])
         parts.append("")
         
-        # 4. Output constraints (optional)
+        # 5b. Guidelines (output constraints)
         if include_constraints:
             parts.append(self.get_output_constraints())
         
-        # 5. Task completion section
-        parts.append(self.get_task_completion_prompt())
-        
-        # 6. Input data
-        parts.append("### User Data to Predict\n")
-        parts.append(input_data_text)
-        parts.append("")
-        
-        # 7. Output format
+        # 5c. Output format
         parts.append("## Output Format\n")
         parts.append(reasoning['output_format'])
         
