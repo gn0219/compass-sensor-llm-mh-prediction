@@ -136,12 +136,10 @@ output_constraints:
   do_header: "\n**DO:**"
   do:
     - "Focus on the normalized feature values and their interpretation"
-    - "Consider temporal patterns (7-day history vs daily/time-of-day)"
-    - "Account for missing data appropriately"
-    - "Reference specific features in your reasoning"
-    - "Compare patterns to clinical knowledge and examples"
+    - "Consider temporal patterns (long-term trends, recent changes, deltas if provided)"
+    - "Cite specific features you used and tie them to clinical associations"
     - "Provide clear, evidence-based reasoning"
-    - "Use the exact output format specified"
+    - "Follow the exact output schema"
   
   dont_header: "\n**DON'T:**"
   dont:
@@ -150,7 +148,6 @@ output_constraints:
     - "Don't predict 'Medium Risk' - only Low Risk or High Risk"
     - "Don't provide probabilities or confidence scores unless requested"
     - "Don't reference external information not in the prompt"
-    - "Don't use overly technical jargon - keep explanations clear"
   
   # Response format requirements
   format_requirements:

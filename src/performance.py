@@ -4,6 +4,7 @@ Performance Evaluation Module
 Handles classification metrics (accuracy, F1, AUROC) and efficiency metrics (latency, tokens).
 """
 
+import warnings
 import numpy as np
 import pandas as pd
 import json
@@ -11,6 +12,9 @@ from typing import Dict, List, Optional
 from datetime import datetime
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix
 from .utils import NumpyEncoder
+
+# Suppress sklearn warnings for single-class confusion matrix
+warnings.filterwarnings('ignore', message='.*single label.*', category=UserWarning)
 
 
 def calculate_binary_metrics(y_true: List[int], y_pred: List[int], 
@@ -26,7 +30,7 @@ def calculate_binary_metrics(y_true: List[int], y_pred: List[int],
     precision = precision_score(y_true, y_pred, zero_division=0)
     recall = recall_score(y_true, y_pred, zero_division=0)
     f1 = f1_score(y_true, y_pred, zero_division=0)
-    cm = confusion_matrix(y_true, y_pred)
+    cm = confusion_matrix(y_true, y_pred, labels=[0, 1])  # Explicitly specify labels to avoid warnings
     
     # Extract TP, TN, FP, FN from confusion matrix
     # cm is [[TN, FP], [FN, TP]] for binary classification
@@ -96,11 +100,39 @@ def calculate_mental_health_metrics(results: List[Dict], anxiety_label_key: str 
     depression_metrics = calculate_binary_metrics(depression_true, depression_pred,
                                                   depression_proba if depression_proba else None, "Depression")
     
+    # Calculate macro F1 scores (two different methods)
+    # Option 1: Binary-class macro F1 - average F1 of both positive and negative classes per label
+    # For each label, calculate F1 for both class 0 and class 1, then average all
+    f1_macro_binary = None
+    try:
+        # Anxiety: F1 for class 0 and class 1
+        anxiety_f1_per_class = f1_score(anxiety_true, anxiety_pred, average=None, zero_division=0)
+        # Depression: F1 for class 0 and class 1
+        depression_f1_per_class = f1_score(depression_true, depression_pred, average=None, zero_division=0)
+        # Average all four values
+        all_f1_values = list(anxiety_f1_per_class) + list(depression_f1_per_class)
+        f1_macro_binary = float(np.mean(all_f1_values))
+    except Exception as e:
+        print(f"⚠️  Warning: Could not calculate f1_macro_binary: {e}")
+    
+    # Option 2: Multi-label macro F1 - sklearn's standard macro average across all label-sample pairs
+    # Treat as multi-label problem: combine anxiety and depression predictions
+    f1_macro_multilabel = None
+    try:
+        # Combine into multi-label format: each sample has 2 labels (anxiety, depression)
+        y_true_combined = np.column_stack([anxiety_true, depression_true]).flatten()
+        y_pred_combined = np.column_stack([anxiety_pred, depression_pred]).flatten()
+        f1_macro_multilabel = float(f1_score(y_true_combined, y_pred_combined, average='macro', zero_division=0))
+    except Exception as e:
+        print(f"⚠️  Warning: Could not calculate f1_macro_multilabel: {e}")
+    
     overall_metrics = {
         'accuracy': (anxiety_metrics['accuracy'] + depression_metrics['accuracy']) / 2,
         'precision': (anxiety_metrics['precision'] + depression_metrics['precision']) / 2,
         'recall': (anxiety_metrics['recall'] + depression_metrics['recall']) / 2,
         'f1_score': (anxiety_metrics['f1_score'] + depression_metrics['f1_score']) / 2,
+        'f1_macro_binary': f1_macro_binary,  # Option 1: Average F1 of all classes (pos/neg) per label
+        'f1_macro_multilabel': f1_macro_multilabel,  # Option 2: sklearn macro average
         'n_samples': len(results)
     }
     
@@ -234,10 +266,15 @@ def print_comprehensive_report(report: Dict):
     print("📋 SUMMARY")
     print("="*80)
     summary = report['summary']
+    classification = report['classification_performance']
     print(f"  Total Samples:     {summary['total_samples']}")
     print(f"  Total Requests:    {summary['total_requests']}")
     print(f"  Overall Accuracy:  {summary['overall_accuracy']:.4f}")
     print(f"  Overall F1 Score:  {summary['overall_f1']:.4f}")
+    if classification['overall'].get('f1_macro_binary') is not None:
+        print(f"  F1 Macro Binary:   {classification['overall']['f1_macro_binary']:.4f}")
+    if classification['overall'].get('f1_macro_multilabel') is not None:
+        print(f"  F1 Macro Multi:    {classification['overall']['f1_macro_multilabel']:.4f}")
     print(f"  Total Cost:        ${summary['total_cost_usd']:.4f}")
     print(f"  Avg Latency:       {summary['avg_latency_sec']:.2f}s")
     
@@ -309,7 +346,9 @@ def print_metrics_summary(metrics: Dict):
     print("\n📊 OVERALL (Macro Average)")
     print("-" * 60)
     overall = metrics['overall']
-    print(f"  Accuracy:  {overall['accuracy']:.4f}  |  F1 Score:  {overall['f1_score']:.4f}")
+    print(f"  Accuracy:         {overall['accuracy']:.4f}  |  F1 Score:        {overall['f1_score']:.4f}")
+    if overall.get('f1_macro_binary') is not None:
+        print(f"  F1 Macro Binary:  {overall['f1_macro_binary']:.4f}  |  F1 Macro Multi:  {overall.get('f1_macro_multilabel', 0):.4f}")
     print("="*60 + "\n")
 
 
@@ -337,12 +376,39 @@ def metrics_to_dataframe(metrics: Dict) -> pd.DataFrame:
             metrics['depression']['tn'],
             metrics['depression']['fp'],
             metrics['depression']['fn']
+        ],
+        'Overall': [
+            metrics['overall']['accuracy'],
+            'N/A',  # precision (not applicable for overall)
+            'N/A',  # recall (not applicable for overall)
+            metrics['overall']['f1_score'],
+            metrics['overall']['auroc'] if metrics['overall']['auroc'] else 'N/A',
+            'N/A',  # tp
+            'N/A',  # tn
+            'N/A',  # fp
+            'N/A'   # fn
         ]
     }
-    return pd.DataFrame(data, index=[
+    
+    index_labels = [
         'Accuracy', 'Precision', 'Recall', 'F1-Score', 'AUROC',
         'TP (True Positive)', 'TN (True Negative)', 'FP (False Positive)', 'FN (False Negative)'
-    ])
+    ]
+    
+    # Add macro F1 scores if available
+    if metrics['overall'].get('f1_macro_binary') is not None:
+        data['Overall'].append(metrics['overall']['f1_macro_binary'])
+        index_labels.append('F1-Macro-Binary')
+    if metrics['overall'].get('f1_macro_multilabel') is not None:
+        data['Overall'].append(metrics['overall']['f1_macro_multilabel'])
+        index_labels.append('F1-Macro-Multilabel')
+        # Fill in N/A for Anxiety and Depression columns
+        if len(data['Anxiety']) < len(data['Overall']):
+            data['Anxiety'].extend(['N/A'] * (len(data['Overall']) - len(data['Anxiety'])))
+        if len(data['Depression']) < len(data['Overall']):
+            data['Depression'].extend(['N/A'] * (len(data['Overall']) - len(data['Depression'])))
+    
+    return pd.DataFrame(data, index=index_labels)
 
 
 def save_metrics_to_csv(metrics: Dict, filepath: str):
@@ -404,7 +470,7 @@ def compare_experiments(reports: List[Dict], names: Optional[List[str]] = None) 
     
     comparison_data = {
         'Metric': ['--- Classification ---', 'Anxiety Accuracy', 'Anxiety F1', 'Depression Accuracy', 
-                  'Depression F1', 'Overall Accuracy', 'Overall F1',
+                  'Depression F1', 'Overall Accuracy', 'Overall F1', 'F1 Macro Binary', 'F1 Macro Multilabel',
                   '--- Efficiency ---', 'Avg Latency (s)', 'Std Latency (s)', 
                   'Total Cost ($)', 'Cost per Sample ($)', 'Std Cost per Sample ($)',
                   'Tokens/Second', 'Samples/Minute', 'Total Tokens', 'Avg Tokens/Request', 'Std Tokens/Request']
@@ -414,6 +480,9 @@ def compare_experiments(reports: List[Dict], names: Optional[List[str]] = None) 
         class_perf = report['classification_performance']
         efficiency = report['cost_efficiency']
         
+        f1_macro_binary = class_perf['overall'].get('f1_macro_binary')
+        f1_macro_multilabel = class_perf['overall'].get('f1_macro_multilabel')
+        
         comparison_data[name] = [
             '---',
             f"{class_perf['anxiety']['accuracy']:.4f}",
@@ -422,6 +491,8 @@ def compare_experiments(reports: List[Dict], names: Optional[List[str]] = None) 
             f"{class_perf['depression']['f1_score']:.4f}",
             f"{class_perf['overall']['accuracy']:.4f}",
             f"{class_perf['overall']['f1_score']:.4f}",
+            f"{f1_macro_binary:.4f}" if f1_macro_binary is not None else "N/A",
+            f"{f1_macro_multilabel:.4f}" if f1_macro_multilabel is not None else "N/A",
             '---',
             f"{efficiency['latency']['avg_seconds']:.2f}",
             f"{efficiency['latency']['std_seconds']:.2f}",

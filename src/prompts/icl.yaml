@@ -50,13 +50,13 @@ strategies:
   personalized:
     description: "Use examples from the same user's history"
     example_selection: "same_user"
-    n_examples: 3
+    n_examples: 4
     temporal_constraint: "previous_timepoints_only"
   
   generalized:
     description: "Use examples from different users"
     example_selection: "diverse_users"
-    n_examples: 5
+    n_examples: 4
     diversity_metric: "behavioral_similarity"
   
   hybrid:

@@ -5,7 +5,7 @@ metadata:
   name: "Mental Health Prediction - Base"
   version: "1.0"
   description: "Standard prompt template for anxiety and depression prediction from sensor data"
-  author: "KAIST ICLab - Gyuna Kim"
+  author: "KAIST ICLab"
 
 # Prompt structure
 structure:
@@ -22,16 +22,13 @@ structure:
 role:
   description: |
     You are an expert clinical psychologist and data scientist specializing in 
-    mental health assessment using digital phenotyping data. You have extensive 
-    experience in interpreting behavioral patterns from smartphone and wearable 
-    device sensors.
+    mental health assessment using digital phenotyping data.
 
 # Task definition
 task:
   objective: |
-    Your task is to predict mental health risk levels (specifically anxiety and 
-    depression) based on sensor-derived behavioral features collected from 
-    smartphones and wearable devices over a 7-day period.
+    Predict mental health risk levels (anxiety and depression) from
+    smartphone and wearable sensor-derived behavioral features.
   
   targets_header: "**Prediction Targets:**"
   output_targets:
@@ -45,8 +42,9 @@ task:
 # Context definition
 context:
   background: |
-    Research has shown that behavioral patterns captured through smartphone and 
-    wearable sensors can serve as digital biomarkers for mental health conditions.
+    Behavioral patterns from smartphones and wearables can serve as digital
+    biomarkers for mental health conditions. Use these cues only as mapping
+    guidance for the provided features.
   
   clinical_header: "**Clinical Associations:**"
   clinical_associations:
@@ -101,8 +99,6 @@ context:
 notes_header: "**Important Notes:**"
 notes:
   - "Features are normalized to [-1, 1] range within each individual"
-  - "Positive values indicate above-average for that person"
-  - "Negative values indicate below-average for that person"
-  - "Consider both absolute values and relative changes"
-  - "Missing values (NaN) indicate insufficient data for that feature"
-
+  - "Positive values indicate above-average for that person; negative values indicate below-average"
+  - "Consider both absolute values and relative changes within the aggregation window"
+  - "Treat missing values (NaN) as non-evidence and acknowledge limitations due to missingness."

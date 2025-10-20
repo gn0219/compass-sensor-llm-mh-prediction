@@ -18,7 +18,8 @@ from typing import Optional, List, Dict, Tuple
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.cluster import KMeans
-from .sensor_transformation import aggregate_7day_features, check_missing_ratio
+from .sensor_transformation import aggregate_window_features, check_missing_ratio
+from . import config
 
 
 def select_icl_examples(
@@ -30,6 +31,7 @@ def select_icl_examples(
 ) -> Optional[List[Dict]]:
     """
     Select in-context learning examples based on specified strategy.
+    Uses aggregation settings from config.py.
     
     Args:
         feat_df: Feature DataFrame
@@ -52,6 +54,9 @@ def select_icl_examples(
     
     # Validate selection method for source
     _validate_selection_for_source(source, selection)
+    
+    # Use config defaults for aggregation (agg_params=None will trigger defaults)
+    agg_params = None
     
     examples = []
     
@@ -81,7 +86,7 @@ def select_icl_examples(
         
         examples = _sample_from_pool(
             feat_df, general_lab, cols, n_shot, selection, random_state,
-            target_sample=target_sample, beta=beta
+            target_sample=target_sample, beta=beta, agg_params=agg_params
         )
     
     elif source == 'hybrid':
@@ -105,13 +110,14 @@ def select_icl_examples(
         # Personal examples: use specified selection method
         personal_examples = _sample_from_pool(
             feat_df, personal_lab, cols, n_personal, selection, random_state,
-            target_sample=target_sample, target_date=target_ema_date, beta=beta
+            target_sample=target_sample, target_date=target_ema_date, beta=beta,
+            agg_params=agg_params
         )
         
         general_examples = _sample_from_pool(
             feat_df, general_lab, cols, n_general, selection, random_state,
             # random_state + 1000 if random_state else None,
-            target_sample=target_sample, beta=beta
+            target_sample=target_sample, beta=beta, agg_params=agg_params
         )
         
         examples = personal_examples + general_examples
@@ -133,7 +139,7 @@ def _validate_selection_for_source(source: str, selection: str):
 
 def _sample_from_pool(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dict, n_samples: int,
     selection: str = 'random', random_state: Optional[int] = None, target_sample: Optional[Dict] = None,
-    target_date: Optional[pd.Timestamp] = None, beta: float = 0.0) -> List[Dict]:
+    target_date: Optional[pd.Timestamp] = None, beta: float = 0.0, agg_params: Dict = None) -> List[Dict]:
     """
     Sample n_samples from the label pool using specified selection strategy.
     
@@ -146,24 +152,36 @@ def _sample_from_pool(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dict,
         random_state: Random seed
         target_sample: Target sample for similarity-based selection
         target_date: Target date for temporal selection
+        beta: Label balance penalty for diversity selection
+        agg_params: Aggregation parameters (window_days, aggregation_mode, etc.)
     
     Returns:
         List of example dictionaries with aggregated features and labels
     """
+    if agg_params is None:
+        agg_params = {
+            'window_days': config.AGGREGATION_WINDOW_DAYS,
+            'aggregation_mode': config.DEFAULT_AGGREGATION_MODE,
+            'use_immediate_window': config.USE_IMMEDIATE_WINDOW,
+            'immediate_days': config.IMMEDIATE_WINDOW_DAYS,
+            'adaptive_window': config.USE_ADAPTIVE_WINDOW
+        }
+    
     if selection == 'random':
-        return _random_selection(feat_df, lab_pool, cols, n_samples, random_state)
+        return _random_selection(feat_df, lab_pool, cols, n_samples, random_state, agg_params)
     
     elif selection == 'similarity':
         return _similarity_selection(feat_df, lab_pool, cols, n_samples, random_state, 
-                                     target_sample, metric='cosine')
+                                     target_sample, metric='cosine', agg_params=agg_params)
     
     elif selection == 'temporal':
         return _temporal_selection(feat_df, lab_pool, cols, n_samples, random_state,
-                                   target_date, most_recent=True)
+                                   target_date, most_recent=True, agg_params=agg_params)
     
     elif selection == 'diversity':
         return _diversity_selection(feat_df, lab_pool, cols, n_samples, random_state,
-                                    n_clusters=min(n_samples, 5) if n_samples > 10 else n_samples, beta=beta)
+                                    n_clusters=min(n_samples, 5) if n_samples > 10 else n_samples, 
+                                    beta=beta, agg_params=agg_params)
     
     else:
         raise ValueError(f"Invalid selection method: {selection}. Choose from: 'random', 'similarity', 'temporal', 'diversity'")
@@ -172,16 +190,27 @@ def _sample_from_pool(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dict,
 # ==================== Selection Strategy Implementations ====================
 
 def _random_selection(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dict, n_samples: int, 
-                      random_state: Optional[int] = None, max_attempts: int = None) -> List[Dict]:
+                      random_state: Optional[int] = None, agg_params: Dict = None, 
+                      max_attempts: int = None) -> List[Dict]:
     """
     Random selection baseline - shuffle and select valid samples.
     
     Hyperparameters:
         - random_state: Seed for reproducibility
         - max_attempts: Maximum iterations to find valid samples (default: n_samples * 10)
+        - agg_params: Aggregation parameters (window_days, aggregation_mode, etc.)
     """
     if max_attempts is None:
         max_attempts = n_samples * 10
+    
+    if agg_params is None:
+        agg_params = {
+            'window_days': config.AGGREGATION_WINDOW_DAYS,
+            'aggregation_mode': config.DEFAULT_AGGREGATION_MODE,
+            'use_immediate_window': config.USE_IMMEDIATE_WINDOW,
+            'immediate_days': config.IMMEDIATE_WINDOW_DAYS,
+            'adaptive_window': config.USE_ADAPTIVE_WINDOW
+        }
     
     examples = []
     attempts = 0
@@ -201,8 +230,15 @@ def _random_selection(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dict,
         user_id = row[cols['user_id']]
         ema_date = row[cols['date']]
         
-        # Get 7-day aggregated features
-        agg_feats = aggregate_7day_features(feat_df, user_id, ema_date, cols)
+        # Get aggregated features
+        agg_feats = aggregate_window_features(
+            feat_df, user_id, ema_date, cols,
+            window_days=agg_params['window_days'],
+            mode=agg_params['aggregation_mode'],
+            use_immediate_window=agg_params['use_immediate_window'],
+            immediate_days=agg_params['immediate_days'],
+            adaptive_window=agg_params['adaptive_window']
+        )
         
         # Check if valid (not too many missing values)
         if agg_feats is not None and check_missing_ratio(agg_feats):
@@ -222,7 +258,7 @@ def _random_selection(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dict,
 
 def _similarity_selection(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dict, n_samples: int,
                           random_state: Optional[int] = None, target_sample: Optional[Dict] = None,
-                          metric: str = 'cosine', max_pool_size: int = 500) -> List[Dict]:
+                          metric: str = 'cosine', max_pool_size: int = 500, agg_params: Dict = None) -> List[Dict]:
     """
     Feature-space similarity-based selection using cosine similarity.
     
@@ -232,15 +268,25 @@ def _similarity_selection(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: D
         - metric: Similarity metric ('cosine' or 'euclidean')
         - max_pool_size: Maximum candidates to consider (for efficiency)
         - random_state: Seed for candidate sampling if pool is large
+        - agg_params: Aggregation parameters (window_days, aggregation_mode, etc.)
     """
     if target_sample is None:
         raise ValueError("target_sample is required for similarity-based selection")
+    
+    if agg_params is None:
+        agg_params = {
+            'window_days': config.AGGREGATION_WINDOW_DAYS,
+            'aggregation_mode': config.DEFAULT_AGGREGATION_MODE,
+            'use_immediate_window': config.USE_IMMEDIATE_WINDOW,
+            'immediate_days': config.IMMEDIATE_WINDOW_DAYS,
+            'adaptive_window': config.USE_ADAPTIVE_WINDOW
+        }
     
     # Extract target feature vector
     target_vector = _extract_feature_vector(target_sample['aggregated_features'], cols)
     
     # Build candidate pool with features
-    candidates = _build_candidate_pool(feat_df, lab_pool, cols, max_pool_size, random_state)
+    candidates = _build_candidate_pool(feat_df, lab_pool, cols, max_pool_size, random_state, agg_params)
     
     if len(candidates) < n_samples:
         print(f"Warning: Only {len(candidates)} valid candidates for similarity selection")
@@ -276,7 +322,7 @@ def _similarity_selection(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: D
 
 def _temporal_selection(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dict, n_samples: int,
                         random_state: Optional[int] = None, target_date: Optional[pd.Timestamp] = None,
-                        most_recent: bool = True, max_attempts: int = None) -> List[Dict]:
+                        most_recent: bool = True, max_attempts: int = None, agg_params: Dict = None) -> List[Dict]:
     """
     Temporal proximity-based selection - select most recent samples before target date.
     
@@ -285,12 +331,22 @@ def _temporal_selection(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dic
     Hyperparameters:
         - most_recent: If True, select most recent; if False, select oldest
         - max_attempts: Maximum iterations to find valid samples
+        - agg_params: Aggregation parameters (window_days, aggregation_mode, etc.)
     """
     if target_date is None:
         raise ValueError("target_date is required for temporal selection")
     
     if max_attempts is None:
         max_attempts = n_samples * 10
+    
+    if agg_params is None:
+        agg_params = {
+            'window_days': config.AGGREGATION_WINDOW_DAYS,
+            'aggregation_mode': config.DEFAULT_AGGREGATION_MODE,
+            'use_immediate_window': config.USE_IMMEDIATE_WINDOW,
+            'immediate_days': config.IMMEDIATE_WINDOW_DAYS,
+            'adaptive_window': config.USE_ADAPTIVE_WINDOW
+        }
     
     # Sort by date (most recent first if most_recent=True)
     lab_pool_sorted = lab_pool.sort_values(by=cols['date'], ascending=not most_recent).reset_index(drop=True)
@@ -307,8 +363,15 @@ def _temporal_selection(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dic
         user_id = row[cols['user_id']]
         ema_date = row[cols['date']]
         
-        # Get 7-day aggregated features
-        agg_feats = aggregate_7day_features(feat_df, user_id, ema_date, cols)
+        # Get aggregated features
+        agg_feats = aggregate_window_features(
+            feat_df, user_id, ema_date, cols,
+            window_days=agg_params['window_days'],
+            mode=agg_params['aggregation_mode'],
+            use_immediate_window=agg_params['use_immediate_window'],
+            immediate_days=agg_params['immediate_days'],
+            adaptive_window=agg_params['adaptive_window']
+        )
         
         # Check if valid
         if agg_feats is not None and check_missing_ratio(agg_feats):
@@ -328,7 +391,7 @@ def _temporal_selection(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dic
 
 def _diversity_selection(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dict, n_samples: int,
                          random_state: Optional[int] = None, n_clusters: int = 5, beta: float = 0.0,
-                         max_pool_size: int = 1000) -> List[Dict]:
+                         max_pool_size: int = 1000, agg_params: Dict = None) -> List[Dict]:
     """
     Diversity-based selection using K-means clustering with optional label balance penalty.
     
@@ -347,9 +410,19 @@ def _diversity_selection(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Di
                   - 0.1-0.3: Soft label balance
         - max_pool_size: Maximum candidates to cluster (for efficiency)
         - random_state: Seed for clustering reproducibility
+        - agg_params: Aggregation parameters (window_days, aggregation_mode, etc.)
     """
+    if agg_params is None:
+        agg_params = {
+            'window_days': config.AGGREGATION_WINDOW_DAYS,
+            'aggregation_mode': config.DEFAULT_AGGREGATION_MODE,
+            'use_immediate_window': config.USE_IMMEDIATE_WINDOW,
+            'immediate_days': config.IMMEDIATE_WINDOW_DAYS,
+            'adaptive_window': config.USE_ADAPTIVE_WINDOW
+        }
+    
     # Build candidate pool with features
-    candidates = _build_candidate_pool(feat_df, lab_pool, cols, max_pool_size, random_state)
+    candidates = _build_candidate_pool(feat_df, lab_pool, cols, max_pool_size, random_state, agg_params)
     
     if len(candidates) < n_samples:
         print(f"Warning: Only {len(candidates)} valid candidates for diversity selection")
@@ -504,24 +577,54 @@ def _compute_label_deviation(candidate_sample: Dict, selected_samples: List[Dict
 
 # ==================== Helper Functions ====================
 
-def _extract_feature_vector(agg_feats: pd.DataFrame, cols: Dict, fill_strategy: str = 'zero') -> np.ndarray:
+def _extract_feature_vector(agg_feats, cols: Dict, fill_strategy: str = 'zero') -> np.ndarray:
     """
-    Extract numeric feature vector from aggregated features DataFrame.
+    Extract numeric feature vector from aggregated features.
     
     Args:
-        agg_feats: Aggregated features DataFrame (1 row)
+        agg_feats: Aggregated features (Dict or DataFrame)
         cols: Column configuration
         fill_strategy: How to handle missing values ('zero', 'mean', 'median')
     
     Returns:
         1D numpy array of feature values
     """
-    # Get feature columns (exclude user_id and date)
-    feature_cols = [col for col in agg_feats.columns 
-                   if col not in [cols['user_id'], cols['date']]]
+    # Handle new Dict format
+    if isinstance(agg_feats, dict) and 'features' in agg_feats:
+        mode = agg_feats.get('aggregation_mode', 'statistics')
+        
+        if mode == 'array':
+            # For array mode, flatten all arrays into one vector
+            feature_values = []
+            for feat_name, feat_values_list in agg_feats['features'].items():
+                # Convert None to np.nan, then append
+                values = [v if v is not None else np.nan for v in feat_values_list]
+                feature_values.extend(values)
+            feature_vector = np.array(feature_values, dtype=float)
+        
+        elif mode == 'statistics':
+            # For statistics mode, extract all numeric statistics
+            feature_values = []
+            for feat_name, feat_stats in agg_feats['features'].items():
+                for stat_name, stat_value in feat_stats.items():
+                    # Skip arrays (last_N) - only use scalar statistics
+                    if not stat_name.startswith('last_'):
+                        val = stat_value if stat_value is not None else np.nan
+                        feature_values.append(val)
+            feature_vector = np.array(feature_values, dtype=float)
+        else:
+            raise ValueError(f"Unknown aggregation mode: {mode}")
     
-    # Extract values
-    feature_vector = agg_feats[feature_cols].values.flatten()
+    # Handle legacy DataFrame format
+    elif isinstance(agg_feats, pd.DataFrame):
+        # Get feature columns (exclude user_id and date)
+        feature_cols = [col for col in agg_feats.columns 
+                       if col not in [cols['user_id'], cols['date']]]
+        
+        # Extract values
+        feature_vector = agg_feats[feature_cols].values.flatten()
+    else:
+        raise ValueError(f"Unsupported agg_feats type: {type(agg_feats)}")
     
     # Handle missing values
     if fill_strategy == 'zero':
@@ -539,13 +642,31 @@ def _extract_feature_vector(agg_feats: pd.DataFrame, cols: Dict, fill_strategy: 
 
 
 def _build_candidate_pool(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dict,
-                          max_pool_size: int = 500, random_state: Optional[int] = None) -> List[Dict]:
+                          max_pool_size: int = 500, random_state: Optional[int] = None,
+                          agg_params: Dict = None) -> List[Dict]:
     """
     Build candidate pool with aggregated features and feature vectors.
+    
+    Args:
+        feat_df: Feature DataFrame
+        lab_pool: Pool of label samples
+        cols: Column configuration
+        max_pool_size: Maximum pool size for efficiency
+        random_state: Random seed
+        agg_params: Aggregation parameters (window_days, aggregation_mode, etc.)
     
     Returns:
         List of dicts with 'features' (numpy array) and 'sample' (dict)
     """
+    if agg_params is None:
+        agg_params = {
+            'window_days': config.AGGREGATION_WINDOW_DAYS,
+            'aggregation_mode': config.DEFAULT_AGGREGATION_MODE,
+            'use_immediate_window': config.USE_IMMEDIATE_WINDOW,
+            'immediate_days': config.IMMEDIATE_WINDOW_DAYS,
+            'adaptive_window': config.USE_ADAPTIVE_WINDOW
+        }
+    
     # Limit pool size for efficiency
     if len(lab_pool) > max_pool_size:
         if random_state is not None:
@@ -560,8 +681,15 @@ def _build_candidate_pool(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: D
         user_id = row[cols['user_id']]
         ema_date = row[cols['date']]
         
-        # Get 7-day aggregated features
-        agg_feats = aggregate_7day_features(feat_df, user_id, ema_date, cols)
+        # Get aggregated features
+        agg_feats = aggregate_window_features(
+            feat_df, user_id, ema_date, cols,
+            window_days=agg_params['window_days'],
+            mode=agg_params['aggregation_mode'],
+            use_immediate_window=agg_params['use_immediate_window'],
+            immediate_days=agg_params['immediate_days'],
+            adaptive_window=agg_params['adaptive_window']
+        )
         
         # Check if valid
         if agg_feats is not None and check_missing_ratio(agg_feats):

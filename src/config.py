@@ -10,7 +10,26 @@ Modify these values to change system behavior without touching code.
 # ============================================================================
 
 # Time window for feature aggregation
-AGGREGATION_WINDOW_DAYS = 7
+AGGREGATION_WINDOW_DAYS = 28
+
+# Immediate window for recent behavioral patterns
+IMMEDIATE_WINDOW_DAYS = 7
+
+# Whether to use immediate window by default
+USE_IMMEDIATE_WINDOW = True
+
+# Aggregation mode: 'array' or 'statistics'
+# - 'array': Raw daily values as list [val1, val2, ..., valN]
+# - 'statistics': Statistical summaries (mean, std, slope, etc.)
+DEFAULT_AGGREGATION_MODE = 'statistics'
+
+# Adaptive window for early samples (ICL examples)
+# If True, use all available data when window_days exceeds available history
+# Useful for personalized ICL where early samples have limited history
+USE_ADAPTIVE_WINDOW = True
+
+# Test set filtering: skip if you want all samples (not recommended for personalized ICL)
+FILTER_TESTSET_BY_HISTORY = True
 
 # Missing data threshold (samples with more missing data are excluded)
 MISSING_RATIO_THRESHOLD = 0.7
@@ -26,13 +45,18 @@ DEFAULT_THRESHOLDS = {
 # ============================================================================
 
 # Default number of ICL examples
-DEFAULT_N_SHOT = 5
+DEFAULT_N_SHOT = 4
 
 # Default ICL source strategy
 DEFAULT_ICL_SOURCE = 'hybrid'  # Options: 'personalized', 'generalized', 'hybrid'
 
 # ICL example selection method
 DEFAULT_SELECTION_METHOD = 'random'  # Options: 'random', 'similarity' (not implemented)
+
+# Minimum historical labels required for test set samples
+# This ensures personalized ICL always has sufficient examples
+# For fair comparison across generalized, personalized, and hybrid strategies
+MIN_HISTORICAL_LABELS = 4
 
 # ============================================================================
 # LLM CONFIGURATION
@@ -43,6 +67,7 @@ DEFAULT_MODEL = 'gpt-5-nano'
 
 # Supported models
 SUPPORTED_MODELS = [
+    'gpt-5',
     'gpt-5-nano',          # OpenAI
     'claude-3-5-sonnet',   # Anthropic
     'gemini-2.5-pro',      # Google
@@ -70,6 +95,10 @@ SELF_CONSISTENCY_TEMPERATURE = 0.9
 
 # Default batch size for evaluation
 DEFAULT_BATCH_SIZE = 30
+
+# Stratified sampling for batch evaluation
+# Now uses ALL labels for stratification (e.g., anxiety_depression: 0_0, 0_1, 1_0, 1_1)
+USE_STRATIFIED_SAMPLING = True
 
 # Minimum samples for reliable metrics
 MIN_SAMPLES_FOR_METRICS = 10
