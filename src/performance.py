@@ -10,7 +10,7 @@ import pandas as pd
 import json
 from typing import Dict, List, Optional
 from datetime import datetime
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix, balanced_accuracy_score
 from .utils import NumpyEncoder
 
 # Suppress sklearn warnings for single-class confusion matrix
@@ -21,12 +21,13 @@ def calculate_binary_metrics(y_true: List[int], y_pred: List[int],
                              y_proba: Optional[List[float]] = None, label_name: str = "") -> Dict:
     """Calculate classification metrics for binary prediction."""
     if len(y_true) == 0:
-        return {'accuracy': 0.0, 'precision': 0.0, 'recall': 0.0, 'f1_score': 0.0, 
+        return {'accuracy': 0.0, 'balanced_accuracy': 0.0, 'precision': 0.0, 'recall': 0.0, 'f1_score': 0.0, 
                 'auroc': None, 'confusion_matrix': [[0, 0], [0, 0]], 
                 'support': {'class_0': 0, 'class_1': 0},
                 'tn': 0, 'fp': 0, 'fn': 0, 'tp': 0}
     
     accuracy = accuracy_score(y_true, y_pred)
+    balanced_acc = balanced_accuracy_score(y_true, y_pred)
     precision = precision_score(y_true, y_pred, zero_division=0)
     recall = recall_score(y_true, y_pred, zero_division=0)
     f1 = f1_score(y_true, y_pred, zero_division=0)
@@ -65,8 +66,8 @@ def calculate_binary_metrics(y_true: List[int], y_pred: List[int],
     support = dict(zip([f'class_{int(u)}' for u in unique], counts.tolist()))
     
     return {
-        'accuracy': float(accuracy), 'precision': float(precision), 
-        'recall': float(recall), 'f1_score': float(f1),
+        'accuracy': float(accuracy), 'balanced_accuracy': float(balanced_acc),
+        'precision': float(precision), 'recall': float(recall), 'f1_score': float(f1),
         'auroc': float(auroc) if auroc else None,
         'confusion_matrix': cm.tolist(), 'support': support,
         'tn': int(tn), 'fp': int(fp), 'fn': int(fn), 'tp': int(tp)
@@ -128,6 +129,7 @@ def calculate_mental_health_metrics(results: List[Dict], anxiety_label_key: str 
     
     overall_metrics = {
         'accuracy': (anxiety_metrics['accuracy'] + depression_metrics['accuracy']) / 2,
+        'balanced_accuracy': (anxiety_metrics['balanced_accuracy'] + depression_metrics['balanced_accuracy']) / 2,
         'precision': (anxiety_metrics['precision'] + depression_metrics['precision']) / 2,
         'recall': (anxiety_metrics['recall'] + depression_metrics['recall']) / 2,
         'f1_score': (anxiety_metrics['f1_score'] + depression_metrics['f1_score']) / 2,
@@ -267,16 +269,17 @@ def print_comprehensive_report(report: Dict):
     print("="*80)
     summary = report['summary']
     classification = report['classification_performance']
-    print(f"  Total Samples:     {summary['total_samples']}")
-    print(f"  Total Requests:    {summary['total_requests']}")
-    print(f"  Overall Accuracy:  {summary['overall_accuracy']:.4f}")
-    print(f"  Overall F1 Score:  {summary['overall_f1']:.4f}")
+    print(f"  Total Samples:         {summary['total_samples']}")
+    print(f"  Total Requests:        {summary['total_requests']}")
+    print(f"  Overall Accuracy:      {summary['overall_accuracy']:.4f}")
+    print(f"  Overall Bal. Accuracy: {classification['overall']['balanced_accuracy']:.4f}")
+    print(f"  Overall F1 Score:      {summary['overall_f1']:.4f}")
     if classification['overall'].get('f1_macro_binary') is not None:
-        print(f"  F1 Macro Binary:   {classification['overall']['f1_macro_binary']:.4f}")
+        print(f"  F1 Macro Binary:       {classification['overall']['f1_macro_binary']:.4f}")
     if classification['overall'].get('f1_macro_multilabel') is not None:
-        print(f"  F1 Macro Multi:    {classification['overall']['f1_macro_multilabel']:.4f}")
-    print(f"  Total Cost:        ${summary['total_cost_usd']:.4f}")
-    print(f"  Avg Latency:       {summary['avg_latency_sec']:.2f}s")
+        print(f"  F1 Macro Multi:        {classification['overall']['f1_macro_multilabel']:.4f}")
+    print(f"  Total Cost:            ${summary['total_cost_usd']:.4f}")
+    print(f"  Avg Latency:           {summary['avg_latency_sec']:.2f}s")
     
     # Classification Performance
     print("\n" + "="*80)
@@ -288,12 +291,13 @@ def print_comprehensive_report(report: Dict):
         metrics = classification[target]
         print(f"\n📊 {target.upper()} PREDICTION")
         print("-" * 80)
-        print(f"  Accuracy:  {metrics['accuracy']:.4f}")
-        print(f"  Precision: {metrics['precision']:.4f}")
-        print(f"  Recall:    {metrics['recall']:.4f}")
-        print(f"  F1 Score:  {metrics['f1_score']:.4f}")
-        print(f"  AUROC:     {metrics['auroc']:.4f}" if metrics['auroc'] else "  AUROC:     N/A")
-        print(f"  Support:   {metrics['support']}")
+        print(f"  Accuracy:          {metrics['accuracy']:.4f}")
+        print(f"  Balanced Accuracy: {metrics['balanced_accuracy']:.4f}")
+        print(f"  Precision:         {metrics['precision']:.4f}")
+        print(f"  Recall:            {metrics['recall']:.4f}")
+        print(f"  F1 Score:          {metrics['f1_score']:.4f}")
+        print(f"  AUROC:             {metrics['auroc']:.4f}" if metrics['auroc'] else "  AUROC:             N/A")
+        print(f"  Support:           {metrics['support']}")
         print(f"  Confusion Matrix: TP={metrics['tp']}, TN={metrics['tn']}, FP={metrics['fp']}, FN={metrics['fn']}")
     
     # Cost & Efficiency
@@ -338,17 +342,21 @@ def print_metrics_summary(metrics: Dict):
         m = metrics[target]
         print(f"\n📊 {target.upper()}")
         print("-" * 60)
-        print(f"  Accuracy:  {m['accuracy']:.4f}  |  Precision: {m['precision']:.4f}")
-        print(f"  Recall:    {m['recall']:.4f}  |  F1 Score:  {m['f1_score']:.4f}")
+        print(f"  Accuracy:          {m['accuracy']:.4f}  |  Precision: {m['precision']:.4f}")
+        print(f"  Balanced Accuracy: {m['balanced_accuracy']:.4f}  |  Recall:    {m['recall']:.4f}")
+        print(f"  F1 Score:          {m['f1_score']:.4f}", end="")
         if m['auroc']:
-            print(f"  AUROC:     {m['auroc']:.4f}")
+            print(f"  |  AUROC:     {m['auroc']:.4f}")
+        else:
+            print()
     
     print("\n📊 OVERALL (Macro Average)")
     print("-" * 60)
     overall = metrics['overall']
-    print(f"  Accuracy:         {overall['accuracy']:.4f}  |  F1 Score:        {overall['f1_score']:.4f}")
+    print(f"  Accuracy:          {overall['accuracy']:.4f}  |  F1 Score:        {overall['f1_score']:.4f}")
+    print(f"  Balanced Accuracy: {overall['balanced_accuracy']:.4f}")
     if overall.get('f1_macro_binary') is not None:
-        print(f"  F1 Macro Binary:  {overall['f1_macro_binary']:.4f}  |  F1 Macro Multi:  {overall.get('f1_macro_multilabel', 0):.4f}")
+        print(f"  F1 Macro Binary:   {overall['f1_macro_binary']:.4f}  |  F1 Macro Multi:  {overall.get('f1_macro_multilabel', 0):.4f}")
     print("="*60 + "\n")
 
 
@@ -357,6 +365,7 @@ def metrics_to_dataframe(metrics: Dict) -> pd.DataFrame:
     data = {
         'Anxiety': [
             metrics['anxiety']['accuracy'],
+            metrics['anxiety']['balanced_accuracy'],
             metrics['anxiety']['precision'],
             metrics['anxiety']['recall'],
             metrics['anxiety']['f1_score'],
@@ -368,6 +377,7 @@ def metrics_to_dataframe(metrics: Dict) -> pd.DataFrame:
         ],
         'Depression': [
             metrics['depression']['accuracy'],
+            metrics['depression']['balanced_accuracy'],
             metrics['depression']['precision'],
             metrics['depression']['recall'],
             metrics['depression']['f1_score'],
@@ -379,6 +389,7 @@ def metrics_to_dataframe(metrics: Dict) -> pd.DataFrame:
         ],
         'Overall': [
             metrics['overall']['accuracy'],
+            metrics['overall']['balanced_accuracy'],
             'N/A',  # precision (not applicable for overall)
             'N/A',  # recall (not applicable for overall)
             metrics['overall']['f1_score'],
@@ -391,7 +402,7 @@ def metrics_to_dataframe(metrics: Dict) -> pd.DataFrame:
     }
     
     index_labels = [
-        'Accuracy', 'Precision', 'Recall', 'F1-Score', 'AUROC',
+        'Accuracy', 'Balanced Accuracy', 'Precision', 'Recall', 'F1-Score', 'AUROC',
         'TP (True Positive)', 'TN (True Negative)', 'FP (False Positive)', 'FN (False Negative)'
     ]
     
@@ -469,8 +480,9 @@ def compare_experiments(reports: List[Dict], names: Optional[List[str]] = None) 
         names = [f"Experiment {i+1}" for i in range(len(reports))]
     
     comparison_data = {
-        'Metric': ['--- Classification ---', 'Anxiety Accuracy', 'Anxiety F1', 'Depression Accuracy', 
-                  'Depression F1', 'Overall Accuracy', 'Overall F1', 'F1 Macro Binary', 'F1 Macro Multilabel',
+        'Metric': ['--- Classification ---', 'Anxiety Accuracy', 'Anxiety Balanced Acc', 'Anxiety F1', 
+                  'Depression Accuracy', 'Depression Balanced Acc', 'Depression F1', 
+                  'Overall Accuracy', 'Overall Balanced Acc', 'Overall F1', 'F1 Macro Binary', 'F1 Macro Multilabel',
                   '--- Efficiency ---', 'Avg Latency (s)', 'Std Latency (s)', 
                   'Total Cost ($)', 'Cost per Sample ($)', 'Std Cost per Sample ($)',
                   'Tokens/Second', 'Samples/Minute', 'Total Tokens', 'Avg Tokens/Request', 'Std Tokens/Request']
@@ -486,10 +498,13 @@ def compare_experiments(reports: List[Dict], names: Optional[List[str]] = None) 
         comparison_data[name] = [
             '---',
             f"{class_perf['anxiety']['accuracy']:.4f}",
+            f"{class_perf['anxiety']['balanced_accuracy']:.4f}",
             f"{class_perf['anxiety']['f1_score']:.4f}",
             f"{class_perf['depression']['accuracy']:.4f}",
+            f"{class_perf['depression']['balanced_accuracy']:.4f}",
             f"{class_perf['depression']['f1_score']:.4f}",
             f"{class_perf['overall']['accuracy']:.4f}",
+            f"{class_perf['overall']['balanced_accuracy']:.4f}",
             f"{class_perf['overall']['f1_score']:.4f}",
             f"{f1_macro_binary:.4f}" if f1_macro_binary is not None else "N/A",
             f"{f1_macro_multilabel:.4f}" if f1_macro_multilabel is not None else "N/A",

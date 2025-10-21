@@ -227,7 +227,9 @@ def main():
             if args.save_prompts_only:
                 # Only save prompts, skip result export
                 if 'prompts' in result and 'metadata' in result:
-                    save_prompts_to_disk(result['prompts'], result['metadata'], exp_prefix, args.seed, args.prompts_dir)
+                    step_timings = result.get('step_timings', None)
+                    save_prompts_to_disk(result['prompts'], result['metadata'], exp_prefix, args.seed, 
+                                        args.prompts_dir, step_timings)
                     print(f"\n💾 Prompts saved: {exp_prefix} ({result['n_samples']} samples)")
             else:
                 # Normal batch mode: export results
@@ -239,7 +241,9 @@ def main():
                 print(f"\n💾 Results saved with model comparison name: {exp_prefix}")
                 if args.save_prompts and 'prompts' in result and 'metadata' in result:
                     # Save folder is just prefix (no model/reasoning/llm_seed/timestamp)
-                    save_prompts_to_disk(result['prompts'], result['metadata'], exp_prefix, args.seed, args.prompts_dir)
+                    step_timings = result.get('step_timings', None)
+                    save_prompts_to_disk(result['prompts'], result['metadata'], exp_prefix, args.seed, 
+                                        args.prompts_dir, step_timings)
     
     print("\n✅ Evaluation complete!\n")
 

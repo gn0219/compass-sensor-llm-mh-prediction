@@ -513,7 +513,7 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
 
     if verbose:
         print(f"\n✅ Generated {len(collected_prompts)} prompts successfully\n")
-        print_batch_timing_summary(all_step_timings, len(collected_prompts), verbose=True)
+        print_batch_timing_summary(all_step_timings, verbose=True)
 
     return {
         'prompts': collected_prompts,

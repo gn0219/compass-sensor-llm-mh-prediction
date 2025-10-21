@@ -96,11 +96,20 @@ def build_prompt(prompt_manager: PromptManager, input_sample: Dict, cols: Dict,
 
 
 def save_prompts_to_disk(prompts: List[str], labels: List, experiment_name: str,
-                        seed: int, output_dir: str = "./saved_prompts"):
+                        seed: int, output_dir: str = "./saved_prompts", 
+                        step_timings: Optional[Dict] = None):
     """Save prompts and labels to disk for later reuse.
 
     The directory name is `experiment_name` and, if provided, suffixed with `_seed`.
     If `experiment_name` already ends with that seed, it won't be added again.
+    
+    Args:
+        prompts: List of prompt strings
+        labels: List of label dictionaries
+        experiment_name: Name of the experiment
+        seed: Random seed used
+        output_dir: Directory to save prompts
+        step_timings: Optional dict of timing arrays for data_sampling, icl_selection, prompt_building
     """
 
     save_dir = Path(output_dir) / experiment_name
@@ -122,9 +131,17 @@ def save_prompts_to_disk(prompts: List[str], labels: List, experiment_name: str,
         'seed': seed,
         'num_samples': len(prompts)
     }
+    
+    # Add step timings if provided
+    if step_timings:
+        metadata['step_timings'] = {
+            k: v for k, v in step_timings.items() 
+            if k in ['data_sampling', 'icl_selection', 'prompt_building']
+        }
+    
     metadata_file = save_dir / "metadata.json"
     with open(metadata_file, 'w') as f:
-        json.dump(metadata, f, indent=2)
+        json.dump(metadata, f, indent=2, cls=NumpyEncoder)
     
     print(f"✅ Saved {len(prompts)} prompts to {save_dir}")
     return str(save_dir)
