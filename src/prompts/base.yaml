@@ -40,55 +40,47 @@ task:
 # Context definition
 context:
   background: |
-    Behavioral patterns from smartphones and wearables can serve as digital biomarkers for mental health conditions. Use these cues only as mapping guidance for the provided features.
+    Behavioral patterns from smartphones and wearables can serve as digital biomarkers for mental health conditions. Use the following symptom–feature mappings as soft guidelines, not absolute rules, since sensor data may be noisy or incomplete.
   
   clinical_header: "**Clinical Associations:**"
   clinical_associations:
     depression:
       title: "Depression Indicators"
       patterns:
-        - indicator: "Reduced physical activity and movement"
-          evidence: "Lower step counts, less distance traveled"
-        - indicator: "Decreased social interactions"
-          evidence: "Fewer calls, less Bluetooth contacts"
-        - indicator: "Irregular sleep patterns or excessive sleep"
-          evidence: "Changed sleep duration, efficiency"
-        - indicator: "Less time spent outside home"
-          evidence: "Higher time at home, lower location entropy"
-        - indicator: "Reduced digital engagement"
-          evidence: "Fewer screen unlocks, less app usage"
+        - indicator: "Anhedonia"
+          features: "Call count, Total distance, Number of places visited"
+          patterns: "Decreased social interactions and reduced movement"
+        - indicator: "Insomnia or hypersomnia"
+          features: "Sleep duration, Sleep efficiency, Duration in bed"
+          patterns: "Irregular sleep pattern or excessive sleep"
+        - indicator: "Psychomotor agitation or retardation"
+          features: "Daily step count, Total distance, Time at home"
+          patterns: "Reduced activity (retardation) or restless increase in activity (agitation)"
+        - indicator: "Fatigue or loss of energy"
+          features: "Daily step count"
+          patterns: "Persistent decrease in daily steps from baseline"
+        - indicator: "Diminished ability to think or concentrate"
+          features: "Screen unlock duration, App session duration, App switching"
+          patterns: "Shortened sustained attention (frequent, short)"
     
     anxiety:
       title: "Anxiety Indicators"
       patterns:
-        - indicator: "Irregular movement patterns"
-          evidence: "High location entropy, erratic mobility"
-        - indicator: "Disrupted sleep"
-          evidence: "More awake time during sleep, lower efficiency"
-        - indicator: "Increased or erratic phone usage"
-          evidence: "Irregular screen time patterns"
-        - indicator: "Changes in social communication"
-          evidence: "Altered call/message patterns"
+        - indicator: "Restlessness or feeling keyed up / on edge"
+          features: "Daily step count, Indoor movement"
+          patterns: "Frequent movement"
+        - indicator: "Easily fatigued"
+          features: "Daily step count, Indoor movement"
+          patterns: "Decreased daily activity and rapid decline in energy"
+        - indicator: "Difficulty concentrating"
+          features: "Screen unlock duration, App session duration, App switching"
+          patterns: "Shortened sustained attention, fragmented focus"
+        - indicator: "Sleep disturbance"
+          features: "Sleep duration, Sleep efficiency, Duration in bed"
+          patterns: "Difficulty initiating or maintaining sleep, fragmented sleep patterns"
   
-  features_header: "**Feature Categories:**"
-  feature_categories:
-    - name: "Sleep"
-      description: "Sleep duration, efficiency, bedtime, wake time"
-    - name: "Calls"
-      description: "Incoming/outgoing call counts, duration, contacts"
-    - name: "Bluetooth"
-      description: "Unique devices detected (proxy for social proximity)"
-    - name: "Screen"
-      description: "Unlock count, duration (digital engagement)"
-    - name: "Steps"
-      description: "Step counts, activity bouts (physical activity)"
-    - name: "Location"
-      description: "Distance, home time, entropy (mobility patterns)"
-
 # Important notes
 notes_header: "**Important Notes:**"
 notes:
-  - "Features are normalized to [-1, 1] range within each individual"
-  - "Positive values indicate above-average for that person; negative values indicate below-average"
   - "Consider both absolute values and relative changes within the aggregation window"
   - "Treat missing values (NaN) as non-evidence and acknowledge limitations due to missingness."

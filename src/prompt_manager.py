@@ -55,14 +55,8 @@ class PromptManager:
         for condition, info in ctx['clinical_associations'].items():
             parts.append(f"**{info['title']}:**")
             for pattern in info['patterns']:
-                parts.extend([f"- {pattern['indicator']}", f"  * {pattern['evidence']}"])
+                parts.extend([f"- {pattern['indicator']}", f"  * {pattern['features']}", f"  * {pattern['patterns']}"])
             parts.append("")
-        
-        # Feature categories
-        parts.append(ctx['features_header'])
-        for cat in ctx['feature_categories']:
-            parts.append(f"- **{cat['name']}**: {cat['description']}")
-        parts.append("")
         
         # Notes
         parts.append(t['notes_header'])

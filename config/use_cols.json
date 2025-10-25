@@ -28,6 +28,26 @@
                 "phq4_anxiety_EMA": 2,
                 "phq4_depression_EMA": 2
             }
+        },
+        "health-llm": {
+            "user_id": "pid",
+            "date": "date",
+            "feature_set": [
+                "f_slp:fitbit_sleep_summary_rapids_avgefficiencymain:14dhist",
+                "f_slp:fitbit_sleep_summary_rapids_avgdurationafterwakeupmain:14dhist",
+                "f_slp:fitbit_sleep_summary_rapids_avgdurationasleepmain:14dhist",
+                "f_slp:fitbit_sleep_summary_rapids_avgdurationawakemain:14dhist",
+                "f_slp:fitbit_sleep_summary_rapids_avgdurationtofallasleepmain:14dhist",
+                "f_slp:fitbit_sleep_summary_rapids_avgdurationinbedmain:14dhist" 
+            ],
+            "labels": [
+                "phq4_anxiety_EMA",
+                "phq4_depression_EMA"
+            ],
+            "threshold": {
+                "phq4_anxiety_EMA": 2,
+                "phq4_depression_EMA": 2
+            }
         }
     }
 }
