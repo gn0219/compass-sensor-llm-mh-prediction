@@ -109,6 +109,16 @@ class PromptManager:
         
         prompt_parts = [icl_config['header'], ""]
         
+        # Add strategy description
+        strategy_descriptions = {
+            'personalized': "The following examples are from the target user's historical data.",
+            'generalized': "The following examples are from other users.",
+            'hybrid': "The following examples include both the target user's historical data and data from other users."
+        }
+        
+        if strategy in strategy_descriptions:
+            prompt_parts.append(f"*{strategy_descriptions[strategy]}*\n")
+        
         for i, example in enumerate(examples, 1):
             # Example header
             prompt_parts.append(fmt['header'].format(example_number=i))
@@ -154,15 +164,15 @@ class PromptManager:
             'instruction': m['instruction'].strip(), 'output_format': m['output_format'].strip()
         }
     
-    def get_output_constraints(self) -> str:
-        """Get formatted output constraints (DO/DON'T guidelines)."""
-        c = self.reasoning_template['output_constraints']
-        parts = [c['header'], c['do_header']]
-        parts.extend([f"- {item}" for item in c['do']])
-        parts.append(c['dont_header'])
-        parts.extend([f"- {item}" for item in c['dont']])
-        parts.append("")
-        return "\n".join(parts)
+    # def get_output_constraints(self) -> str:
+    #     """Get formatted output constraints (DO/DON'T guidelines)."""
+    #     c = self.reasoning_template['output_constraints']
+    #     parts = [c['header'], c['do_header']]
+    #     parts.extend([f"- {item}" for item in c['do']])
+    #     parts.append(c['dont_header'])
+    #     parts.extend([f"- {item}" for item in c['dont']])
+    #     parts.append("")
+    #     return "\n".join(parts)
     
     def get_task_completion_prompt(self) -> str:
         """Get the task completion section prompt."""
@@ -226,9 +236,9 @@ class PromptManager:
         parts.append(reasoning['instruction'])
         parts.append("")
         
-        # 5b. Guidelines (output constraints)
-        if include_constraints:
-            parts.append(self.get_output_constraints())
+        # # 5b. Guidelines (output constraints)
+        # if include_constraints:
+        #     parts.append(self.get_output_constraints())
         
         # 5c. Output format
         parts.append("## Output Format\n")

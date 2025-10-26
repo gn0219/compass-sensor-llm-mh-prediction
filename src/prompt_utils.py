@@ -26,7 +26,7 @@ def build_experiment_prefix(n_shot: int, source: str, *, dataset: str = None,
         - globem_structured_5shot_hybrid_random_seed42            (random selection)
     """
     dataset = dataset or config.DATASET_NAME
-    sensor_format = sensor_format or config.SENSOR_FORMAT
+    sensor_format = sensor_format or config.DEFAULT_TARGET
     shot_str = f"{n_shot}shot" if n_shot > 0 else "zeroshot"
     seed_str = f"seed{seed}" if seed is not None else "seedNone"
     
@@ -47,7 +47,7 @@ def get_experiment_name(n_shot: int, source: str = 'hybrid', reasoning_method: s
                             dataset: str = None, sensor_format: str = None, seed: int = None, llm_seed: int = None) -> str:
     """Get descriptive experiment name."""
     dataset = dataset or config.DATASET_NAME
-    sensor_format = sensor_format or config.SENSOR_FORMAT
+    sensor_format = sensor_format or config.DEFAULT_TARGET
     
     shot_str = f"{n_shot}shot" if n_shot > 0 else "zeroshot"
     
@@ -58,10 +58,10 @@ def get_experiment_name(n_shot: int, source: str = 'hybrid', reasoning_method: s
 
 def build_prompt(prompt_manager: PromptManager, input_sample: Dict, cols: Dict,
                 icl_examples: Optional[List[Dict]] = None, icl_strategy: str = "zero_shot",
-                reasoning_method: str = "cot", target_label: str = "fctci") -> str:
+                reasoning_method: str = "cot", target_label: str = "fctci", feat_df=None) -> str:
     """Build complete prompt from components."""
     # Convert input sample to text
-    input_text = sample_to_prompt(input_sample, cols, format_type=config.SENSOR_FORMAT)
+    input_text = sample_to_prompt(input_sample, cols, format_type=config.DEFAULT_TARGET, feat_df=feat_df)
     
     # Format ICL examples if provided
     formatted_examples = None
@@ -69,7 +69,7 @@ def build_prompt(prompt_manager: PromptManager, input_sample: Dict, cols: Dict,
         formatted_examples = []
         for ex in icl_examples:
             # Convert example to text format
-            ex_text = sample_to_prompt(ex, cols, format_type=config.SENSOR_FORMAT, include_labels=False)
+            ex_text = sample_to_prompt(ex, cols, format_type=config.DEFAULT_TARGET, include_labels=False, feat_df=feat_df)
             
             # Extract labels
             anxiety_label = "High Risk" if ex['labels'].get('phq4_anxiety_EMA', 0) == 1 else "Low Risk"

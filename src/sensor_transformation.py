@@ -16,6 +16,8 @@ try:
     from . import config
 except ImportError:
     import config
+import warnings
+warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 # Suppress specific warnings
 warnings.filterwarnings('ignore', message='Mean of empty slice', category=RuntimeWarning)
@@ -30,7 +32,7 @@ def binarize_labels(df: pd.DataFrame, labels: List[str], thresholds: Dict[str, i
     return df
 
 
-def load_globem_data(institution: str = 'INS-W_2', target: str = 'fctci',
+def load_globem_data(institution: str = 'INS-W_2', target: str = 'compass',
                     use_cols_path: str = './config/globem_use_cols.json') -> Tuple[pd.DataFrame, pd.DataFrame, Dict]:
     """Load GLOBEM dataset with feature and label data."""
     feat_path = f'../dataset/Globem/{institution}/FeatureData/rapids.csv'
@@ -154,10 +156,15 @@ def aggregate_window_features(feat_df: pd.DataFrame, user_id: str, ema_date: pd.
     elif mode == 'array':
         return _aggregate_as_array(user_feats, user_id, ema_date, cols, actual_window_days)
     elif mode == 'statistics':
-        return _aggregate_as_statistical_structural_semantical(
-            user_feats, user_id, ema_date, cols, actual_window_days,
-            use_immediate_window, immediate_window_days
-        )
+        # For fctci and health-llm, return a minimal structure
+        # The actual data will be extracted directly from feat_df in features_to_text_*
+        return {
+            'user_id': user_id,
+            'ema_date': ema_date,
+            'aggregation_mode': 'raw',  # Special mode for fctci/health-llm
+            'window_days': actual_window_days,
+            'features': {}  # Empty - will use feat_df directly
+        }
     else:
         raise ValueError(f"Unknown aggregation mode: {mode}")
 
@@ -417,6 +424,11 @@ def check_missing_ratio(data, threshold: float = 0.7) -> bool:
     elif isinstance(data, dict):
         mode = data.get('aggregation_mode', 'unknown')
         
+        if mode == 'raw':
+            # For fctci/health-llm: skip missing ratio check
+            # Data will be extracted directly from feat_df
+            return True
+        
         if mode == 'compass':
             # Compass format: check statistical features
             stat_feats = data.get('statistical_features', {})
@@ -477,6 +489,190 @@ def _simplify_feature_name(feat_name: str) -> str:
     for old, new in replacements.items():
         feat_name = feat_name.replace(old, new)
     return feat_name.title()
+
+
+def features_to_text_fctci(feat_df: pd.DataFrame, user_id: str, ema_date: pd.Timestamp, 
+                           cols: Dict, window_days: int = 28) -> str:
+    """
+    Convert sensor features to FCTCI markdown table format.
+    
+    Args:
+        feat_df: Feature dataframe
+        user_id: User ID
+        ema_date: Target EMA date
+        cols: Column configuration with feature_set list
+        window_days: Number of days to include (default: 28)
+    
+    Returns:
+        Markdown table string
+    """
+    # Feature name mapping for FCTCI format (matching the paper)
+    FCTCI_FEATURE_NAMES = {
+        'f_loc:phone_locations_doryab_totaldistance:allday': 'total_distance_traveled(meters)',
+        'f_loc:phone_locations_doryab_timeathome:allday': 'time_at_home(minutes)',
+        'f_loc:phone_locations_doryab_locationentropy:allday': 'location_entropy',
+        'f_screen:phone_screen_rapids_sumdurationunlock:allday': 'screen_time(seconds)',
+        'f_screen:phone_screen_rapids_avgdurationunlock:allday': 'avg_screen_duration(seconds)',
+        'f_call:phone_calls_rapids_incoming_sumduration:allday': 'call_incoming_duration(seconds)',
+        'f_call:phone_calls_rapids_outgoing_sumduration:allday': 'call_outgoing_duration(seconds)',
+        'f_blue:phone_bluetooth_doryab_uniquedevicesothers:allday': 'bluetooth_devices',
+        'f_steps:fitbit_steps_intraday_rapids_sumsteps:allday': 'steps',
+        'f_steps:fitbit_steps_intraday_rapids_countepisodesedentarybout:allday': 'sedentary_episodes',
+        'f_steps:fitbit_steps_intraday_rapids_sumdurationsedentarybout:allday': 'sedentary_duration(minutes)',
+        'f_steps:fitbit_steps_intraday_rapids_countepisodeactivebout:allday': 'active_episodes',
+        'f_steps:fitbit_steps_intraday_rapids_sumdurationactivebout:allday': 'active_duration(minutes)',
+        'f_slp:fitbit_sleep_intraday_rapids_sumdurationasleepunifiedmain:allday': 'sleep_duration(minutes)',
+        'f_slp:fitbit_sleep_intraday_rapids_sumdurationawakeunifiedmain:allday': 'awake_duration(minutes)'
+    }
+    
+    # Get feature columns
+    if not isinstance(cols['feature_set'], list):
+        raise ValueError("FCTCI format requires feature_set to be a list of feature names")
+    
+    feature_cols = cols['feature_set']
+    
+    # Get user data for the window
+    start_date = ema_date - timedelta(days=window_days)
+    user_data = feat_df[
+        (feat_df[cols['user_id']] == user_id) & 
+        (feat_df[cols['date']] >= start_date) & 
+        (feat_df[cols['date']] < ema_date)
+    ].sort_values(cols['date'])
+    
+    if len(user_data) == 0:
+        return "No data available for this time window."
+    
+    # Build markdown table
+    # Header: date | feature1 | feature2 | ...
+    # Use readable feature names
+    available_cols = [col for col in feature_cols if col in user_data.columns]
+    readable_headers = ['date'] + [FCTCI_FEATURE_NAMES.get(col, col) for col in available_cols]
+    header_row = '|'.join(readable_headers)
+    
+    # Data rows (no separator row as per the user's example)
+    data_rows = []
+    for _, row in user_data.iterrows():
+        date_str = row[cols['date']].strftime('%Y-%m-%d')
+        values = [date_str]
+        for col in available_cols:
+            val = row[col]
+            if pd.isna(val):
+                values.append('nan')
+            else:
+                # Format numbers appropriately
+                if isinstance(val, (int, float)):
+                    # Round to 2 decimals, but show as int if whole number
+                    rounded = round(val, 2)
+                    if rounded == int(rounded):
+                        values.append(str(int(rounded)))
+                    else:
+                        values.append(str(rounded))
+                else:
+                    values.append(str(val))
+        data_rows.append('|'.join(values) + '|')
+    
+    # Combine (no separator row)
+    table = header_row + '|' + '\n' + '\n'.join(data_rows)
+    return table
+
+
+def features_to_text_healthllm(feat_df: pd.DataFrame, user_id: str, ema_date: pd.Timestamp,
+                                cols: Dict, period_days: int = 14) -> str:
+    """
+    Convert sensor features to Health-LLM captioning format.
+    
+    Matches Health-LLM's actual format:
+    "The recent 14-days sensor readings show: [Steps] is {avg_steps}. 
+    [Sleep] efficiency, duration the user stayed in bed after waking up, 
+    duration the user spent to fall asleep, duration the user stayed awake but still in bed, 
+    duration the user spent to fall asleep are {eff}, {durafwake}, {dursleep}, {durawake}, 
+    {durfall}, {durbed} mins in average"
+    
+    Note: The 14dhist features are already 14-day statistics, so we just read the value at ema_date.
+    
+    Args:
+        feat_df: Feature dataframe
+        user_id: User ID
+        ema_date: Target EMA date
+        cols: Column configuration with feature_set list (14dhist features)
+        period_days: Number of days for statistics (default: 14)
+    
+    Returns:
+        Health-LLM style text description
+    """
+    # Get feature columns
+    if not isinstance(cols['feature_set'], list):
+        raise ValueError("Health-LLM format requires feature_set to be a list of feature names")
+    
+    feature_cols = cols['feature_set']
+    
+    # Get user data for the specific EMA date
+    # The 14dhist features already contain 14-day statistics
+    user_data = feat_df[
+        (feat_df[cols['user_id']] == user_id) & 
+        (feat_df[cols['date']] == ema_date)
+    ]
+    
+    if len(user_data) == 0:
+        return f"No data available for the last {period_days} days."
+    
+    # Extract the row
+    row = user_data.iloc[0]
+    
+    # Feature mapping - exact order from Health-LLM paper
+    STEPS_FEATURE = 'f_steps:fitbit_steps_summary_rapids_avgsumsteps:14dhist'
+    
+    # Sleep features in the exact order they appear in Health-LLM's prompt
+    SLEEP_FEATURES_ORDERED = [
+        'f_slp:fitbit_sleep_summary_rapids_avgefficiencymain:14dhist',
+        'f_slp:fitbit_sleep_summary_rapids_avgdurationafterwakeupmain:14dhist',
+        'f_slp:fitbit_sleep_summary_rapids_avgdurationasleepmain:14dhist',
+        'f_slp:fitbit_sleep_summary_rapids_avgdurationawakemain:14dhist',
+        'f_slp:fitbit_sleep_summary_rapids_avgdurationtofallasleepmain:14dhist',
+        'f_slp:fitbit_sleep_summary_rapids_avgdurationinbedmain:14dhist'
+    ]
+    
+    # Build Health-LLM style text - exact format from paper
+    result_parts = []
+    
+    # Get steps value
+    steps_val = None
+    if STEPS_FEATURE in row.index:
+        steps_val = row[STEPS_FEATURE]
+        if pd.notna(steps_val):
+            steps_val = f"{steps_val:.2f}"
+        else:
+            steps_val = "N/A"
+    else:
+        steps_val = "N/A"
+    
+    # Get sleep values in order
+    sleep_vals = []
+    for feat in SLEEP_FEATURES_ORDERED:
+        if feat in row.index:
+            val = row[feat]
+            if pd.notna(val):
+                sleep_vals.append(f"{val:.2f}")
+            else:
+                sleep_vals.append("N/A")
+        else:
+            sleep_vals.append("N/A")
+    
+    # Build the exact Health-LLM format
+    if len(sleep_vals) >= 6:
+        result = (
+            f"The recent {period_days}-days sensor readings show: "
+            f"[Steps] is {steps_val}. "
+            f"[Sleep] efficiency, duration the user stayed in bed after waking up, "
+            f"duration the user spent to fall asleep, duration the user stayed awake but still in bed, "
+            f"duration the user spent to fall asleep are "
+            f"{sleep_vals[0]}, {sleep_vals[1]}, {sleep_vals[2]}, {sleep_vals[3]}, {sleep_vals[4]}, {sleep_vals[5]} "
+            f"mins in average"
+        )
+    else:
+        result = f"No data available for the last {period_days} days."
+    
+    return result
 
 
 def features_to_text(agg_feats, cols: Dict, include_stats: bool = True) -> str:
@@ -609,23 +805,48 @@ def features_to_text(agg_feats, cols: Dict, include_stats: bool = True) -> str:
 
 
 def sample_to_prompt(sample: Dict, cols: Dict, format_type: str = 'structured',
-                    include_labels: bool = False) -> str:
-    """Convert a sample to prompt text."""
+                    include_labels: bool = False, feat_df: pd.DataFrame = None) -> str:
+    """
+    Convert a sample to prompt text.
+    
+    Args:
+        sample: Sample dictionary with user_id, ema_date, aggregated_features, labels
+        cols: Column configuration
+        format_type: Format type ('structured'/'compass', 'fctci', 'health-llm')
+        include_labels: Whether to include labels
+        feat_df: Feature dataframe (required for fctci and health-llm formats)
+    
+    Returns:
+        Formatted prompt text
+    """
     prompt = f"User ID: {sample['user_id']}\n"
     prompt += f"Date: {sample['ema_date'].strftime('%Y-%m-%d')}\n"
-    
-    # Get window information from aggregated features
-    agg_feats = sample['aggregated_features']
-    if isinstance(agg_feats, dict):
-        window_days = agg_feats.get('window_days', 7)
-        mode = agg_feats.get('aggregation_mode', 'statistics')
-    else:
-        window_days = 7
-        mode = 'legacy'
-    
     prompt += "\nSensor Features:\n"
     
-    prompt += features_to_text(agg_feats, cols)
+    # Check format type
+    if format_type in ['fctci', 'FCTCI']:
+        if feat_df is None:
+            raise ValueError("feat_df is required for fctci format")
+        prompt += features_to_text_fctci(
+            feat_df, sample['user_id'], sample['ema_date'], cols, window_days=28
+        )
+    elif format_type in ['health-llm', 'healthllm', 'health_llm']:
+        if feat_df is None:
+            raise ValueError("feat_df is required for health-llm format")
+        prompt += features_to_text_healthllm(
+            feat_df, sample['user_id'], sample['ema_date'], cols, period_days=14
+        )
+    else:
+        # Default: compass/structured format
+        agg_feats = sample['aggregated_features']
+        if isinstance(agg_feats, dict):
+            window_days = agg_feats.get('window_days', 7)
+            mode = agg_feats.get('aggregation_mode', 'statistics')
+        else:
+            window_days = 7
+            mode = 'legacy'
+        
+        prompt += features_to_text(agg_feats, cols)
     
     if include_labels:
         prompt += "\nLabels:\n"
@@ -853,6 +1074,180 @@ def filter_testset_by_historical_labels(lab_df: pd.DataFrame, cols: Dict,
         raise ValueError(f"No samples remain after filtering for {min_historical} historical labels")
     
     return filtered_df
+
+
+def sample_multiinstitution_testset(
+    institutions_config: Dict[str, int],
+    min_ema_per_user: int = 10,
+    samples_per_user: int = 3,
+    random_state: Optional[int] = None,
+    use_cols_path: str = './config/globem_use_cols.json',
+    target: str = 'compass'
+) -> Tuple[pd.DataFrame, pd.DataFrame, Dict]:
+    """
+    Sample testset from multiple institutions with specified number of users per institution.
+    For each selected user, extract the last N EMA samples.
+    
+    Args:
+        institutions_config: Dict mapping institution names to number of users to sample
+                           e.g., {'INS-W_2': 65, 'INS-W_3': 28, 'INS-W_4': 45}
+        min_ema_per_user: Minimum number of EMA samples required per user
+        samples_per_user: Number of last EMA samples to use per user (default: 3)
+        random_state: Random seed for reproducibility
+        use_cols_path: Path to column configuration
+        target: Target feature set name
+    
+    Returns:
+        Tuple of (feat_df, lab_df, cols) with combined data from all institutions
+    """
+    print("\n" + "="*80)
+    print("MULTI-INSTITUTION TESTSET SAMPLING")
+    print("="*80)
+    print(f"  Configuration:")
+    for inst, n_users in institutions_config.items():
+        print(f"    {inst}: {n_users} users")
+    print(f"  Min EMA per user: {min_ema_per_user}")
+    print(f"  Samples per user: {samples_per_user} (last EMAs)")
+    if random_state:
+        print(f"  Random seed: {random_state}")
+    print("="*80 + "\n")
+    
+    if random_state is not None:
+        rng = np.random.RandomState(random_state)
+    else:
+        rng = np.random.RandomState()
+    
+    all_feat_dfs = []
+    all_lab_dfs = []
+    total_users_selected = 0
+    total_samples_collected = 0
+    
+    # Load column configuration
+    with open(use_cols_path, 'r') as f:
+        use_cols = json.load(f)
+    cols = use_cols[target]
+    
+    # Process each institution
+    for institution, n_users_target in institutions_config.items():
+        print(f"\n[Processing {institution}...]")
+        
+        # Load institution data
+        feat_path = f'../dataset/Globem/{institution}/FeatureData/rapids.csv'
+        lab_path = f'../dataset/Globem/{institution}/SurveyData/ema.csv'
+        
+        feat_df_inst = pd.read_csv(feat_path, low_memory=False)
+        lab_df_inst = pd.read_csv(lab_path)
+        
+        # Convert dates
+        feat_df_inst[cols['date']] = pd.to_datetime(feat_df_inst[cols['date']])
+        lab_df_inst[cols['date']] = pd.to_datetime(lab_df_inst[cols['date']])
+        
+        # Binarize labels
+        lab_df_inst = binarize_labels(lab_df_inst, cols['labels'], cols['threshold'])
+        
+        # Count EMAs per user
+        user_ema_counts = lab_df_inst.groupby(cols['user_id']).size()
+        
+        # Filter users with sufficient EMAs
+        users_with_emas = user_ema_counts[user_ema_counts >= min_ema_per_user].index.tolist()
+        
+        print(f"  Total users: {lab_df_inst[cols['user_id']].nunique()}")
+        print(f"  Users with >= {min_ema_per_user} EMAs: {len(users_with_emas)}")
+        
+        # Further filter: check if users have sufficient sensor data for their last N samples
+        print(f"  Checking sensor data availability for last {samples_per_user} EMA samples...")
+        eligible_users = []
+        
+        for user_id in users_with_emas:
+            user_labs = lab_df_inst[lab_df_inst[cols['user_id']] == user_id].sort_values(cols['date'])
+            last_n_samples = user_labs.tail(samples_per_user)
+            
+            # Check if user has sensor features for these dates
+            has_sufficient_data = True
+            for _, sample in last_n_samples.iterrows():
+                ema_date = sample[cols['date']]
+                # Check if user has any sensor data around this EMA date
+                user_feat = feat_df_inst[
+                    (feat_df_inst[cols['user_id']] == user_id) & 
+                    (feat_df_inst[cols['date']] < ema_date)
+                ]
+                
+                # If user has no sensor data before this EMA, skip this user
+                if len(user_feat) == 0:
+                    has_sufficient_data = False
+                    break
+            
+            if has_sufficient_data:
+                eligible_users.append(user_id)
+        
+        print(f"  Eligible users (with sensor data): {len(eligible_users)}")
+        
+        if len(eligible_users) < n_users_target:
+            print(f"  [WARNING] Only {len(eligible_users)} eligible users, requested {n_users_target}")
+            print(f"            Using all {len(eligible_users)} eligible users")
+            n_users_target = len(eligible_users)
+        
+        # Randomly select users from eligible pool
+        selected_users = rng.choice(eligible_users, size=n_users_target, replace=False)
+        print(f"  Selected {len(selected_users)} users: {selected_users[:5]}..." if len(selected_users) > 5 else f"  Selected {len(selected_users)} users: {selected_users}")
+        
+        # For each selected user, get last N EMA samples
+        inst_testset_indices = []
+        for user_id in selected_users:
+            user_labs = lab_df_inst[lab_df_inst[cols['user_id']] == user_id].sort_values(cols['date'])
+            
+            # Get last N samples
+            last_n_samples = user_labs.tail(samples_per_user)
+            inst_testset_indices.extend(last_n_samples.index.tolist())
+        
+        # Filter dataframes
+        lab_df_testset = lab_df_inst.loc[inst_testset_indices].copy()
+        
+        # Add institution column for tracking
+        lab_df_testset['institution'] = institution
+        feat_df_inst['institution'] = institution
+        
+        all_feat_dfs.append(feat_df_inst)
+        all_lab_dfs.append(lab_df_testset)
+        
+        total_users_selected += len(selected_users)
+        total_samples_collected += len(lab_df_testset)
+        
+        print(f"  [OK] Collected {len(lab_df_testset)} samples from {len(selected_users)} users")
+    
+    # Combine all institutions
+    combined_feat_df = pd.concat(all_feat_dfs, ignore_index=True)
+    combined_lab_df = pd.concat(all_lab_dfs, ignore_index=True)
+    
+    # Select only required feature columns
+    feat_cols = [cols['user_id'], cols['date'], 'institution']
+    if isinstance(cols['feature_set'], dict):
+        for category, features in cols['feature_set'].items():
+            if isinstance(features, dict):
+                feat_cols.extend(features.keys())
+            elif features != "None":
+                feat_cols.append(features)
+    elif isinstance(cols['feature_set'], list):
+        feat_cols.extend(cols['feature_set'])
+    
+    # Remove duplicates and select available columns
+    feat_cols = list(dict.fromkeys(feat_cols))
+    available_feat_cols = [col for col in feat_cols if col in combined_feat_df.columns]
+    combined_feat_df = combined_feat_df[available_feat_cols].copy()
+    
+    print("\n" + "="*80)
+    print("TESTSET SUMMARY")
+    print("="*80)
+    print(f"  Total users selected: {total_users_selected}")
+    print(f"  Total samples collected: {total_samples_collected}")
+    print(f"  Samples per institution:")
+    for inst in institutions_config.keys():
+        inst_count = len(combined_lab_df[combined_lab_df['institution'] == inst])
+        inst_users = combined_lab_df[combined_lab_df['institution'] == inst][cols['user_id']].nunique()
+        print(f"    {inst}: {inst_count} samples from {inst_users} users")
+    print("="*80 + "\n")
+    
+    return combined_feat_df, combined_lab_df, cols
 
 
 # def get_data_statistics(lab_df: pd.DataFrame, cols: Dict) -> Dict:

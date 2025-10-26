@@ -59,7 +59,7 @@ def select_icl(
 
     if n_shot > 0:
         if verbose:
-            msg = f"\n📚 Selecting {n_shot} ICL examples (source: {source}, selection: {selection}"
+            msg = f"\n[ICL] Selecting {n_shot} examples (source: {source}, selection: {selection}"
             if selection == 'diversity' and beta > 0:
                 msg += f", β={beta}"
             msg += ")..."
@@ -73,7 +73,7 @@ def select_icl(
             )
         if icl_examples is None:
             if verbose:
-                print("  ⚠️  Failed to select ICL examples, falling back to zero-shot")
+                print("  [WARNING]  Failed to select ICL examples, falling back to zero-shot")
             icl_strategy = 'zero_shot'
         else:
             print_icl_selection_info(
@@ -82,7 +82,7 @@ def select_icl(
             icl_strategy = source # personalized, generalized, hybrid
     else:
         if verbose:
-            print(f"\n📚 Using zero-shot (no ICL examples)")
+            print(f"\n[ICL] Using zero-shot (no ICL examples)")
         append_zero(step_timings, 'icl_selection')
 
     return icl_examples, icl_strategy
@@ -91,12 +91,12 @@ def select_icl(
 def build_prompt_with_timing(
     prompt_manager: PromptManager, input_sample: Dict, cols: Dict,
     icl_examples, icl_strategy: str, reasoning_method: str,
-    step_timings: Dict[str, List[float]], verbose: bool
+    step_timings: Dict[str, List[float]], verbose: bool, feat_df=None
 ) -> str:
     if verbose:
-        print(f"\n🤖 Building prompt (reasoning: {reasoning_method})...")
+        print(f"\n[Prompt] Building prompt (reasoning: {reasoning_method})...")
     with timeit(step_timings, 'prompt_building'):
-        prompt = build_prompt(prompt_manager, input_sample, cols, icl_examples, icl_strategy, reasoning_method)
+        prompt = build_prompt(prompt_manager, input_sample, cols, icl_examples, icl_strategy, reasoning_method, feat_df=feat_df)
     print_prompt_building_info(len(prompt), step_timings['prompt_building'][-1], verbose)
     return prompt
 
@@ -129,7 +129,7 @@ def predict(all_predictions: List[Dict], all_step_timings: Dict[str, List[float]
     else:
         if not response_text:
             if verbose:
-                print("  ⚠️  LLM call failed, skipping")
+                print("  [WARNING]  LLM call failed, skipping")
             failed_count += 1
             append_zero(all_step_timings, 'response_parsing')
             return all_predictions, all_step_timings, failed_count, None
@@ -139,7 +139,7 @@ def predict(all_predictions: List[Dict], all_step_timings: Dict[str, List[float]
 
     if not prediction:
         if verbose:
-            print("  ⚠️  Parse failed, skipping")
+            print("  [WARNING]  Parse failed, skipping")
         failed_count += 1
         return all_predictions, all_step_timings, failed_count, None
 
@@ -197,7 +197,7 @@ def run_single_prediction(prompt_manager: PromptManager, reasoner: LLMReasoner,
         input_sample = sample_input_data(feat_df, lab_df, cols, random_state)
 
     if input_sample is None:
-        print("❌ Failed to sample valid input data")
+        print("[ERROR] Failed to sample valid input data")
         return None
     
     print_input_sample_info(input_sample, all_step_timings['data_sampling'][-1], verbose)
@@ -210,7 +210,7 @@ def run_single_prediction(prompt_manager: PromptManager, reasoner: LLMReasoner,
 
     # Prompt
     prompt = build_prompt_with_timing(
-        prompt_manager, input_sample, cols, icl_examples, icl_strategy, reasoning_method, all_step_timings, verbose
+        prompt_manager, input_sample, cols, icl_examples, icl_strategy, reasoning_method, all_step_timings, verbose, feat_df=feat_df
     )
 
     # Predict
@@ -224,7 +224,7 @@ def run_single_prediction(prompt_manager: PromptManager, reasoner: LLMReasoner,
     )
 
     if last_pred is None:
-        print("❌ Prediction failed for the sampled input")
+        print("[ERROR] Prediction failed for the sampled input")
         return None
 
     # Output
@@ -254,11 +254,22 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
                          feat_df, lab_df, cols: Dict, n_samples: int = 30, n_shot: int = 5, 
                          source: str = 'hybrid', selection: str = 'random', reasoning_method: str = 'cot', 
                          random_state: Optional[int] = 42, llm_seed: Optional[int] = None, 
-                         beta: float = 0.0, collect_prompts: bool = False, verbose: bool = True) -> Optional[Dict]:
-    """Run batch evaluation on multiple samples."""
+                         beta: float = 0.0, collect_prompts: bool = False, verbose: bool = True,
+                         use_all_samples: bool = False) -> Optional[Dict]:
+    """Run batch evaluation on multiple samples.
+    
+    Args:
+        use_all_samples: If True, use all samples in lab_df (ignores n_samples).
+                        Useful for multi-institution testset where samples are pre-selected.
+    """
+    
+    # Determine actual number of samples to use
+    actual_n_samples = len(lab_df) if use_all_samples else n_samples
     
     if verbose:
-        print("\n" + "="*60 + f"\n🔬 BATCH EVALUATION ({n_samples} samples)" + "\n" + "="*60)
+        print("\n" + "="*60 + f"\n🔬 BATCH EVALUATION ({actual_n_samples} samples)" + "\n" + "="*60)
+        if use_all_samples:
+            print(f"  [Using all pre-selected samples from testset]")
         print(f"  ICL: {source} | Selection: {selection} | N-Shot: {n_shot} | Reasoning: {reasoning_method} | Model: {reasoner.model}")
         if random_state or llm_seed:
             print(f"   Seed: {random_state} | LLM Seed: {llm_seed}")
@@ -270,67 +281,105 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
     
     # Sample input data
     if verbose:
-        print("📊 Sampling input data...")
+        print("[Data] Sampling input data...")
     
     with timeit(all_step_timings, 'data_sampling'):
-        use_stratified = config.USE_STRATIFIED_SAMPLING
-        if use_stratified:
-            try:
-                input_samples = sample_batch_stratified(
-                    feat_df, lab_df, cols, n_samples,
-                    random_state=random_state
-                )
-            except Exception as e:
-                if verbose:
-                    print(f"❌ Stratified sampling failed: {e}\n   Falling back to random sampling...")
-                use_stratified = False
-        
-        if not use_stratified:
-            # Non-stratified random sampling
+        # If use_all_samples is True, use all samples in lab_df
+        if use_all_samples:
+            if verbose:
+                print("  [Note: Using ALL samples without missing data filtering]")
             input_samples = []
-            rng = np.random.RandomState(random_state) if random_state else np.random.RandomState()
-            max_attempts = n_samples * 20  # Try up to 20x the requested samples
-            attempts = 0
-            
-            while len(input_samples) < n_samples and attempts < max_attempts:
-                # Randomly sample from label dataframe
-                idx = rng.choice(len(lab_df))
-                row = lab_df.iloc[idx]
+            for idx, row in lab_df.iterrows():
                 user_id = row[cols['user_id']]
                 ema_date = row[cols['date']]
                 
                 agg_feats = aggregate_window_features(
                     feat_df, user_id, ema_date, cols,
                     window_days=config.AGGREGATION_WINDOW_DAYS,
-                     mode=config.DEFAULT_AGGREGATION_MODE,
-                     use_immediate_window=config.USE_IMMEDIATE_WINDOW,
-                     immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
-                     adaptive_window=config.USE_ADAPTIVE_WINDOW
-                 )
+                    mode=config.DEFAULT_AGGREGATION_MODE,
+                    use_immediate_window=config.USE_IMMEDIATE_WINDOW,
+                    immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
+                    adaptive_window=config.USE_ADAPTIVE_WINDOW
+                )
                 
-                if agg_feats is not None and check_missing_ratio(agg_feats):
-                    labels = row[cols['labels']].to_dict()
-                    input_samples.append({
-                        'aggregated_features': agg_feats,
-                        'labels': labels,
+                # For pre-selected testset: include ALL samples even if agg_feats is None
+                if agg_feats is None:
+                    # Create minimal placeholder for samples with no historical data
+                    agg_feats = {
                         'user_id': user_id,
-                        'ema_date': ema_date
-                    })
+                        'ema_date': ema_date,
+                        'aggregation_mode': 'raw',
+                        'window_days': 0,
+                        'features': {}
+                    }
                 
-                attempts += 1
+                labels = row[cols['labels']].to_dict()
+                input_samples.append({
+                    'aggregated_features': agg_feats,
+                    'labels': labels,
+                    'user_id': user_id,
+                    'ema_date': ema_date
+                })
+        else:
+            # Original sampling logic
+            use_stratified = config.USE_STRATIFIED_SAMPLING
+            if use_stratified:
+                try:
+                    input_samples = sample_batch_stratified(
+                        feat_df, lab_df, cols, n_samples,
+                        random_state=random_state
+                    )
+                except Exception as e:
+                    if verbose:
+                        print(f"[ERROR] Stratified sampling failed: {e}\n   Falling back to random sampling...")
+                    use_stratified = False
             
-            if len(input_samples) < n_samples * 0.75:
-                if verbose:
-                    print(f"⚠️  Warning: Only collected {len(input_samples)}/{n_samples} samples")
-            
-            if len(input_samples) == 0:
-                if verbose:
-                    print("❌ Could not collect any valid samples")
-                return None
+            if not use_stratified:
+                # Non-stratified random sampling
+                input_samples = []
+                rng = np.random.RandomState(random_state) if random_state else np.random.RandomState()
+                max_attempts = n_samples * 20  # Try up to 20x the requested samples
+                attempts = 0
+                
+                while len(input_samples) < n_samples and attempts < max_attempts:
+                    # Randomly sample from label dataframe
+                    idx = rng.choice(len(lab_df))
+                    row = lab_df.iloc[idx]
+                    user_id = row[cols['user_id']]
+                    ema_date = row[cols['date']]
+                    
+                    agg_feats = aggregate_window_features(
+                        feat_df, user_id, ema_date, cols,
+                        window_days=config.AGGREGATION_WINDOW_DAYS,
+                         mode=config.DEFAULT_AGGREGATION_MODE,
+                         use_immediate_window=config.USE_IMMEDIATE_WINDOW,
+                         immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
+                         adaptive_window=config.USE_ADAPTIVE_WINDOW
+                     )
+                    
+                    if agg_feats is not None and check_missing_ratio(agg_feats):
+                        labels = row[cols['labels']].to_dict()
+                        input_samples.append({
+                            'aggregated_features': agg_feats,
+                            'labels': labels,
+                            'user_id': user_id,
+                            'ema_date': ema_date
+                        })
+                    
+                    attempts += 1
+                
+                if len(input_samples) < n_samples * 0.75:
+                    if verbose:
+                        print(f"[WARNING]  Warning: Only collected {len(input_samples)}/{n_samples} samples")
+                
+                if len(input_samples) == 0:
+                    if verbose:
+                        print("[ERROR] Could not collect any valid samples")
+                    return None
 
     total_sampling_time = all_step_timings['data_sampling'][-1] if all_step_timings['data_sampling'] else 0.0
     if verbose:
-        print(f"✅ Collected {len(input_samples)} valid samples in {total_sampling_time:.2f}s\n")
+        print(f"[OK] Collected {len(input_samples)} valid samples in {total_sampling_time:.2f}s\n")
 
     # Distribute average sampling time per sample (keeps shape identical to other step lists)
     per_sample_sampling = total_sampling_time / max(1, len(input_samples))
@@ -350,7 +399,7 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
         # Prompt
         prompt = build_prompt_with_timing(
             prompt_manager, input_sample, cols, icl_examples, icl_strategy,
-            reasoning_method, all_step_timings, verbose
+            reasoning_method, all_step_timings, verbose, feat_df=feat_df
         )
 
         if collect_prompts:
@@ -376,10 +425,10 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
             print_batch_progress(i, len(input_samples), input_sample, last_pred['prediction'], input_sample['labels'], verbose)
 
     if verbose:
-        print(f"\n{'=' * 60}\n✅ Completed: {len(all_predictions)}/{n_samples} | ❌ Failed: {failed_count}\n{'=' * 60}\n")
+        print(f"\n{'=' * 60}\n[DONE] Completed: {len(all_predictions)}/{n_samples} | Failed: {failed_count}\n{'=' * 60}\n")
 
     if not all_predictions:
-        print("❌ No successful predictions")
+        print("[ERROR] No successful predictions")
         return None
 
     usage = reasoner.get_usage_summary()
@@ -392,6 +441,7 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
     report = generate_comprehensive_report(results_for_report, usage, eval_config)
     report['step_timings_avg'] = avg_timings
     report['step_timings_all'] = {k: [float(x) for x in v] for k, v in all_step_timings.items()}
+    report['predictions'] = all_predictions  # Store predictions for CSV export
 
     if collect_prompts:
         report['prompts'], report['metadata'] = collected_prompts, collected_metadata
@@ -404,13 +454,21 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
                            n_samples: int = 30, n_shot: int = 5, source: str = 'hybrid', 
                            selection: str = 'random', reasoning_method: str = 'cot',
                            random_state: Optional[int] = 42, beta: float = 0.0, 
-                           verbose: bool = True) -> Dict:
+                           verbose: bool = True, use_all_samples: bool = False) -> Dict:
     """
     Generate and save prompts only without calling LLM.
     Returns prompts and metadata for saving to disk.
+    
+    Args:
+        use_all_samples: If True, use all samples in lab_df (ignores n_samples).
     """
+    # Determine actual number of samples to use
+    actual_n_samples = len(lab_df) if use_all_samples else n_samples
+    
     if verbose:
-        print("\n" + "="*60 + f"\n💾 PROMPT GENERATION ONLY ({n_samples} samples)" + "\n" + "="*60)
+        print("\n" + "="*60 + f"\n[PROMPT GENERATION ONLY] ({actual_n_samples} samples)" + "\n" + "="*60)
+        if use_all_samples:
+            print(f"  [Using all pre-selected samples from testset]")
         print(f"  ICL: {source} | Selection: {selection} | N-Shot: {n_shot} | Reasoning: {reasoning_method}")
         if random_state:
             print(f"  Seed: {random_state}")
@@ -422,31 +480,15 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
     
     # Sample input data
     if verbose:
-        print("📊 Sampling input data...")
+        print("[Data] Sampling input data...")
     
     with timeit(all_step_timings, 'data_sampling'):
-        use_stratified = config.USE_STRATIFIED_SAMPLING
-        if use_stratified:
-            try:
-                input_samples = sample_batch_stratified(
-                    feat_df, lab_df, cols, n_samples,
-                    random_state=random_state
-                )
-            except Exception as e:
-                if verbose:
-                    print(f"❌ Stratified sampling failed: {e}\n   Falling back to random sampling...")
-                use_stratified = False
-        
-        if not use_stratified:
-            # Non-stratified random sampling
+        # If use_all_samples is True, use all samples in lab_df
+        if use_all_samples:
+            if verbose:
+                print("  [Note: Using ALL samples without missing data filtering]")
             input_samples = []
-            rng = np.random.RandomState(random_state) if random_state else np.random.RandomState()
-            max_attempts = n_samples * 20
-            attempts = 0
-            
-            while len(input_samples) < n_samples and attempts < max_attempts:
-                idx = rng.choice(len(lab_df))
-                row = lab_df.iloc[idx]
+            for idx, row in lab_df.iterrows():
                 user_id = row[cols['user_id']]
                 ema_date = row[cols['date']]
                 
@@ -459,30 +501,84 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
                     adaptive_window=config.USE_ADAPTIVE_WINDOW
                 )
                 
-                if agg_feats is not None and check_missing_ratio(agg_feats):
-                    labels = row[cols['labels']].to_dict()
-                    input_samples.append({
-                        'aggregated_features': agg_feats,
-                        'labels': labels,
+                # For pre-selected testset: include ALL samples even if agg_feats is None
+                if agg_feats is None:
+                    # Create minimal placeholder for samples with no historical data
+                    agg_feats = {
                         'user_id': user_id,
-                        'ema_date': ema_date
-                    })
+                        'ema_date': ema_date,
+                        'aggregation_mode': 'raw',
+                        'window_days': 0,
+                        'features': {}
+                    }
                 
-                attempts += 1
+                labels = row[cols['labels']].to_dict()
+                input_samples.append({
+                    'aggregated_features': agg_feats,
+                    'labels': labels,
+                    'user_id': user_id,
+                    'ema_date': ema_date
+                })
+        else:
+            # Original sampling logic
+            use_stratified = config.USE_STRATIFIED_SAMPLING
+            if use_stratified:
+                try:
+                    input_samples = sample_batch_stratified(
+                        feat_df, lab_df, cols, n_samples,
+                        random_state=random_state
+                    )
+                except Exception as e:
+                    if verbose:
+                        print(f"[ERROR] Stratified sampling failed: {e}\n   Falling back to random sampling...")
+                    use_stratified = False
             
-            if len(input_samples) < n_samples * 0.75:
-                if verbose:
-                    print(f"⚠️  Warning: Only collected {len(input_samples)}/{n_samples} samples")
-            
-            if len(input_samples) == 0:
-                if verbose:
-                    print("❌ Could not collect any valid samples")
-                return None
+            if not use_stratified:
+                # Non-stratified random sampling
+                input_samples = []
+                rng = np.random.RandomState(random_state) if random_state else np.random.RandomState()
+                max_attempts = n_samples * 20
+                attempts = 0
+                
+                while len(input_samples) < n_samples and attempts < max_attempts:
+                    idx = rng.choice(len(lab_df))
+                    row = lab_df.iloc[idx]
+                    user_id = row[cols['user_id']]
+                    ema_date = row[cols['date']]
+                    
+                    agg_feats = aggregate_window_features(
+                        feat_df, user_id, ema_date, cols,
+                        window_days=config.AGGREGATION_WINDOW_DAYS,
+                        mode=config.DEFAULT_AGGREGATION_MODE,
+                        use_immediate_window=config.USE_IMMEDIATE_WINDOW,
+                        immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
+                        adaptive_window=config.USE_ADAPTIVE_WINDOW
+                    )
+                    
+                    if agg_feats is not None and check_missing_ratio(agg_feats):
+                        labels = row[cols['labels']].to_dict()
+                        input_samples.append({
+                            'aggregated_features': agg_feats,
+                            'labels': labels,
+                            'user_id': user_id,
+                            'ema_date': ema_date
+                        })
+                    
+                    attempts += 1
+                
+                if len(input_samples) < n_samples * 0.75:
+                    if verbose:
+                        print(f"[WARNING]  Warning: Only collected {len(input_samples)}/{n_samples} samples")
+                
+                if len(input_samples) == 0:
+                    if verbose:
+                        print("[ERROR] Could not collect any valid samples")
+                    return None
 
     total_sampling_time = all_step_timings['data_sampling'][-1] if all_step_timings['data_sampling'] else 0.0
     if verbose:
-        print(f"✅ Collected {len(input_samples)} valid samples in {total_sampling_time:.2f}s\n")
-        print("🎨 Generating prompts...")
+        print(f"[OK] Collected {len(input_samples)} valid samples in {total_sampling_time:.2f}s\n")
+        print("[Prompt] Generating prompts...")
 
     # Generate prompts for each sample
     for i, input_sample in enumerate(input_samples):
@@ -499,7 +595,7 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
         # Prompt
         prompt = build_prompt_with_timing(
             prompt_manager, input_sample, cols, icl_examples, icl_strategy,
-            reasoning_method, all_step_timings, False  # verbose=False
+            reasoning_method, all_step_timings, False, feat_df=feat_df  # verbose=False
         )
 
         collected_prompts.append(prompt)
@@ -512,7 +608,7 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
         })
 
     if verbose:
-        print(f"\n✅ Generated {len(collected_prompts)} prompts successfully\n")
+        print(f"\n[OK] Generated {len(collected_prompts)} prompts successfully\n")
         print_batch_timing_summary(all_step_timings, verbose=True)
 
     return {
@@ -536,14 +632,14 @@ def run_batch_with_loaded_prompts(reasoner: LLMReasoner, prompts: List[str], met
         resume_from: Path to checkpoint file to resume from
     """
     if verbose:
-        print("\n" + "=" * 60 + "\n🔄 BATCH WITH LOADED PROMPTS" + "\n" + "=" * 60)
+        print("\n" + "=" * 60 + "\n[RESUME] BATCH WITH LOADED PROMPTS" + "\n" + "=" * 60)
         print(f"Samples: {len(prompts)} | Reasoning: {reasoning_method} | Model: {reasoner.model}")
         if llm_seed:
             print(f"LLM Seed: {llm_seed}")
         if checkpoint_every > 0:
-            print(f"💾 Checkpoint: every {checkpoint_every} samples")
+            print(f"[Checkpoint] Every {checkpoint_every} samples")
         if resume_from:
-            print(f"🔄 Resuming from: {resume_from}")
+            print(f"[RESUME] Resuming from: {resume_from}")
         print("=" * 60 + "\n")
 
     # Initialize tracking variables
@@ -563,9 +659,9 @@ def run_batch_with_loaded_prompts(reasoner: LLMReasoner, prompts: List[str], met
             all_step_timings = checkpoint.get('step_timings', new_step_timings())
             start_idx = checkpoint.get('last_index', -1) + 1
             
-            print(f"✅ Resumed from checkpoint: {len(all_predictions)} predictions loaded, starting from index {start_idx}")
+            print(f"[OK] Resumed from checkpoint: {len(all_predictions)} predictions loaded, starting from index {start_idx}")
         except Exception as e:
-            print(f"⚠️  Failed to load checkpoint: {e}")
+            print(f"[WARNING]  Failed to load checkpoint: {e}")
             print("   Starting from scratch...")
             start_idx = 0
 
@@ -589,7 +685,15 @@ def run_batch_with_loaded_prompts(reasoner: LLMReasoner, prompts: List[str], met
         
         # Save checkpoint if enabled
         if checkpoint_every > 0 and checkpoint_path and (idx + 1) % checkpoint_every == 0:
-            checkpoint_file = f"{checkpoint_path}_checkpoint_{idx+1}.json"
+            # Create chk directory
+            checkpoint_dir = os.path.join(os.path.dirname(checkpoint_path) or '.', 'chk')
+            os.makedirs(checkpoint_dir, exist_ok=True)
+            
+            # Build checkpoint filename
+            base_name = os.path.basename(checkpoint_path)
+            checkpoint_file = os.path.join(checkpoint_dir, f"{base_name}_checkpoint_{idx+1}.json")
+            previous_checkpoint = os.path.join(checkpoint_dir, f"{base_name}_checkpoint_{idx+1-checkpoint_every}.json")
+            
             try:
                 import json
                 from src.prompt_utils import NumpyEncoder
@@ -604,16 +708,26 @@ def run_batch_with_loaded_prompts(reasoner: LLMReasoner, prompts: List[str], met
                 with open(checkpoint_file, 'w') as f:
                     json.dump(checkpoint_data, f, indent=2, cls=NumpyEncoder)
                 if verbose:
-                    print(f"  💾 Checkpoint saved: {checkpoint_file}")
+                    print(f"  [Checkpoint saved] {checkpoint_file}")
+                
+                # Delete previous checkpoint if it exists
+                if os.path.exists(previous_checkpoint):
+                    try:
+                        os.remove(previous_checkpoint)
+                        if verbose:
+                            print(f"  🗑️  Deleted previous checkpoint: {previous_checkpoint}")
+                    except Exception as e:
+                        if verbose:
+                            print(f"  [WARNING]  Failed to delete previous checkpoint: {e}")
             except Exception as e:
-                print(f"  ⚠️  Failed to save checkpoint: {e}")
+                print(f"  [WARNING]  Failed to save checkpoint: {e}")
 
     if not all_predictions:
-        print("❌ No successful predictions")
+        print("[ERROR] No successful predictions")
         return None
 
     if verbose:
-        print(f"\n{'=' * 60}\n📊 CALCULATING METRICS\n{'=' * 60}\n")
+        print(f"\n{'=' * 60}\n[Data] CALCULATING METRICS\n{'=' * 60}\n")
 
     results = [
         {
@@ -630,5 +744,6 @@ def run_batch_with_loaded_prompts(reasoner: LLMReasoner, prompts: List[str], met
     ]
 
     report = generate_comprehensive_report(results, reasoner.get_usage_summary())
+    report['predictions'] = all_predictions  # Store predictions for CSV export
     print_comprehensive_report(report)
     return report

@@ -14,6 +14,7 @@ from datetime import datetime
 
 from src.sensor_transformation import (
     load_globem_data, 
+    sample_multiinstitution_testset,
     # get_data_statistics, 
     # print_data_statistics,
     filter_testset_by_historical_labels
@@ -107,8 +108,7 @@ def main():
         if args.mode == 'batch':
             print(f"  Samples: {args.n_samples} | Stratified: {config.USE_STRATIFIED_SAMPLING}")
         print(f"\n  Data Config (see src/config.py to change):")
-        print(f"     Window: {config.AGGREGATION_WINDOW_DAYS} days | Mode: {config.DEFAULT_AGGREGATION_MODE}")
-        print(f"     Adaptive: {config.USE_ADAPTIVE_WINDOW} | Immediate: {config.USE_IMMEDIATE_WINDOW}")
+        print(f"     Format: {config.DEFAULT_TARGET}")
         print(f"     Test Filter: {config.FILTER_TESTSET_BY_HISTORY} (min {config.MIN_HISTORICAL_LABELS} labels)")
     if args.seed:
         print(f"  Random Seed: {args.seed}")
@@ -124,17 +124,28 @@ def main():
         feat_df, lab_df, cols, prompt_manager = None, None, None, None
     else:
         print("\n[Loading GLOBEM dataset...]")
-        feat_df, lab_df, cols = load_globem_data(target=config.DEFAULT_TARGET)
-        print(f"  Target: {config.DEFAULT_TARGET}")
-        print(f"  Features: {feat_df.shape[0]} rows | Labels: {lab_df.shape[0]} rows")
         
-        # Filter test set by historical labels (for fair ICL comparison)
-        if config.FILTER_TESTSET_BY_HISTORY:
-            lab_df = filter_testset_by_historical_labels(
-                lab_df, cols, min_historical=config.MIN_HISTORICAL_LABELS
+        # Check if multi-institution testset mode is enabled
+        if config.USE_MULTI_INSTITUTION_TESTSET:
+            feat_df, lab_df, cols = sample_multiinstitution_testset(
+                institutions_config=config.MULTI_INSTITUTION_CONFIG,
+                min_ema_per_user=config.MIN_EMA_PER_USER,
+                samples_per_user=config.SAMPLES_PER_USER,
+                random_state=args.seed,
+                target=config.DEFAULT_TARGET
             )
         else:
-            print(f"\n[Warning: Test set filtering disabled - personalized ICL may fail]")
+            feat_df, lab_df, cols = load_globem_data(institution=config.DEFAULT_INSTITUTION, target=config.DEFAULT_TARGET)
+            print(f"  Target: {config.DEFAULT_TARGET}")
+            print(f"  Features: {feat_df.shape[0]} rows | Labels: {lab_df.shape[0]} rows")
+            
+            # Filter test set by historical labels (for fair ICL comparison)
+            if config.FILTER_TESTSET_BY_HISTORY:
+                lab_df = filter_testset_by_historical_labels(
+                    lab_df, cols, min_historical=config.MIN_HISTORICAL_LABELS
+                )
+            else:
+                print(f"\n[Warning: Test set filtering disabled - personalized ICL may fail]")
         
         print("\n[Initializing Prompt Manager...]")
         prompt_manager = PromptManager()
@@ -206,7 +217,8 @@ def main():
                 n_samples=args.n_samples, n_shot=args.n_shot,
                 source=args.source, selection=args.selection,
                 reasoning_method=args.reasoning, random_state=args.seed,
-                beta=args.beta, verbose=args.verbose
+                beta=args.beta, verbose=args.verbose,
+                use_all_samples=config.USE_MULTI_INSTITUTION_TESTSET
             )
             exp_prefix = build_experiment_prefix(args.n_shot, args.source, selection=args.selection,
                                                 beta=args.beta if args.selection == 'diversity' else None,
@@ -218,7 +230,8 @@ def main():
                 source=args.source, selection=args.selection,
                 reasoning_method=args.reasoning, random_state=args.seed, 
                 llm_seed=args.llm_seed, beta=args.beta,
-                collect_prompts=args.save_prompts, verbose=args.verbose
+                collect_prompts=args.save_prompts, verbose=args.verbose,
+                use_all_samples=config.USE_MULTI_INSTITUTION_TESTSET
             )
             exp_prefix = build_experiment_prefix(args.n_shot, args.source, selection=args.selection,
                                                 beta=args.beta if args.selection == 'diversity' else None,
@@ -238,7 +251,8 @@ def main():
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 base = f"{exp_prefix}_{model_name}_{args.reasoning}_{args.llm_seed}_{timestamp}"
                 base_filepath = os.path.join(args.output_dir, base)
-                export_comprehensive_report(result, base_filepath)
+                predictions = result.get('predictions', None)
+                export_comprehensive_report(result, base_filepath, predictions=predictions)
                 print(f"\nResults saved with model comparison name: {exp_prefix}")
                 if args.save_prompts and 'prompts' in result and 'metadata' in result:
                     # Save folder is just prefix (no model/reasoning/llm_seed/timestamp)

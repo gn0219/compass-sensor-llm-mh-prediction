@@ -101,6 +101,7 @@
         "user_id": "pid",
         "date": "date",
         "feature_set": [
+            "f_steps:fitbit_steps_summary_rapids_avgsumsteps:14dhist",
             "f_slp:fitbit_sleep_summary_rapids_avgefficiencymain:14dhist",
             "f_slp:fitbit_sleep_summary_rapids_avgdurationafterwakeupmain:14dhist",
             "f_slp:fitbit_sleep_summary_rapids_avgdurationasleepmain:14dhist",

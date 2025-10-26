@@ -114,7 +114,7 @@ class LLMClient:
             if not self._gpt5_warning_shown:
                 if temperature != 1.0:
                     print(f"  ℹ️  Note: GPT-5 only supports temperature=1.0 (requested {temperature})")
-                if max_tokens < 16000:
+                if max_tokens < 6000:
                     print(f"  ℹ️  Note: GPT-5 uses reasoning tokens internally, increasing max_tokens {max_tokens} → 6000")
                 self._gpt5_warning_shown = True
             

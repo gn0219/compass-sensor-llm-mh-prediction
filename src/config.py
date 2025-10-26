@@ -14,14 +14,30 @@ DEFAULT_OUTPUT_DIR = './results'
 
 # Dataset paths (relative to project root)
 GLOBEM_BASE_PATH = '../dataset/Globem'
+
 DEFAULT_INSTITUTION = 'INS-W_2'
-DEFAULT_TARGET = 'compass'  # Options: 'compass', 'fctci', 'health-llm'
+SAMPLING_USER = 28
+
+# Multi-institution testset configuration
+USE_MULTI_INSTITUTION_TESTSET = True  # Set to True to use multi-institution testset
+MULTI_INSTITUTION_CONFIG = {
+    'INS-W_2': 65,
+    'INS-W_3': 28,
+    'INS-W_4': 45
+}
+MIN_EMA_PER_USER = 10  # Minimum EMAs required per user
+SAMPLES_PER_USER = 3  # Number of last EMA samples per user for testset
+
+# Sensor data format and features
+# Options: 
+#   'compass' - Statistical/structural/semantic features with descriptive text
+#   'fctci' - Markdown table format (From Classification to Clinical Insights)
+#   'health-llm' - Statistical summaries (max, min, avg, median, std)
+DEFAULT_TARGET = 'compass'
 
 # Configuration files
 PROMPT_CONFIGS_PATH = '../config/prompt_configs.yaml'
 USE_COLS_PATH = '../config/globem_use_cols.json'
-
-SENSOR_FORMAT = 'compass'
 
 # ============================================================================
 # DATA PROCESSING

@@ -25,8 +25,7 @@ reasoning_methods:
         "Prediction": {
           "Anxiety": "Low Risk" or "High Risk",
           "Depression": "Low Risk" or "High Risk"
-        },
-        "Reasoning": "Brief explanation of your prediction"
+        }
       }
   
   # -------------------------
@@ -94,40 +93,34 @@ reasoning_methods:
       }
 
 # Output constraints
-output_constraints:
-  header: "## Guidelines"
-  do_header: "\n**DO:**"
-  do:
-    - "Focus on the normalized feature values and their interpretation"
-    - "Consider temporal patterns (long-term trends, recent changes, deltas if provided)"
-    - "Cite specific features you used and tie them to clinical associations"
-    - "Provide clear, evidence-based reasoning"
-    - "Follow the exact output schema"
+# output_constraints:
+  # header: "## Guidelines"
+  # do_header: "\n**DO:**"
+  # do:
+  #   - "Consider temporal patterns (long-term trends, recent changes, deltas if provided)"
+  #   - "Cite specific features you used and tie them to clinical associations"
+  #   - "Follow the exact output schema"
   
-  dont_header: "\n**DON'T:**"
-  dont:
-    - "Don't make assumptions beyond the provided data"
-    - "Don't ignore missing values (NaN) - acknowledge data limitations"
-    - "Don't predict 'Medium Risk' - only Low Risk or High Risk"
-    - "Don't provide probabilities or confidence scores unless requested"
-    - "Don't reference external information not in the prompt"
+  # dont_header: "\n**DON'T:**"
+  # dont:
+  #   - "Don't predict 'Medium Risk' - only Low Risk or High Risk"
   
-  # Response format requirements
-  format_requirements:
-    response_type: "json"
-    ensure_parseable: true
-    prediction_format: "Must be exactly 'Low Risk' or 'High Risk'"
-    required_fields:
-      - "Prediction"
-      - "Anxiety"
-      - "Depression"
+  # # Response format requirements
+  # format_requirements:
+  #   response_type: "json"
+  #   ensure_parseable: true
+  #   prediction_format: "Must be exactly 'Low Risk' or 'High Risk'"
+  #   required_fields:
+  #     - "Prediction"
+  #     - "Anxiety"
+  #     - "Depression"
   
-  # Reasoning quality guidelines
-  reasoning_quality:
-    - "Be specific: cite actual feature values"
-    - "Be balanced: consider both risk and protective factors"
-    - "Be evidence-based: link observations to clinical knowledge"
-    - "Be concise: focus on the most relevant patterns"
+  # # Reasoning quality guidelines
+  # reasoning_quality:
+  #   - "Be specific: cite actual feature values"
+  #   - "Be balanced: consider both risk and protective factors"
+  #   - "Be evidence-based: link observations to clinical knowledge"
+  #   - "Be concise: focus on the most relevant patterns"
 
 # ============================================================================
 # TASK COMPLETION PROMPT

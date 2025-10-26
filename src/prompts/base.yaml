@@ -80,7 +80,6 @@ context:
           patterns: "Difficulty initiating or maintaining sleep, fragmented sleep patterns"
   
 # Important notes
-notes_header: "**Important Notes:**"
+notes_header: "**Notes:**"
 notes:
-  - "Consider both absolute values and relative changes within the aggregation window"
   - "Treat missing values (NaN) as non-evidence and acknowledge limitations due to missingness."
