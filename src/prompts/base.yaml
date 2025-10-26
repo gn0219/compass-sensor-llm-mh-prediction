@@ -67,10 +67,10 @@ context:
       title: "Anxiety Indicators"
       patterns:
         - indicator: "Restlessness or feeling keyed up / on edge"
-          features: "Daily step count, Indoor movement"
+          features: "Daily step count"
           patterns: "Frequent movement"
         - indicator: "Easily fatigued"
-          features: "Daily step count, Indoor movement"
+          features: "Daily step count"
           patterns: "Decreased daily activity and rapid decline in energy"
         - indicator: "Difficulty concentrating"
           features: "Screen unlock duration, App session duration, App switching"

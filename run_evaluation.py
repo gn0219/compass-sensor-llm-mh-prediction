@@ -14,8 +14,8 @@ from datetime import datetime
 
 from src.sensor_transformation import (
     load_globem_data, 
-    get_data_statistics, 
-    print_data_statistics,
+    # get_data_statistics, 
+    # print_data_statistics,
     filter_testset_by_historical_labels
 )
 from src.reasoning import LLMReasoner
@@ -54,7 +54,7 @@ def main():
     parser.add_argument('--beta', type=float, default=0.0,
                        help='Label balance penalty for diversity selection (0.0=no penalty, 0.1-0.3=recommended)')
     parser.add_argument('--reasoning', type=str, default=config.DEFAULT_REASONING_METHOD,
-                       choices=['direct', 'cot', 'tot', 'sc'],
+                       choices=['direct', 'cot', 'sc'],
                        help='LLM reasoning method')
     parser.add_argument('--model', type=str, default=config.DEFAULT_MODEL,
                        choices=config.SUPPORTED_MODELS,
@@ -98,7 +98,7 @@ def main():
     
     # Print configuration
     print("\n" + "="*60)
-    print("🚀 LLM MENTAL HEALTH PREDICTION EVALUATION")
+    print("LLM MENTAL HEALTH PREDICTION EVALUATION")
     print("="*60)
     print(f"  Mode: {args.mode} | Model: {args.model}")
     if not args.load_prompts:
@@ -106,7 +106,7 @@ def main():
         print(f"  Reasoning: {args.reasoning}")
         if args.mode == 'batch':
             print(f"  Samples: {args.n_samples} | Stratified: {config.USE_STRATIFIED_SAMPLING}")
-        print(f"\n  📊 Data Config (see src/config.py to change):")
+        print(f"\n  Data Config (see src/config.py to change):")
         print(f"     Window: {config.AGGREGATION_WINDOW_DAYS} days | Mode: {config.DEFAULT_AGGREGATION_MODE}")
         print(f"     Adaptive: {config.USE_ADAPTIVE_WINDOW} | Immediate: {config.USE_IMMEDIATE_WINDOW}")
         print(f"     Test Filter: {config.FILTER_TESTSET_BY_HISTORY} (min {config.MIN_HISTORICAL_LABELS} labels)")
@@ -118,13 +118,14 @@ def main():
     
     # Optimization: Skip data/prompt loading when using --load-prompts
     if args.load_prompts:
-        print("\n🔄 Model Comparison Mode")
-        print("  ⚡ Skipping data loading (not needed)")
-        print("  ⚡ Skipping prompt manager (prompts pre-generated)")
+        print("\n[Model Comparison Mode]")
+        print("  Skipping data loading (not needed)")
+        print("  Skipping prompt manager (prompts pre-generated)")
         feat_df, lab_df, cols, prompt_manager = None, None, None, None
     else:
-        print("\n📂 Loading GLOBEM dataset...")
-        feat_df, lab_df, cols = load_globem_data()
+        print("\n[Loading GLOBEM dataset...]")
+        feat_df, lab_df, cols = load_globem_data(target=config.DEFAULT_TARGET)
+        print(f"  Target: {config.DEFAULT_TARGET}")
         print(f"  Features: {feat_df.shape[0]} rows | Labels: {lab_df.shape[0]} rows")
         
         # Filter test set by historical labels (for fair ICL comparison)
@@ -133,20 +134,20 @@ def main():
                 lab_df, cols, min_historical=config.MIN_HISTORICAL_LABELS
             )
         else:
-            print(f"\n⚠️  Warning: Test set filtering disabled - personalized ICL may fail")
+            print(f"\n[Warning: Test set filtering disabled - personalized ICL may fail]")
         
-        print("\n🎨 Initializing Prompt Manager...")
+        print("\n[Initializing Prompt Manager...]")
         prompt_manager = PromptManager()
-        print("  ✓ YAML templates loaded")
+        print("  YAML templates loaded")
     
     # Initialize LLM reasoner (skip if only saving prompts)
     if args.save_prompts_only:
-        print(f"\n⚡ Prompt-only mode: Skipping LLM initialization")
+        print(f"\n[Prompt-only mode: Skipping LLM initialization]")
         reasoner = None
     else:
-        print(f"\n🤖 Initializing LLM Reasoner ({args.model})...")
+        print(f"\n[Initializing LLM Reasoner ({args.model})...]")
         reasoner = LLMReasoner(model=args.model)
-        print("  ✓ Ready")
+        print("  Ready")
     
     model_name = args.model.replace('/', '_').replace('-', '_').replace('.', '_')
     # Common prefix per spec - include selection and beta
@@ -173,11 +174,11 @@ def main():
             with open(result_file, 'w') as f:
                 json.dump(result, f, indent=2, cls=NumpyEncoder)
             
-            print(f"\n✅ Result saved to: {result_file}")
+            print(f"\n[Result saved to: {result_file}]")
     
     elif args.mode == 'batch':
         if args.load_prompts:
-            print(f"\n🔄 Loading prompts from: {args.load_prompts}")
+            print(f"\n[Loading prompts from: {args.load_prompts}]")
             prompts, labels, metadata = load_prompts_from_disk(args.load_prompts)
             
             # Use provided folder (should be prefix) as exp_prefix
@@ -230,7 +231,7 @@ def main():
                     step_timings = result.get('step_timings', None)
                     save_prompts_to_disk(result['prompts'], result['metadata'], exp_prefix, args.seed, 
                                         args.prompts_dir, step_timings)
-                    print(f"\n💾 Prompts saved: {exp_prefix} ({result['n_samples']} samples)")
+                    print(f"\n[Prompts saved: {exp_prefix} ({result['n_samples']} samples)]")
             else:
                 # Normal batch mode: export results
                 os.makedirs(args.output_dir, exist_ok=True)
@@ -238,14 +239,14 @@ def main():
                 base = f"{exp_prefix}_{model_name}_{args.reasoning}_{args.llm_seed}_{timestamp}"
                 base_filepath = os.path.join(args.output_dir, base)
                 export_comprehensive_report(result, base_filepath)
-                print(f"\n💾 Results saved with model comparison name: {exp_prefix}")
+                print(f"\nResults saved with model comparison name: {exp_prefix}")
                 if args.save_prompts and 'prompts' in result and 'metadata' in result:
                     # Save folder is just prefix (no model/reasoning/llm_seed/timestamp)
                     step_timings = result.get('step_timings', None)
                     save_prompts_to_disk(result['prompts'], result['metadata'], exp_prefix, args.seed, 
                                         args.prompts_dir, step_timings)
     
-    print("\n✅ Evaluation complete!\n")
+    print("\nEvaluation complete!\n")
 
 
 if __name__ == "__main__":

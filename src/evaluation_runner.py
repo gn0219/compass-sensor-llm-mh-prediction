@@ -302,11 +302,11 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
                 agg_feats = aggregate_window_features(
                     feat_df, user_id, ema_date, cols,
                     window_days=config.AGGREGATION_WINDOW_DAYS,
-                    mode=config.DEFAULT_AGGREGATION_MODE,
-                    use_immediate_window=config.USE_IMMEDIATE_WINDOW,
-                    immediate_days=config.IMMEDIATE_WINDOW_DAYS,
-                    adaptive_window=config.USE_ADAPTIVE_WINDOW
-                )
+                     mode=config.DEFAULT_AGGREGATION_MODE,
+                     use_immediate_window=config.USE_IMMEDIATE_WINDOW,
+                     immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
+                     adaptive_window=config.USE_ADAPTIVE_WINDOW
+                 )
                 
                 if agg_feats is not None and check_missing_ratio(agg_feats):
                     labels = row[cols['labels']].to_dict()
@@ -455,7 +455,7 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
                     window_days=config.AGGREGATION_WINDOW_DAYS,
                     mode=config.DEFAULT_AGGREGATION_MODE,
                     use_immediate_window=config.USE_IMMEDIATE_WINDOW,
-                    immediate_days=config.IMMEDIATE_WINDOW_DAYS,
+                    immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
                     adaptive_window=config.USE_ADAPTIVE_WINDOW
                 )
                 

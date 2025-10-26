@@ -49,46 +49,9 @@ reasoning_methods:
       Please provide your response in the following JSON format:
       {
         "Step1_ObservePatterns": "Description of observed behavioral patterns",
-        "Step2_CompareToExamples": "How these patterns compare to the examples",
+        "Step2_CompareToClinicalKnowledge": "How these patterns compare to the clinical knowledge",
         "Step3_IdentifyRiskFactors": "Key risk or protective factors identified",
         "Step4_MakePrediction": "Final reasoning and prediction",
-        "Prediction": {
-          "Anxiety": "Low Risk" or "High Risk",
-          "Depression": "Low Risk" or "High Risk"
-        }
-      }
-  
-  # -------------------------
-  # 3. Tree-of-Thoughts (ToT)
-  # -------------------------
-  tot:
-    name: "Tree-of-Thoughts"
-    description: "Explore multiple reasoning paths"
-    instruction: |
-      Please explore multiple possible interpretations of the behavioral data 
-      before making your final prediction.
-      
-      For each condition (Anxiety and Depression), consider:
-      1. **Path A - High Risk Hypothesis**: What evidence supports high risk?
-      2. **Path B - Low Risk Hypothesis**: What evidence supports low risk?
-      3. **Evaluate Paths**: Which interpretation is more strongly supported?
-      4. **Final Decision**: Make your prediction based on the strongest path
-    
-    output_format: |
-      Please provide your response in the following JSON format:
-      {
-        "Anxiety_Analysis": {
-          "HighRiskEvidence": "Evidence supporting high risk",
-          "LowRiskEvidence": "Evidence supporting low risk",
-          "Evaluation": "Which is stronger and why",
-          "Prediction": "Low Risk" or "High Risk"
-        },
-        "Depression_Analysis": {
-          "HighRiskEvidence": "Evidence supporting high risk",
-          "LowRiskEvidence": "Evidence supporting low risk",
-          "Evaluation": "Which is stronger and why",
-          "Prediction": "Low Risk" or "High Risk"
-        },
         "Prediction": {
           "Anxiety": "Low Risk" or "High Risk",
           "Depression": "Low Risk" or "High Risk"

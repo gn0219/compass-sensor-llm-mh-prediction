@@ -10,6 +10,7 @@ openai>=1.0.0              # Required for OpenAI models (GPT)
 anthropic>=0.25.0          # Optional: for Claude models
 google-generativeai>=0.3.0 # Optional: for Gemini models
 ollama>=0.1.0              # Optional: for on-device models
+tiktoken>=0.5.0            # Token counting for OpenAI models
 
 # Statistical Analysis
 scipy>=1.11.0

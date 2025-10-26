@@ -31,7 +31,7 @@ def binarize_labels(df: pd.DataFrame, labels: List[str], thresholds: Dict[str, i
 
 
 def load_globem_data(institution: str = 'INS-W_2', target: str = 'fctci',
-                    use_cols_path: str = './config/use_cols.json') -> Tuple[pd.DataFrame, pd.DataFrame, Dict]:
+                    use_cols_path: str = './config/globem_use_cols.json') -> Tuple[pd.DataFrame, pd.DataFrame, Dict]:
     """Load GLOBEM dataset with feature and label data."""
     feat_path = f'../dataset/Globem/{institution}/FeatureData/rapids.csv'
     lab_path = f'../dataset/Globem/{institution}/SurveyData/ema.csv'
@@ -41,13 +41,31 @@ def load_globem_data(institution: str = 'INS-W_2', target: str = 'fctci',
     
     with open(use_cols_path, 'r') as f:
         use_cols = json.load(f)
-    cols = use_cols['globem'][target]
+    cols = use_cols[target]
     
-    # Select columns
-    feat_cols = [cols['user_id'], cols['date']] + cols['feature_set']
+    # Collect all required columns
+    feat_cols = [cols['user_id'], cols['date']]
+    
+    # Handle different feature_set structures
+    if isinstance(cols['feature_set'], dict):
+        # Compass format: statistical, structural, semantic, temporal_descriptor
+        for category, features in cols['feature_set'].items():
+            if isinstance(features, dict):
+                feat_cols.extend(features.keys())
+            elif features != "None":
+                feat_cols.append(features)
+    elif isinstance(cols['feature_set'], list):
+        # Legacy format: simple list
+        feat_cols.extend(cols['feature_set'])
+    
+    # Remove duplicates while preserving order
+    feat_cols = list(dict.fromkeys(feat_cols))
+    
     lab_cols = [cols['user_id'], cols['date']] + cols['labels']
     
-    feat_df = feat_df[feat_cols].copy()
+    # Select available columns only
+    available_feat_cols = [col for col in feat_cols if col in feat_df.columns]
+    feat_df = feat_df[available_feat_cols].copy()
     lab_df = lab_df[lab_cols].copy()
     
     # Convert dates
@@ -56,6 +74,8 @@ def load_globem_data(institution: str = 'INS-W_2', target: str = 'fctci',
     
     # Binarize labels
     lab_df = binarize_labels(lab_df, cols['labels'], cols['threshold'])
+    
+    print(f"Loaded {len(available_feat_cols)-2} feature columns for target '{target}'")
     
     return feat_df, lab_df, cols
 
@@ -125,10 +145,16 @@ def aggregate_window_features(feat_df: pd.DataFrame, user_id: str, ema_date: pd.
             # If immediate window is >= actual window, just use statistics mode without immediate
             use_immediate_window = False
     
-    if mode == 'array':
+    # Check if this is compass format (dict with statistical/semantic/etc)
+    if isinstance(cols.get('feature_set'), dict) and 'statistical' in cols['feature_set']:
+        # Compass format - use new aggregation
+        return _aggregate_compass_features(
+            feat_df, user_feats, user_id, ema_date, cols, actual_window_days
+        )
+    elif mode == 'array':
         return _aggregate_as_array(user_feats, user_id, ema_date, cols, actual_window_days)
     elif mode == 'statistics':
-        return _aggregate_as_statistics(
+        return _aggregate_as_statistical_structural_semantical(
             user_feats, user_id, ema_date, cols, actual_window_days,
             use_immediate_window, immediate_window_days
         )
@@ -164,81 +190,214 @@ def _aggregate_as_array(user_feats: pd.DataFrame, user_id: str, ema_date: pd.Tim
     return result
 
 
-def _calculate_slope(values: np.ndarray) -> float:
-    """Calculate linear trend slope using least squares."""
+
+def _calculate_normalized_slope(values: np.ndarray) -> Tuple[float, str]:
+    """
+    Calculate normalized slope (slope / mean) to make it scale-independent.
+    
+    Returns:
+        Tuple of (normalized_slope, direction) where direction is 'increasing', 'decreasing', or 'stable'
+    """
     valid_mask = ~np.isnan(values)
     if np.sum(valid_mask) < 2:
-        return np.nan
+        return np.nan, 'stable'
     
-    x = np.arange(len(values))[valid_mask]
     y = values[valid_mask]
+    mean_val = np.mean(y)
     
-    if len(x) < 2:
-        return np.nan
+    if mean_val == 0:
+        return np.nan, 'stable'
     
+    x = np.arange(len(y))
     slope, _ = np.polyfit(x, y, 1)
-    return slope
+    
+    # Normalize by mean to make slope scale-independent
+    normalized_slope = slope / abs(mean_val)
+    
+    # Determine direction
+    if normalized_slope > 0.05:  # 5% increase per day
+        direction = 'increasing'
+    elif normalized_slope < -0.05:  # 5% decrease per day
+        direction = 'decreasing'
+    else:
+        direction = 'stable'
+    
+    return normalized_slope, direction
 
 
-def _aggregate_as_statistics(user_feats: pd.DataFrame, user_id: str, ema_date: pd.Timestamp,
-                             cols: Dict, window_days: int, use_immediate_window: bool,
-                             immediate_window_days: int) -> Dict:
-    """Aggregate features as statistical summaries (Option 2)."""
+
+def _aggregate_compass_features(feat_df: pd.DataFrame, user_feats: pd.DataFrame, user_id: str, 
+                               ema_date: pd.Timestamp, cols: Dict, window_days: int) -> Dict:
+    """
+    Aggregate features for compass format with statistical, structural, semantic, and temporal components.
+    
+    Args:
+        feat_df: Full feature dataframe (needed for yesterday's data)
+        user_feats: User's features within window
+        user_id: User ID
+        ema_date: EMA date
+        cols: Column configuration with statistical, semantic, temporal_descriptor sections
+        window_days: Aggregation window (default 28)
+    """
     result = {
         'user_id': user_id,
         'ema_date': ema_date,
-        'aggregation_mode': 'statistics',
+        'aggregation_mode': 'compass',
         'window_days': window_days,
-        'use_immediate_window': use_immediate_window,
-        'immediate_window_days': immediate_window_days if use_immediate_window else None,
-        'features': {}
+        'statistical_features': {},
+        'structural_features': {},
+        'semantic_features': {},
+        'temporal_descriptors': {}
     }
     
-    for feat in cols['feature_set']:
-        if feat not in user_feats.columns:
+    feature_set = cols['feature_set']
+    statistical_feats = feature_set.get('statistical', {})
+    semantic_feats = feature_set.get('semantic', {})
+    temporal_feats = feature_set.get('temporal_descriptor', {})
+    
+    # ========== 1. STATISTICAL & STRUCTURAL FEATURES ==========
+    for feat_col, feat_name in statistical_feats.items():
+        if feat_col not in user_feats.columns:
             continue
         
-        feat_stats = {}
-        values = user_feats[feat].values
+        values = user_feats[feat_col].values
         
-        # Statistics over full window
-        if np.all(np.isnan(values)):
-            feat_stats[f'mean_{window_days}'] = None
-            feat_stats[f'std_{window_days}'] = None
-            feat_stats[f'slope_{window_days}'] = None
+        if len(values) < window_days * 0.5:  # Need at least 50% data
+            continue
+        
+        # Statistical: mean, std, min, max over 28 days
+        stats = {
+            'mean': round(np.nanmean(values), 2),
+            'std': round(np.nanstd(values), 2),
+            'min': round(np.nanmin(values), 2),
+            'max': round(np.nanmax(values), 2)
+        }
+        
+        # Structural: slopes for past 2 weeks (28~15 days) and recent 2 weeks (14~1 days)
+        # Past 2 weeks: days 28 to 15 (earlier period)
+        if len(values) >= 28:
+            past_2weeks = values[:14]  # First 14 days of 28-day window
+            past_slope, past_dir = _calculate_normalized_slope(past_2weeks)
+            
+            # Recent 2 weeks: days 14 to 1
+            recent_2weeks = values[-14:]  # Last 14 days
+            recent_slope, recent_dir = _calculate_normalized_slope(recent_2weeks)
+            
+            structural = {
+                'past_2weeks_slope': round(past_slope, 2) if not np.isnan(past_slope) else None,
+                'past_2weeks_direction': past_dir,
+                'recent_2weeks_slope': round(recent_slope, 2) if not np.isnan(recent_slope) else None,
+                'recent_2weeks_direction': recent_dir
+            }
         else:
-            feat_stats[f'mean_{window_days}'] = round(np.nanmean(values), 2)
-            feat_stats[f'std_{window_days}'] = round(np.nanstd(values), 2)
-            feat_stats[f'slope_{window_days}'] = round(_calculate_slope(values), 4)
+            # If less than 28 days, just compute one slope
+            slope, direction = _calculate_normalized_slope(values)
+            structural = {
+                'past_2weeks_slope': None,
+                'past_2weeks_direction': 'stable',
+                'recent_2weeks_slope': round(slope, 2) if not np.isnan(slope) else None,
+                'recent_2weeks_direction': direction
+            }
         
-        # Immediate window statistics if requested
-        if use_immediate_window and immediate_window_days < window_days:
-            # Split into immediate (recent) and previous windows
-            immediate_values = values[-immediate_window_days:]
-            previous_values = values[:-immediate_window_days]
+        result['statistical_features'][feat_name] = stats
+        result['structural_features'][feat_name] = structural
+    
+    # ========== 2. SEMANTIC FEATURES ==========
+    # Extract base feature names for semantic analysis
+    semantic_groups = {}
+    
+    # Group semantic features by base name and type (weekday/weekend/morning/etc)
+    for feat_col, feat_name in semantic_feats.items():
+        if feat_col not in user_feats.columns:
+            continue
+        
+        # Parse feature column: extract base and time period
+        # e.g., "f_steps:fitbit_steps_intraday_rapids_sumsteps:weekday" -> base: steps, period: weekday
+        parts = feat_col.split(':')
+        if len(parts) >= 3:
+            base = parts[1]  # e.g., "fitbit_steps_intraday_rapids_sumsteps"
+            period = parts[2]  # e.g., "weekday", "morning"
             
-            # Raw values for immediate window
-            immediate_list = [round(v, 2) if pd.notna(v) else None for v in immediate_values]
-            feat_stats[f'last_{immediate_window_days}'] = immediate_list
-            
-            # Delta: mean of immediate vs mean of previous
-            if len(previous_values) > 0 and not np.all(np.isnan(previous_values)):
-                prev_mean = np.nanmean(previous_values)
-                immediate_mean = np.nanmean(immediate_values)
-                
-                if pd.notna(prev_mean) and pd.notna(immediate_mean):
-                    delta = immediate_mean - prev_mean
-                    feat_stats[f'delta_last{immediate_window_days}_vs_prev{window_days-immediate_window_days}'] = round(delta, 2)
-                else:
-                    feat_stats[f'delta_last{immediate_window_days}_vs_prev{window_days-immediate_window_days}'] = None
+            # Simplify base name
+            if 'sleep' in base:
+                base_name = 'Sleep duration'
+            elif 'steps' in base or 'sumsteps' in base:
+                base_name = 'Physical activity'
+            elif 'locationentropy' in base:
+                base_name = 'Location entropy'
+            elif 'sumdurationunlock' in base:
+                base_name = 'Phone usage'
             else:
-                feat_stats[f'delta_last{immediate_window_days}_vs_prev{window_days-immediate_window_days}'] = None
+                base_name = base
+            
+            if base_name not in semantic_groups:
+                semantic_groups[base_name] = {}
+            
+            values = user_feats[feat_col].values
+            mean_val = np.nanmean(values)
+            
+            semantic_groups[base_name][period] = round(mean_val, 2) if not np.isnan(mean_val) else None
+    
+    # Build semantic feature descriptions
+    for base_name, periods in semantic_groups.items():
+        semantic_info = {}
         
-        result['features'][feat] = feat_stats
+        # Pattern: weekday vs weekend
+        if 'weekday' in periods and 'weekend' in periods:
+            weekday = periods['weekday']
+            weekend = periods['weekend']
+            if weekday is not None and weekend is not None:
+                diff = weekend - weekday
+                semantic_info['pattern'] = {
+                    'weekday': weekday,
+                    'weekend': weekend,
+                    'difference': round(diff, 2)
+                }
+        
+        # Circadian: 28-day average for morning/afternoon/evening/night
+        circadian_periods = ['morning', 'afternoon', 'evening', 'night']
+        if all(p in periods for p in circadian_periods):
+            circadian = {p: periods[p] for p in circadian_periods if periods[p] is not None}
+            if circadian:
+                semantic_info['circadian_28day'] = circadian
+        
+        # Yesterday transition: Get yesterday's data for morning/afternoon/evening/night
+        yesterday = ema_date - timedelta(days=1)
+        yesterday_data = feat_df[
+            (feat_df[cols['user_id']] == user_id) &
+            (feat_df[cols['date']] == yesterday)
+        ]
+        
+        if len(yesterday_data) > 0:
+            yesterday_values = {}
+            for period in circadian_periods:
+                # Find corresponding column in semantic_feats
+                for feat_col in semantic_feats.keys():
+                    if base_name.lower().replace(' ', '') in feat_col.lower() and f':{period}' in feat_col:
+                        if feat_col in yesterday_data.columns:
+                            val = yesterday_data[feat_col].iloc[0]
+                            if pd.notna(val):
+                                yesterday_values[period] = round(val, 2)
+                        break
+            
+            if yesterday_values:
+                semantic_info['yesterday_transition'] = yesterday_values
+        
+        if semantic_info:
+            result['semantic_features'][base_name] = semantic_info
+    
+    # ========== 3. TEMPORAL DESCRIPTORS ==========
+    # Get last 7 days as daily arrays
+    last_7_days = user_feats.tail(7)
+    
+    for feat_col, feat_name in temporal_feats.items():
+        if feat_col in last_7_days.columns:
+            values = last_7_days[feat_col].tolist()
+            # Round and handle None
+            values = [round(v, 2) if pd.notna(v) else None for v in values]
+            result['temporal_descriptors'][feat_name] = values
     
     return result
-
-
 
 
 def check_missing_ratio(data, threshold: float = 0.7) -> bool:
@@ -255,27 +414,51 @@ def check_missing_ratio(data, threshold: float = 0.7) -> bool:
     if isinstance(data, pd.DataFrame):
         # Legacy format
         missing_ratio = data.isna().sum().sum() / (data.shape[0] * data.shape[1])
-    elif isinstance(data, dict) and 'features' in data:
-        # New format
-        total_values = 0
-        missing_values = 0
+    elif isinstance(data, dict):
+        mode = data.get('aggregation_mode', 'unknown')
         
-        for feat_name, feat_data in data['features'].items():
-            if isinstance(feat_data, list):
-                # Array mode
-                total_values += len(feat_data)
-                missing_values += sum(1 for v in feat_data if v is None)
-            elif isinstance(feat_data, dict):
-                # Statistics mode
-                for stat_name, stat_value in feat_data.items():
-                    if not stat_name.startswith('last_'):  # Skip raw arrays
-                        total_values += 1
-                        if stat_value is None:
-                            missing_values += 1
-        
-        if total_values == 0:
-            return False
-        missing_ratio = missing_values / total_values
+        if mode == 'compass':
+            # Compass format: check statistical features
+            stat_feats = data.get('statistical_features', {})
+            if not stat_feats:
+                return False
+            
+            total_values = 0
+            missing_values = 0
+            
+            for feat_name, stats in stat_feats.items():
+                for stat_name, stat_value in stats.items():
+                    total_values += 1
+                    if stat_value is None or (isinstance(stat_value, float) and np.isnan(stat_value)):
+                        missing_values += 1
+            
+            if total_values == 0:
+                return False
+            missing_ratio = missing_values / total_values
+            
+        elif 'features' in data:
+            # Array or statistics format
+            total_values = 0
+            missing_values = 0
+            
+            for feat_name, feat_data in data['features'].items():
+                if isinstance(feat_data, list):
+                    # Array mode
+                    total_values += len(feat_data)
+                    missing_values += sum(1 for v in feat_data if v is None)
+                elif isinstance(feat_data, dict):
+                    # Statistics mode
+                    for stat_name, stat_value in feat_data.items():
+                        if not stat_name.startswith('last_'):  # Skip raw arrays
+                            total_values += 1
+                            if stat_value is None:
+                                missing_values += 1
+            
+            if total_values == 0:
+                return False
+            missing_ratio = missing_values / total_values
+        else:
+            raise ValueError(f"Unsupported dict format: {data.keys()}")
     else:
         raise ValueError(f"Unsupported data type: {type(data)}")
     
@@ -310,74 +493,117 @@ def features_to_text(agg_feats, cols: Dict, include_stats: bool = True) -> str:
     """
     text = ""
     
-    # Legacy DataFrame format
-    # if isinstance(agg_feats, pd.DataFrame):
-    #     if include_stats:
-    #         feature_groups = {}
-    #         for col in agg_feats.columns:
-    #             if col not in [cols['user_id'], cols['date']]:
-    #                 for feat in cols['feature_set']:
-    #                     if col.startswith(feat):
-    #                         if feat not in feature_groups:
-    #                             feature_groups[feat] = {}
-    #                         stat_type = col.replace(feat + '_', '')
-    #                         feature_groups[feat][stat_type] = agg_feats[col].iloc[0]
-    #                         break
-            
-    #         for feat_name, stats in feature_groups.items():
-    #             simple_name = _simplify_feature_name(feat_name)
-    #             text += f"  - {simple_name}:\n"
-    #             for stat, value in stats.items():
-    #                 if value is not None and pd.notna(value):
-    #                     text += f"    * {stat}: {value:.2f}\n"
-    #                 else:
-    #                     text += f"    * {stat}: missing\n"
+    if not isinstance(agg_feats, dict):
+        return text
     
-    # New Dict format
-    if isinstance(agg_feats, dict) and 'features' in agg_feats:
-        mode = agg_feats.get('aggregation_mode', 'unknown')
+    mode = agg_feats.get('aggregation_mode', 'unknown')
+    
+    # ========== COMPASS FORMAT ==========
+    if mode == 'compass':
+        window_days = agg_feats.get('window_days', 28)
         
-        if mode == 'array':
-            # Array format
-            window_days = agg_feats.get('window_days', 'N')            
-            for feat_name, values in agg_feats['features'].items():
-                simple_name = _simplify_feature_name(feat_name)
-                text += f"  - {simple_name}:\n"
-                
-                # Format array in compact form
-                if values:
-                    value_str = ', '.join([str(v) if v is not None else 'missing' for v in values])
-                    text += f"    [{value_str}]\n"
-                else:
-                    text += f"    [all missing]\n"
+        # 1. Statistical & Structural features
+        statistical = agg_feats.get('statistical_features', {})
+        structural = agg_feats.get('structural_features', {})
         
-        elif mode == 'statistics':
-            # Statistics format
-            window_days = agg_feats.get('window_days', 'N')
-            use_immediate = agg_feats.get('use_immediate_window', False)
-            immediate_window_days = agg_feats.get('immediate_window_days', 7)
+        for feat_name in statistical.keys():
+            stats = statistical.get(feat_name, {})
+            struct = structural.get(feat_name, {})
             
-            if use_immediate:
-                text += f"(Statistics over {window_days} days, with recent {immediate_window_days}-day window)\n\n"
+            text += f"{feat_name}\n"
+            text += f"- {window_days} day mean: {stats.get('mean', 'N/A')}, "
+            text += f"std: {stats.get('std', 'N/A')}, "
+            text += f"min: {stats.get('min', 'N/A')}, "
+            text += f"max: {stats.get('max', 'N/A')}\n"
+            
+            # Slopes
+            past_dir = struct.get('past_2weeks_direction', 'stable')
+            past_slope = struct.get('past_2weeks_slope', 'N/A')
+            recent_dir = struct.get('recent_2weeks_direction', 'stable')
+            recent_slope = struct.get('recent_2weeks_slope', 'N/A')
+            text += f"- Past 2 weeks slope: ({past_dir}, {past_slope}), Recent 2 weeks slope: ({recent_dir}, {recent_slope})\n\n"
+        
+        # 2. Semantic features
+        semantic = agg_feats.get('semantic_features', {})
+        if semantic:
+            text += "The following shows weekday/weekend patterns, 28-day circadian rhythms, "
+            text += "and yesterday's transitions (morning/afternoon/evening/night) for some features.\n\n"
+            
+            for feat_name, sem_info in semantic.items():
+                text += f"- {feat_name}\n"
+                
+                # Pattern (weekday vs weekend)
+                if 'pattern' in sem_info:
+                    pat = sem_info['pattern']
+                    weekday = pat.get('weekday', 'N/A')
+                    weekend = pat.get('weekend', 'N/A')
+                    diff = pat.get('difference', 'N/A')
+                    text += f"  - Weekday: {weekday}, Weekend: {weekend} (diff={diff})\n"
+                
+                # Circadian (28-day rhythms)
+                if 'circadian_28day' in sem_info:
+                    circ = sem_info['circadian_28day']
+                    text += f"  - 28 day rhythms (mean):\n"
+                    for period in ['morning', 'afternoon', 'evening', 'night']:
+                        if period in circ:
+                            text += f"    - {period}: {circ[period]}\n"
+                
+                # Yesterday transition
+                if 'yesterday_transition' in sem_info:
+                    trans = sem_info['yesterday_transition']
+                    text += f"  - Yesterday transition:\n"
+                    for period in ['morning', 'afternoon', 'evening', 'night']:
+                        if period in trans:
+                            text += f"    - {period}: {trans[period]}\n"
+                
+                text += "\n"
+        
+        # 3. Temporal descriptors
+        temporal = agg_feats.get('temporal_descriptors', {})
+        if temporal:
+            text += "Here are some recent variables (last 7 days):\n"
+            for feat_name, values in temporal.items():
+                value_str = ', '.join([str(v) if v is not None else 'N/A' for v in values])
+                text += f"- {feat_name}: [{value_str}]\n"
+    
+    # ========== ARRAY FORMAT ==========
+    elif mode == 'array':
+        window_days = agg_feats.get('window_days', 'N')
+        for feat_name, values in agg_feats.get('features', {}).items():
+            simple_name = _simplify_feature_name(feat_name)
+            text += f"  - {simple_name}:\n"
+            
+            if values:
+                value_str = ', '.join([str(v) if v is not None else 'missing' for v in values])
+                text += f"    [{value_str}]\n"
             else:
-                text += f"(Statistics over {window_days} days)\n\n"
+                text += f"    [all missing]\n"
+    
+    # ========== STATISTICS FORMAT ==========
+    elif mode == 'statistics':
+        window_days = agg_feats.get('window_days', 'N')
+        use_immediate = agg_feats.get('use_immediate_window', False)
+        immediate_window_days = agg_feats.get('immediate_window_days', 7)
+        
+        if use_immediate:
+            text += f"(Statistics over {window_days} days, with recent {immediate_window_days}-day window)\n\n"
+        else:
+            text += f"(Statistics over {window_days} days)\n\n"
+        
+        for feat_name, feat_stats in agg_feats.get('features', {}).items():
+            simple_name = _simplify_feature_name(feat_name)
+            text += f"  - {simple_name}:\n"
             
-            for feat_name, feat_stats in agg_feats['features'].items():
-                simple_name = _simplify_feature_name(feat_name)
-                text += f"  - {simple_name}:\n"
-                
-                for stat_name, stat_value in feat_stats.items():
-                    if stat_name.startswith('last_'):
-                        # Format array compactly for immediate window
-                        if isinstance(stat_value, list):
-                            value_str = ', '.join([str(v) if v is not None else 'missing' for v in stat_value])
-                            text += f"    * {stat_name}: [{value_str}]\n"
+            for stat_name, stat_value in feat_stats.items():
+                if stat_name.startswith('last_'):
+                    if isinstance(stat_value, list):
+                        value_str = ', '.join([str(v) if v is not None else 'missing' for v in stat_value])
+                        text += f"    * {stat_name}: [{value_str}]\n"
+                else:
+                    if stat_value is not None and pd.notna(stat_value):
+                        text += f"    * {stat_name}: {stat_value}\n"
                     else:
-                        # Regular statistics
-                        if stat_value is not None and pd.notna(stat_value):
-                            text += f"    * {stat_name}: {stat_value}\n"
-                        else:
-                            text += f"    * {stat_name}: missing\n"
+                        text += f"    * {stat_name}: missing\n"
     
     return text
 
@@ -397,13 +623,7 @@ def sample_to_prompt(sample: Dict, cols: Dict, format_type: str = 'structured',
         window_days = 7
         mode = 'legacy'
     
-    # Update header based on mode
-    if mode == 'array':
-        prompt += f"Sensor Features ({window_days}-day daily values):\n"
-    elif mode == 'statistics':
-        prompt += f"Sensor Features ({window_days}-day aggregated statistics):\n"
-    else:
-        prompt += "Sensor Features (7-day aggregated statistics):\n"
+    prompt += "\nSensor Features:\n"
     
     prompt += features_to_text(agg_feats, cols)
     
@@ -597,7 +817,7 @@ def filter_testset_by_historical_labels(lab_df: pd.DataFrame, cols: Dict,
     Returns:
         Filtered DataFrame with only samples that have >= min_historical prior labels
     """
-    print(f"\n📋 Filtering test set: requiring >= {min_historical} historical labels per user...")
+    print(f"\n[Filtering test set: requiring >= {min_historical} historical labels per user...]")
     
     user_id_col = cols['user_id']
     date_col = cols['date']
@@ -635,37 +855,37 @@ def filter_testset_by_historical_labels(lab_df: pd.DataFrame, cols: Dict,
     return filtered_df
 
 
-def get_data_statistics(lab_df: pd.DataFrame, cols: Dict) -> Dict:
-    """Get statistics about the dataset."""
-    stats = {
-        'total_samples': len(lab_df),
-        'unique_users': lab_df[cols['user_id']].nunique(),
-        'label_distributions': {}
-    }
+# def get_data_statistics(lab_df: pd.DataFrame, cols: Dict) -> Dict:
+#     """Get statistics about the dataset."""
+#     stats = {
+#         'total_samples': len(lab_df),
+#         'unique_users': lab_df[cols['user_id']].nunique(),
+#         'label_distributions': {}
+#     }
     
-    for label in cols['labels']:
-        if label in lab_df.columns:
-            dist = lab_df[label].value_counts().to_dict()
-            stats['label_distributions'][label] = {
-                'counts': dist,
-                'proportions': {k: v/len(lab_df) for k, v in dist.items()}
-            }
+#     for label in cols['labels']:
+#         if label in lab_df.columns:
+#             dist = lab_df[label].value_counts().to_dict()
+#             stats['label_distributions'][label] = {
+#                 'counts': dist,
+#                 'proportions': {k: v/len(lab_df) for k, v in dist.items()}
+#             }
     
-    return stats
+#     return stats
 
 
-def print_data_statistics(stats: Dict):
-    """Pretty print dataset statistics."""
-    print("\n" + "="*80)
-    print("DATASET STATISTICS")
-    print("="*80)
-    print(f"\nTotal Samples: {stats['total_samples']}")
-    print(f"Unique Users: {stats['unique_users']}")
+# def print_data_statistics(stats: Dict):
+#     """Pretty print dataset statistics."""
+#     print("\n" + "="*80)
+#     print("DATASET STATISTICS")
+#     print("="*80)
+#     print(f"\nTotal Samples: {stats['total_samples']}")
+#     print(f"Unique Users: {stats['unique_users']}")
     
-    print("\nLabel Distributions:")
-    for label, dist_info in stats['label_distributions'].items():
-        print(f"\n  {label}:")
-        for cls, count in dist_info['counts'].items():
-            proportion = dist_info['proportions'][cls]
-            print(f"    Class {cls}: {count} ({proportion*100:.1f}%)")
-    print("="*80 + "\n")
+#     print("\nLabel Distributions:")
+#     for label, dist_info in stats['label_distributions'].items():
+#         print(f"\n  {label}:")
+#         for cls, count in dist_info['counts'].items():
+#             proportion = dist_info['proportions'][cls]
+#             print(f"    Class {cls}: {count} ({proportion*100:.1f}%)")
+#     print("="*80 + "\n")

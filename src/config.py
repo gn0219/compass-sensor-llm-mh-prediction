@@ -6,6 +6,24 @@ Modify these values to change system behavior without touching code.
 """
 
 # ============================================================================
+# FILE PATHS
+# ============================================================================
+
+# Default output directory
+DEFAULT_OUTPUT_DIR = './results'
+
+# Dataset paths (relative to project root)
+GLOBEM_BASE_PATH = '../dataset/Globem'
+DEFAULT_INSTITUTION = 'INS-W_2'
+DEFAULT_TARGET = 'compass'  # Options: 'compass', 'fctci', 'health-llm'
+
+# Configuration files
+PROMPT_CONFIGS_PATH = '../config/prompt_configs.yaml'
+USE_COLS_PATH = '../config/globem_use_cols.json'
+
+SENSOR_FORMAT = 'compass'
+
+# ============================================================================
 # DATA PROCESSING
 # ============================================================================
 
@@ -28,11 +46,6 @@ DEFAULT_AGGREGATION_MODE = 'statistics'
 # Useful for personalized ICL where early samples have limited history
 USE_ADAPTIVE_WINDOW = True
 
-# Feature normalization
-# If True, normalize features to [-1, 1] range per user using z-score normalization
-# Uses only historical data before prediction timepoint to prevent data leakage
-NORMALIZE_FEATURES = True
-
 # Test set filtering: skip if you want all samples (not recommended for personalized ICL)
 FILTER_TESTSET_BY_HISTORY = True
 
@@ -41,8 +54,8 @@ MISSING_RATIO_THRESHOLD = 0.7
 
 # Label binarization thresholds
 DEFAULT_THRESHOLDS = {
-    'phq4_anxiety_EMA': 3,      # PHQ-4 anxiety subscale
-    'phq4_depression_EMA': 3    # PHQ-4 depression subscale
+    'phq4_anxiety_EMA': 2,      # PHQ-4 anxiety subscale
+    'phq4_depression_EMA': 2    # PHQ-4 depression subscale
 }
 
 # ============================================================================
@@ -114,52 +127,17 @@ DEFAULT_ALPHA = 0.05
 N_BOOTSTRAP_SAMPLES = 1000
 
 # ============================================================================
-# FILE PATHS
-# ============================================================================
-
-# Default output directory
-DEFAULT_OUTPUT_DIR = './results'
-
-# Dataset paths (relative to project root)
-GLOBEM_BASE_PATH = '../dataset/Globem'
-DEFAULT_INSTITUTION = 'INS-W_2'
-DEFAULT_TARGET = 'fctci'
-
-# Configuration files
-PROMPT_CONFIGS_PATH = '../config/prompt_configs.yaml'
-USE_COLS_PATH = 'use_cols.json'
-
-# ============================================================================
 # EXPERIMENT NAMING
 # ============================================================================
 
 # Dataset name for result files
 DATASET_NAME = 'globem'
 
-# Sensor-to-text format
-SENSOR_FORMAT = 'structured'  # Options: 'structured', 'narrative'
-
 # ============================================================================
 # FEATURE NAMES MAPPING
 # ============================================================================
 
-# Mapping for cleaner feature name display
-FEATURE_NAME_MAPPING = {
-    'f_loc:phone_locations_doryab_': 'Location - ',
-    'f_screen:phone_screen_rapids_': 'Screen - ',
-    'f_call:phone_calls_rapids_': 'Call - ',
-    'f_blue:phone_bluetooth_doryab_': 'Bluetooth - ',
-    'f_steps:fitbit_steps_intraday_rapids_': 'Activity - ',
-    'f_slp:fitbit_sleep_intraday_rapids_': 'Sleep - ',
-    'phone_locations_doryab_': '',
-    'phone_screen_rapids_': '',
-    'phone_calls_rapids_': '',
-    'phone_bluetooth_doryab_': '',
-    'fitbit_steps_intraday_rapids_': '',
-    'fitbit_sleep_intraday_rapids_': '',
-    ':allday': '',
-    '_': ' '
-}
+# Note: Feature name mapping is now handled in globem_use_cols.json
 
 # ============================================================================
 # DISPLAY SETTINGS
