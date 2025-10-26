@@ -55,5 +55,5 @@ Thumbs.db
 
 # Project specific
 results/
-saved_prompts/
+# saved_prompts/
 *.log
