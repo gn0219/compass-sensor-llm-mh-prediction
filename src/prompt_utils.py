@@ -71,8 +71,8 @@ def build_prompt(prompt_manager: PromptManager, input_sample: Dict, cols: Dict,
     if icl_examples and icl_strategy != "zero_shot":
         formatted_examples = []
         for ex in icl_examples:
-            # Convert example to text format
-            ex_text = sample_to_prompt(ex, cols, format_type=config.DEFAULT_TARGET, include_labels=False, feat_df=feat_df)
+            # Convert example to text format (exclude user_info since it's added by PromptManager)
+            ex_text = sample_to_prompt(ex, cols, format_type=config.DEFAULT_TARGET, include_labels=False, feat_df=feat_df, include_user_info=False)
             
             # Extract labels
             anxiety_label = "High Risk" if ex['labels'].get('phq4_anxiety_EMA', 0) == 1 else "Low Risk"

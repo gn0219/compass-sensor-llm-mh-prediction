@@ -28,6 +28,9 @@ MULTI_INSTITUTION_CONFIG = {
 MIN_EMA_PER_USER = 10  # Minimum EMAs required per user
 SAMPLES_PER_USER = 3  # Number of last EMA samples per user for testset
 
+# TimeRAG Retrieval Configuration
+TIMERAG_POOL_SIZE = 300  # Number of representative samples for DTW candidate pool (via clustering)
+
 # Sensor data format and features
 # Options: 
 #   'compass' - Statistical/structural/semantic features with descriptive text

@@ -330,25 +330,28 @@ def save_predictions_to_csv(predictions: List[Dict], filepath: str, reasoning_me
         }
         
         # For self_feedback, save all iteration results
-        if reasoning_method == 'self_feedback' and 'llm_response' in pred:
-            llm_resp = pred['llm_response']
-            if llm_resp and 'Reasoning' in llm_resp:
-                reasoning = llm_resp['Reasoning']
-                all_iterations = reasoning.get('all_iterations', [])
+        if reasoning_method == 'self_feedback' and 'prediction' in pred:
+            prediction_data = pred['prediction']
+            
+            # Extract iteration-specific predictions and confidences
+            # These were added by predict_with_self_feedback()
+            iteration_num = 1
+            while f'pred_iteration_{iteration_num}' in prediction_data:
+                pred_iter = prediction_data[f'pred_iteration_{iteration_num}']
+                conf_iter = prediction_data.get(f'conf_iteration_{iteration_num}', {})
+                diff_iter = prediction_data.get(f'difficulty_iteration_{iteration_num}', 'N/A')
                 
-                # Save each iteration's prediction and confidence
-                for i, iteration in enumerate(all_iterations, 1):
-                    iter_pred = iteration.get('Refined_Prediction') or iteration.get('Prediction')
-                    iter_conf = iteration.get('Confidence', {})
-                    
-                    if iter_pred:
-                        anx_pred = 1 if iter_pred.get('Anxiety') == 'High Risk' else 0
-                        dep_pred = 1 if iter_pred.get('Depression') == 'High Risk' else 0
-                        
-                        record[f'y_anx_pred_{i}'] = anx_pred
-                        record[f'y_dep_pred_{i}'] = dep_pred
-                        record[f'y_anx_conf_{i}'] = iter_conf.get('Anxiety', 'N/A')
-                        record[f'y_dep_conf_{i}'] = iter_conf.get('Depression', 'N/A')
+                record[f'y_anx_pred_{iteration_num}'] = pred_iter.get('Anxiety_binary', 0)
+                record[f'y_dep_pred_{iteration_num}'] = pred_iter.get('Depression_binary', 0)
+                record[f'y_anx_conf_{iteration_num}'] = conf_iter.get('Anxiety', 'N/A')
+                record[f'y_dep_conf_{iteration_num}'] = conf_iter.get('Depression', 'N/A')
+                record[f'difficulty_{iteration_num}'] = diff_iter
+                
+                iteration_num += 1
+            
+            # Add total iterations count
+            if 'Reasoning' in prediction_data:
+                record['total_iterations'] = prediction_data['Reasoning'].get('total_iterations', 1)
         
         # Always save final prediction
         record['y_anx_pred'] = pred['pred_anxiety']

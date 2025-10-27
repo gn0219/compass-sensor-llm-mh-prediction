@@ -11,10 +11,12 @@ import numpy as np
 import pandas as pd
 from contextlib import contextmanager
 from typing import Dict, List, Optional, Tuple
+from tqdm import tqdm
 
 from . import config
-from .sensor_transformation import sample_input_data, sample_batch_stratified, aggregate_window_features, check_missing_ratio
-from .example_selection import select_icl_examples
+from .data_utils import sample_batch_stratified
+from .sensor_transformation import sample_input_data, aggregate_window_features, check_missing_ratio
+from .example_selection import select_icl_examples, build_retrieval_candidate_pool
 from .prompt_utils import build_prompt
 from .reasoning import LLMReasoner
 from .performance import generate_comprehensive_report, print_comprehensive_report
@@ -52,7 +54,8 @@ def append_zero(step_timings: Dict[str, List[float]], key: str):
 def select_icl(
     feat_df, lab_df, cols: Dict, input_sample: Dict,
     n_shot: int, strategy: str, use_dtw: bool, random_state: Optional[int],
-    step_timings: Dict[str, List[float]], verbose: bool
+    step_timings: Dict[str, List[float]], verbose: bool,
+    retrieval_candidates: Optional[List[Dict]] = None
 ):
     """
     Select ICL examples if needed, append timing, and return (icl_examples, icl_strategy).
@@ -60,6 +63,7 @@ def select_icl(
     Args:
         strategy: 'cross_random', 'cross_retrieval', 'personal_recent', 'hybrid_blend', or 'none'
         use_dtw: For hybrid_blend, whether to use DTW for cross-user part
+        retrieval_candidates: Prebuilt candidate pool for retrieval strategies
     """
     icl_examples = None
     icl_strategy = 'zero_shot'
@@ -76,7 +80,8 @@ def select_icl(
                 feat_df, lab_df, cols,
                 input_sample['user_id'], input_sample['ema_date'],
                 n_shot=n_shot, strategy=strategy, use_dtw=use_dtw,
-                random_state=random_state, target_sample=input_sample
+                random_state=random_state, target_sample=input_sample,
+                retrieval_candidates=retrieval_candidates
             )
         if icl_examples is None:
             if verbose:
@@ -135,11 +140,18 @@ def predict(all_predictions: List[Dict], all_step_timings: Dict[str, List[float]
             prediction, _ = reasoner.predict_with_self_consistency(
                 prompt, n_samples=n_sc, seed=llm_seed
             )
+        elif reasoning_method == 'self_feedback':
+            # Self-feedback: iterative refinement
+            prediction, iterations = reasoner.predict_with_self_feedback(
+                prompt, max_iterations=3, temperature=0.7, seed=llm_seed
+            )
+            if verbose and iterations:
+                print(f"  [Self-Feedback] Total iterations: {len(iterations)}")
         else:
             response_text, usage_info = reasoner.call_llm(prompt, seed=llm_seed)
 
-    if reasoning_method == 'self_consistency':       
-        # # parsing is internal to self-consistency path
+    if reasoning_method in ['self_consistency', 'self_feedback']:       
+        # Parsing is internal to self-consistency and self-feedback paths
         append_zero(all_step_timings, 'response_parsing')
     else:
         if not response_text:
@@ -219,7 +231,7 @@ def run_single_prediction(prompt_manager: PromptManager, reasoner: LLMReasoner,
     # ICL
     icl_examples, icl_strategy = select_icl(
         feat_df, lab_df, cols, input_sample, n_shot, strategy, use_dtw,
-        random_state, all_step_timings, verbose
+        random_state, all_step_timings, verbose, None  # No prebuilt pool for single prediction
     )
 
     # Prompt
@@ -322,6 +334,27 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
         if verbose:
             print(f"  Loaded {len(lab_df_for_icl)} historical samples for ICL")
     
+    # Build retrieval candidate pool ONCE for entire evaluation (if using retrieval)
+    retrieval_candidates = None
+    if strategy in ['cross_retrieval', 'hybrid_blend'] and (strategy == 'cross_retrieval' or use_dtw):
+        if verbose:
+            print(f"\n[Retrieval Setup] Building candidate pool for {strategy}...")
+        
+        # Use trainset: all historical data excluding testset
+        if use_all_samples and lab_df_for_icl is not None:
+            trainset = lab_df_for_icl[~lab_df_for_icl.get('is_testset', False)] if 'is_testset' in lab_df_for_icl.columns else lab_df_for_icl
+        else:
+            trainset = lab_df_for_icl if lab_df_for_icl is not None else lab_df
+        
+        retrieval_candidates = build_retrieval_candidate_pool(
+            feat_df, trainset, cols,
+            max_pool_size=500,
+            random_state=random_state
+        )
+        
+        if verbose and retrieval_candidates:
+            print(f"  [OK] Candidate pool ready: {len(retrieval_candidates)} candidates\n")
+    
     # Sample input data
     if verbose:
         print("[Data] Sampling input data...")
@@ -331,7 +364,7 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
         if verbose:
             print(f"  [Using {len(lab_df)} pre-selected testset samples]")
         input_samples = []
-        for idx, row in lab_df.iterrows():
+        for idx, row in tqdm(lab_df.iterrows(), total=len(lab_df), desc="Preparing samples", disable=not verbose):
             user_id = row[cols['user_id']]
             ema_date = row[cols['date']]
             
@@ -424,14 +457,14 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
 
     # Loop
     all_predictions, failed_count = [], 0
-    for i, input_sample in enumerate(input_samples):
+    for i, input_sample in enumerate(tqdm(input_samples, desc="Generating prompts", disable=not verbose)):
 
         # ICL - use lab_df_for_icl if available (full historical data)
         icl_lab_df = lab_df_for_icl if (use_all_samples and lab_df_for_icl is not None) else lab_df
         icl_examples, icl_strategy = select_icl(
             feat_df, icl_lab_df, cols, input_sample, n_shot, strategy, use_dtw,
             (random_state + i * 1000) if random_state else None,
-            all_step_timings, verbose
+            all_step_timings, verbose, retrieval_candidates
         )
 
         # Prompt
@@ -546,6 +579,27 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
         if verbose:
             print(f"  Loaded {len(lab_df_for_icl)} historical samples for ICL")
     
+    # Build retrieval candidate pool ONCE for entire evaluation (if using retrieval)
+    retrieval_candidates = None
+    if strategy in ['cross_retrieval', 'hybrid_blend'] and (strategy == 'cross_retrieval' or use_dtw):
+        if verbose:
+            print(f"\n[Retrieval Setup] Building candidate pool for {strategy}...")
+        
+        # Use trainset: all historical data excluding testset
+        if use_all_samples and lab_df_for_icl is not None:
+            trainset = lab_df_for_icl[~lab_df_for_icl.get('is_testset', False)] if 'is_testset' in lab_df_for_icl.columns else lab_df_for_icl
+        else:
+            trainset = lab_df_for_icl if lab_df_for_icl is not None else lab_df
+        
+        retrieval_candidates = build_retrieval_candidate_pool(
+            feat_df, trainset, cols,
+            max_pool_size=300,
+            random_state=random_state
+        )
+        
+        if verbose and retrieval_candidates:
+            print(f"  [OK] Candidate pool ready: {len(retrieval_candidates)} candidates\n")
+    
     # Sample input data
     if verbose:
         print("[Data] Sampling input data...")
@@ -555,7 +609,7 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
         if verbose:
             print(f"  [Using {len(lab_df)} pre-selected testset samples]")
         input_samples = []
-        for idx, row in lab_df.iterrows():
+        for idx, row in tqdm(lab_df.iterrows(), total=len(lab_df), desc="Preparing samples", disable=not verbose):
             user_id = row[cols['user_id']]
             ema_date = row[cols['date']]
             
@@ -647,16 +701,14 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
         print("[Prompt] Generating prompts...")
 
     # Generate prompts for each sample
-    for i, input_sample in enumerate(input_samples):
-        if verbose and (i + 1) % 10 == 0:
-            print(f"  Progress: {i+1}/{len(input_samples)} prompts generated...")
+    for i, input_sample in enumerate(tqdm(input_samples, desc="Generating prompts", disable=not verbose)):
 
         # ICL - use lab_df_for_icl if available (full historical data)
         icl_lab_df = lab_df_for_icl if (use_all_samples and lab_df_for_icl is not None) else lab_df
         icl_examples, icl_strategy = select_icl(
             feat_df, icl_lab_df, cols, input_sample, n_shot, strategy, use_dtw,
             (random_state + i * 1000) if random_state else None,
-            all_step_timings, False  # verbose=False for cleaner output
+            all_step_timings, False, retrieval_candidates  # verbose=False, pass retrieval pool
         )
 
         # Prompt

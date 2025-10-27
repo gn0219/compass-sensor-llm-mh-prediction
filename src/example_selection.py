@@ -3,26 +3,78 @@ In-Context Learning Example Selection Module
 
 Handles selection of ICL examples based on 4 strategies:
 1. Cross-User Random: Random sampling from other users
-2. Cross-User Retrieval: DTW-based similarity from other users
+2. Cross-User Retrieval: DTW-based similarity from other users (TimeRAG)
 3. Personal-Recent: Most recent samples from target user
 4. Hybrid-Blend: Mix of personal recent + cross-user (retrieval or random)
 """
 
 import pandas as pd
 import numpy as np
+import time
+import json
+from pathlib import Path
 from typing import Optional, List, Dict, Tuple
 from sklearn.preprocessing import StandardScaler
-from scipy.spatial.distance import euclidean
-from fastdtw import fastdtw
-from .sensor_transformation import aggregate_window_features, check_missing_ratio
-from . import config
+from dtaidistance import dtw_ndim
+from tqdm import tqdm
+
+try:
+    from .sensor_transformation import aggregate_window_features, check_missing_ratio, get_user_window_data
+    from .timerag_retrieval import build_retrieval_candidate_pool_timerag, sample_from_timerag_pool_dtw
+    from . import config
+except ImportError:
+    from sensor_transformation import aggregate_window_features, check_missing_ratio, get_user_window_data
+    from timerag_retrieval import build_retrieval_candidate_pool_timerag, sample_from_timerag_pool_dtw
+    import config
+
+
+def _get_statistical_features() -> Optional[List[str]]:
+    """Get statistical features for the current target."""
+    if config.DEFAULT_TARGET == 'compass':
+        config_path = Path(__file__).parent.parent / 'config' / 'globem_use_cols.json'
+        with open(config_path, 'r') as f:
+            cols_config = json.load(f)
+        return list(cols_config['compass']['feature_set']['statistical'].keys())
+    return None
+
+
+def build_retrieval_candidate_pool(
+    feat_df: pd.DataFrame, lab_df: pd.DataFrame, cols: Dict,
+    max_pool_size: Optional[int] = None, random_state: Optional[int] = None
+) -> Optional[List[Dict]]:
+    """
+    Build candidate pool for DTW retrieval using TimeRAG clustering approach.
+    
+    This function now uses TimeRAG's clustering-based selection instead of random sampling,
+    providing better representation of the data distribution.
+    
+    Args:
+        feat_df: Feature DataFrame
+        lab_df: Label DataFrame (trainset only - excluding testset)
+        cols: Column configuration
+        max_pool_size: Maximum number of candidates (default: config.TIMERAG_POOL_SIZE)
+        random_state: Random seed
+        
+    Returns:
+        List of candidate dicts with 'time_series', 'sample', and metadata
+    """
+    if max_pool_size is None:
+        max_pool_size = config.TIMERAG_POOL_SIZE
+    
+    # Use TimeRAG's clustering-based approach
+    return build_retrieval_candidate_pool_timerag(
+        feat_df, lab_df, cols,
+        pool_size=max_pool_size,
+        random_state=random_state
+    )
 
 
 def select_icl_examples(
     feat_df: pd.DataFrame, lab_df: pd.DataFrame, cols: Dict,
     target_user_id: str, target_ema_date: pd.Timestamp,
     n_shot: int = 4, strategy: str = 'cross_random', use_dtw: bool = False,
-    random_state: Optional[int] = None, target_sample: Optional[Dict] = None
+    random_state: Optional[int] = None, target_sample: Optional[Dict] = None,
+    retrieval_candidates: Optional[List[Dict]] = None
 ) -> Optional[List[Dict]]:
     """
     Select in-context learning examples based on specified strategy.
@@ -38,6 +90,7 @@ def select_icl_examples(
         use_dtw: Whether to use DTW for hybrid (if False, uses random for cross-user part)
         random_state: Random seed for reproducibility
         target_sample: Target sample dict (required for retrieval-based selection)
+        retrieval_candidates: Pre-built candidate pool (for cross_retrieval, avoids rebuilding)
     
     Returns:
         List of example dictionaries, or None if insufficient data
@@ -64,19 +117,27 @@ def select_icl_examples(
         )
     
     elif strategy == 'cross_retrieval':
-        # Cross-User Retrieval: DTW-based similarity from other users
-        other_users_lab = lab_df[lab_df[cols['user_id']] != target_user_id]
-        
-        if len(other_users_lab) < n_shot:
-            print(f"Warning: Not enough data from other users")
+        # Cross-User Retrieval: DTW-based similarity from precomputed candidates
+        if retrieval_candidates is None or len(retrieval_candidates) == 0:
+            print(f"Warning: retrieval_candidates required for cross_retrieval strategy")
             return None
         
         if target_sample is None:
             print(f"Warning: target_sample required for retrieval strategy")
             return None
         
-        examples = _sample_cross_retrieval(
-            feat_df, other_users_lab, cols, n_shot, target_sample, random_state
+        # Filter out target user from candidates
+        other_user_candidates = [
+            c for c in retrieval_candidates 
+            if c['user_id'] != target_user_id
+        ]
+        
+        if len(other_user_candidates) < n_shot:
+            print(f"Warning: Not enough candidates from other users")
+            return None
+        
+        examples = sample_from_timerag_pool_dtw(
+            feat_df, cols, n_shot, target_sample, other_user_candidates
         )
     
     elif strategy == 'personal_recent':
@@ -120,9 +181,14 @@ def select_icl_examples(
             print(f"Warning: Not enough cross-user data")
             return None
         
-        if use_dtw and target_sample is not None:
-            cross_examples = _sample_cross_retrieval(
-                feat_df, other_users_lab, cols, n_cross, target_sample, random_state
+        if use_dtw and target_sample is not None and retrieval_candidates is not None:
+            # Use prebuilt pool for DTW
+            other_user_candidates = [
+                c for c in retrieval_candidates 
+                if c['user_id'] != target_user_id
+            ]
+            cross_examples = sample_from_timerag_pool_dtw(
+                feat_df, cols, n_cross, target_sample, other_user_candidates
             )
         else:
             cross_examples = _sample_cross_random(
@@ -190,20 +256,105 @@ def _sample_cross_random(
     return examples if examples else None
 
 
+def _sample_from_prebuilt_pool_dtw(
+    feat_df: pd.DataFrame, cols: Dict,
+    n_samples: int, target_sample: Dict, 
+    candidates: List[Dict]
+) -> Optional[List[Dict]]:
+    """
+    DTW-based retrieval from prebuilt candidate pool.
+    
+    Uses multi-dimensional DTW (dtaidistance.dtw_ndim) for faster computation.
+    
+    Args:
+        feat_df: Feature DataFrame
+        cols: Column configuration
+        n_samples: Number of samples to retrieve
+        target_sample: Target sample dict
+        candidates: Prebuilt candidate pool with time_series already extracted
+        
+    Returns:
+        List of selected examples
+    """
+    if not candidates or len(candidates) < n_samples:
+        print(f"Warning: Only {len(candidates)} candidates available")
+        return [c['sample'] for c in candidates] if candidates else None
+    
+    # Get statistical features
+    stat_features = _get_statistical_features()
+    
+    # Extract target time series
+    target_ts = _extract_time_series_from_raw_data(
+        feat_df, target_sample['user_id'], target_sample['ema_date'], cols,
+        window_days=28, stat_features=stat_features
+    )
+    
+    if target_ts is None:
+        print("Warning: Could not extract target time series")
+        return None
+    
+    # Compute DTW distances using dtaidistance (multi-dimensional)
+    distances = []
+    
+    for candidate in candidates:
+        cand_ts = candidate['time_series']
+        
+        # Pad sequences to same length
+        max_len = max(target_ts.shape[0], cand_ts.shape[0])
+        target_padded = np.pad(target_ts, ((0, max_len - target_ts.shape[0]), (0, 0)), 
+                               mode='constant', constant_values=0)
+        cand_padded = np.pad(cand_ts, ((0, max_len - cand_ts.shape[0]), (0, 0)),
+                            mode='constant', constant_values=0)
+        
+        # Normalize (avoid data leakage - use candidate stats)
+        cand_mean = np.nanmean(cand_padded, axis=0, keepdims=True)
+        cand_std = np.nanstd(cand_padded, axis=0, keepdims=True)
+        cand_std[cand_std < 1e-6] = 1.0  # Avoid division by zero
+        
+        target_norm = (target_padded - cand_mean) / cand_std
+        cand_norm = (cand_padded - cand_mean) / cand_std
+        
+        # Replace NaN with 0
+        target_norm = np.nan_to_num(target_norm, nan=0.0)
+        cand_norm = np.nan_to_num(cand_norm, nan=0.0)
+        
+        # Compute multi-dimensional DTW distance
+        try:
+            distance = dtw_ndim.distance(target_norm, cand_norm)
+        except Exception as e:
+            print(f"Warning: DTW calculation failed: {e}")
+            distance = 1e6
+        
+        distances.append(distance)
+    
+    # Select top-k nearest samples
+    distances = np.array(distances)
+    top_k_indices = np.argsort(distances)[:n_samples]
+    
+    selected_examples = [candidates[i]['sample'] for i in top_k_indices]
+    
+    return selected_examples
+
+
 def _sample_cross_retrieval(
     feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dict,
     n_samples: int, target_sample: Dict, random_state: Optional[int] = None,
-    max_pool_size: int = 500
+    max_pool_size: int = 50  # Reduced from 500 for faster computation
 ) -> Optional[List[Dict]]:
     """
-    DTW-based retrieval from other users.
+    [DEPRECATED] DTW-based retrieval from other users.
+    Use build_retrieval_candidate_pool() + _sample_from_prebuilt_pool_dtw() instead.
     
-    Uses DTW distance on 28-day time series for each of 16 statistical features.
+    Uses DTW distance on actual 28-day time series for each feature.
     """
-    # Build candidate pool
+    t0 = time.time()
+    
+    # Build candidate pool with actual time series
+    print(f"  [DTW] Building candidate pool (max_size={max_pool_size})...", end=" ", flush=True)
     candidates = _build_candidate_pool_dtw(
         feat_df, lab_pool, cols, max_pool_size, random_state
     )
+    print(f"Done. {len(candidates) if candidates else 0} candidates in {time.time()-t0:.2f}s")
     
     if not candidates:
         return None
@@ -212,17 +363,28 @@ def _sample_cross_retrieval(
         print(f"Warning: Only {len(candidates)} valid candidates for retrieval")
         return [c['sample'] for c in candidates]
     
-    # Extract target time series (28 days x 16 features)
-    target_ts = _extract_time_series(
-        target_sample['aggregated_features'], cols
+    # Extract target time series from raw data (actual 28-day time series)
+    t1 = time.time()
+    
+    # Get statistical features for compass mode
+    stat_features = _get_statistical_features()
+    
+    target_ts = _extract_time_series_from_raw_data(
+        feat_df, target_sample['user_id'], target_sample['ema_date'], cols,
+        window_days=28, stat_features=stat_features
     )
     
     if target_ts is None:
         print("Warning: Could not extract target time series")
         return None
     
+    # print(f"  [DTW] Target time series shape: {target_ts.shape}")
+    # print(f"  [DTW] Computing DTW distances for {len(candidates)} candidates x {target_ts.shape[1]} features...")
+    
     # Compute DTW distances
     distances = []
+    dtw_times = []
+    
     for candidate in candidates:
         cand_ts = candidate['time_series']
         
@@ -230,45 +392,66 @@ def _sample_cross_retrieval(
         total_distance = 0.0
         valid_features = 0
         
+        t_dtw = time.time()
         for feat_idx in range(min(target_ts.shape[1], cand_ts.shape[1])):
             target_feat = target_ts[:, feat_idx]
             cand_feat = cand_ts[:, feat_idx]
             
-            # Normalize both series (avoid data leakage)
-            # Use only candidate's stats for normalization
-            cand_mean = np.nanmean(cand_feat)
+            # Check if feature has any variation
             cand_std = np.nanstd(cand_feat)
+            target_std = np.nanstd(target_feat)
             
-            if cand_std > 0:
+            # Skip if both are constant (std=0)
+            if cand_std < 1e-6 and target_std < 1e-6:
+                continue
+            
+            # Normalize both series
+            # Use candidate's stats for normalization to avoid data leakage
+            cand_mean = np.nanmean(cand_feat)
+            
+            if cand_std > 1e-6:
                 target_feat_norm = (target_feat - cand_mean) / cand_std
                 cand_feat_norm = (cand_feat - cand_mean) / cand_std
-                
-                # Replace NaN with 0
-                target_feat_norm = np.nan_to_num(target_feat_norm, nan=0.0)
-                cand_feat_norm = np.nan_to_num(cand_feat_norm, nan=0.0)
-                
-                # Reshape to ensure 1-D arrays for fastdtw
-                target_feat_norm = target_feat_norm.reshape(-1)
-                cand_feat_norm = cand_feat_norm.reshape(-1)
-                
-                # Compute DTW distance
-                distance, _ = fastdtw(target_feat_norm, cand_feat_norm, dist=euclidean)
-                total_distance += distance
-                valid_features += 1
+            else:
+                # If candidate has no variation, just center
+                target_feat_norm = target_feat - cand_mean
+                cand_feat_norm = cand_feat - cand_mean
+            
+            # Replace NaN with 0
+            target_feat_norm = np.nan_to_num(target_feat_norm, nan=0.0)
+            cand_feat_norm = np.nan_to_num(cand_feat_norm, nan=0.0)
+            
+            # Reshape to ensure 1-D arrays for fastdtw
+            target_feat_norm = target_feat_norm.reshape(-1)
+            cand_feat_norm = cand_feat_norm.reshape(-1)
+            
+            # Compute DTW distance
+            # Use radius=1 for faster approximation (allows warping of +/- 1 day)
+            distance, _ = fastdtw(target_feat_norm, cand_feat_norm, dist=1)
+            total_distance += distance
+            valid_features += 1
+        
+        dtw_times.append(time.time() - t_dtw)
         
         # Average distance across features
         if valid_features > 0:
             avg_distance = total_distance / valid_features
         else:
-            avg_distance = float('inf')
+            # If no valid features, assign a large but not infinite distance
+            avg_distance = 1e6
         
         distances.append(avg_distance)
+    
+    avg_dtw_time = np.mean(dtw_times)
+    print(f"  [DTW] Completed in {time.time()-t1:.2f}s (avg {avg_dtw_time:.3f}s per candidate)")
     
     # Select top-k nearest samples
     distances = np.array(distances)
     top_k_indices = np.argsort(distances)[:n_samples]
     
     selected_examples = [candidates[i]['sample'] for i in top_k_indices]
+    
+    print(f"  [DTW] Total time: {time.time()-t0:.2f}s")
     
     return selected_examples
 
@@ -337,27 +520,38 @@ def _build_candidate_pool_dtw(
     
     candidates = []
     
+    # Get statistical features for compass mode
+    stat_features = _get_statistical_features()
+    
     for idx in lab_pool.index:
         row = lab_pool.loc[idx]
         user_id = row[cols['user_id']]
         ema_date = row[cols['date']]
         
-        # Get aggregated features
-        agg_feats = aggregate_window_features(
-            feat_df, user_id, ema_date, cols,
-            window_days=28,  # Use 28-day window for DTW
-            mode='statistics',  # Use statistics mode for faster computation
-            use_immediate_window=False,
-            immediate_window_days=0,
-            adaptive_window=False
-        )
+        # **OPTIMIZATION**: Extract window data only ONCE and reuse it
+        window_data = get_user_window_data(feat_df, user_id, ema_date, cols, window_days=28)
         
-        # Check if valid
-        if agg_feats is not None and check_missing_ratio(agg_feats):
-            # Extract time series
-            time_series = _extract_time_series(agg_feats, cols)
+        if window_data is None or len(window_data) < 14:  # Need at least 50% of 28 days
+            continue
+        
+        # Extract time series from window data (no additional filtering)
+        time_series = _extract_time_series_from_window_data(window_data, stat_features)
+        
+        # Check if valid time series
+        if time_series is not None and time_series.shape[0] > 0:
+            # Compute aggregated features using the SAME precomputed window data
+            # This avoids redundant filtering!
+            agg_feats = aggregate_window_features(
+                feat_df, user_id, ema_date, cols,
+                window_days=28,
+                mode='statistics',
+                use_immediate_window=False,
+                immediate_window_days=0,
+                adaptive_window=False,
+                precomputed_window_data=window_data  # <-- KEY OPTIMIZATION!
+            )
             
-            if time_series is not None:
+            if agg_feats is not None:
                 labels = row[cols['labels']].to_dict()
                 sample = {
                     'aggregated_features': agg_feats,
@@ -372,6 +566,77 @@ def _build_candidate_pool_dtw(
                 })
     
     return candidates
+
+
+def _extract_time_series_from_window_data(
+    window_data: pd.DataFrame, stat_features: Optional[List[str]] = None
+) -> Optional[np.ndarray]:
+    """
+    Extract time series from already-filtered window data.
+    
+    Args:
+        window_data: Already filtered and sorted DataFrame (from get_user_window_data)
+        stat_features: List of statistical feature columns to extract
+        
+    Returns:
+        numpy array of shape (n_days, n_features) or None if insufficient data
+    """
+    if stat_features is None or window_data is None or len(window_data) == 0:
+        return None
+    
+    # Extract feature values for each day
+    time_series_list = []
+    
+    for _, row in window_data.iterrows():
+        day_features = []
+        for feat_col in stat_features:
+            if feat_col in row:
+                val = row[feat_col]
+                # Convert to float, handle NaN
+                if pd.isna(val):
+                    day_features.append(0.0)
+                else:
+                    day_features.append(float(val))
+            else:
+                day_features.append(0.0)
+        
+        time_series_list.append(day_features)
+    
+    if not time_series_list:
+        return None
+    
+    # Convert to numpy array: shape (n_days, n_features)
+    time_series = np.array(time_series_list)
+    
+    return time_series
+
+
+def _extract_time_series_from_raw_data(
+    feat_df: pd.DataFrame, user_id: str, ema_date: pd.Timestamp, cols: Dict,
+    window_days: int = 28, stat_features: Optional[List[str]] = None
+) -> Optional[np.ndarray]:
+    """
+    Extract actual 28-day time series from raw feat_df.
+    
+    Args:
+        feat_df: Raw feature dataframe
+        user_id: User ID
+        ema_date: EMA date
+        cols: Column configuration
+        window_days: Number of days to look back (default 28)
+        stat_features: List of statistical feature columns to extract
+        
+    Returns:
+        numpy array of shape (n_days, n_features) where n_days <= window_days
+        Returns None if insufficient data
+    """
+    # Use shared utility to get window data
+    window_data = get_user_window_data(feat_df, user_id, ema_date, cols, window_days)
+    
+    if window_data is None or len(window_data) < window_days * 0.5:
+        return None
+    
+    return _extract_time_series_from_window_data(window_data, stat_features)
 
 
 def _extract_time_series(agg_feats: Dict, cols: Dict) -> Optional[np.ndarray]:
