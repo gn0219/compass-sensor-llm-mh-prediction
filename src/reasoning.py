@@ -22,7 +22,7 @@ class LLMReasoner:
         self.client = LLMClient(model=model)
         self.model = model
     
-    def call_llm(self, prompt: str, temperature: float = 0.7, max_tokens: int = 1000,
+    def call_llm(self, prompt: str, temperature: float = 0.7, max_tokens: int = 3200,
                 seed: Optional[int] = None) -> Tuple[Optional[str], Dict]:
         """Call LLM API via client."""
         return self.client.call_api(prompt, temperature, max_tokens, seed)
@@ -38,11 +38,20 @@ class LLMReasoner:
             if '```json' in response_text:
                 start = response_text.find('```json') + 7
                 end = response_text.find('```', start)
-                json_str = response_text[start:end].strip()
+                if end == -1:
+                    # No closing ```, response was truncated
+                    print("[Warning] Response appears truncated (no closing ```)")
+                    json_str = response_text[start:].strip()
+                else:
+                    json_str = response_text[start:end].strip()
             elif '```' in response_text:
                 start = response_text.find('```') + 3
                 end = response_text.find('```', start)
-                json_str = response_text[start:end].strip()
+                if end == -1:
+                    print("[Warning] Response appears truncated (no closing ```)")
+                    json_str = response_text[start:].strip()
+                else:
+                    json_str = response_text[start:end].strip()
             else:
                 start = response_text.find('{')
                 end = response_text.rfind('}') + 1

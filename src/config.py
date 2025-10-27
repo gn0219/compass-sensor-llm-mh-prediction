@@ -106,18 +106,21 @@ DEFAULT_MODEL = 'gpt-5-nano'
 SUPPORTED_MODELS = [
     'gpt-5',
     'gpt-5-nano',          # OpenAI
-    'claude-3-5-sonnet',   # Anthropic
-    'gemini-2.5-pro',      # Google
+    'claude-4.5-sonnet',   # OpenRouter (Anthropic)
+    'gemini-2.5-pro',      # OpenRouter (Google)
+    'gemini-2.5-flash',    # OpenRouter (Google)
     'llama-3.1-8b',        # Ollama (on-device)
+    'llama-3.2-3b',        # Ollama (on-device)
     'mistral-7b',          # Ollama (on-device)
-    'alpaca-7b',           # Ollama (on-device)
+    'qwen3-4b',            # Ollama (on-device)
+    'gemma2-9b',           # Ollama (on-device)
 ]
 
 # Default temperature for generation
 DEFAULT_TEMPERATURE = 1.0
 
 # Default max tokens for completion
-DEFAULT_MAX_TOKENS = 1000
+DEFAULT_MAX_TOKENS = 3200
 
 # Default reasoning method
 DEFAULT_REASONING_METHOD = 'cot'  # Options: 'direct', 'cot', 'tot', 'self_consistency'

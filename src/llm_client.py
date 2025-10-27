@@ -14,11 +14,14 @@ from .utils import load_api_keys, estimate_tokens
 PRICING = {
     'gpt-5': {'input': 1.25, 'output': 10.00},
     'gpt-5-nano': {'input': 0.05, 'output': 0.40},
-    'claude-3-5-sonnet': {'input': 3.00, 'output': 15.00},
-    'gemini-2.5-pro': {'input': 1.25, 'output': 5.00},
+    'claude-4.5-sonnet': {'input': 3.00, 'output': 15.00},
+    'gemini-2.5-pro': {'input': 1.25, 'output': 10.00},
+    'gemini-2.5-flash': {'input': 0.3, 'output': 2.50},
     'llama-3.1-8b': {'input': 0.0, 'output': 0.0},  # Free (on-device)
+    'llama-3.2-3b': {'input': 0.0, 'output': 0.0},
     'mistral-7b': {'input': 0.0, 'output': 0.0},
-    'alpaca-7b': {'input': 0.0, 'output': 0.0},
+    'qwen3-4b': {'input': 0.0, 'output': 0.0},
+    'gemma2-9b': {'input': 0.0, 'output': 0.0},
 }
 
 
@@ -38,17 +41,22 @@ class LLMClient:
     MODELS = {
         'gpt-5': 'openai',
         'gpt-5-nano': 'openai',
-        'claude-4.0-sonnet': 'anthropic',
-        'gemini-2.5-pro': 'google',
+        'claude-4.5-sonnet': 'openrouter',
+        'gemini-2.5-pro': 'openrouter',
+        'gemini-2.5-flash': 'openrouter',
         'llama-3.1-8b': 'ollama',
+        'llama-3.2-3b': 'ollama',
         'mistral-7b': 'ollama',
-        'alpaca-7b': 'ollama',
+        'qwen3-4b': 'ollama',
+        'gemma2-9b': 'ollama',
     }
     
     OLLAMA_MODELS = {
         'llama-3.1-8b': 'llama3.1:8b',
+        'llama-3.2-3b': 'llama3.2:3b',
         'mistral-7b': 'mistral:7b',
-        'alpaca-7b': 'alpaca:7b',
+        'qwen3-4b': 'qwen3:4b',
+        'gemma2-9b': 'gemma2:9b',
     }
     
     def __init__(self, model: str = "gpt-5-nano"):
@@ -75,14 +83,29 @@ class LLMClient:
             from openai import OpenAI
             self.client = OpenAI(api_key=self.api_keys['openai'])
             
-        elif self.provider == 'anthropic':
-            from anthropic import Anthropic
-            self.client = Anthropic(api_key=self.api_keys['anthropic'])
+        elif self.provider == 'openrouter':
+            from openai import OpenAI
+            # OpenRouter uses OpenAI-compatible API
+            self.client = OpenAI(
+                api_key=self.api_keys['openrouter'],
+                base_url="https://openrouter.ai/api/v1"
+            )
+            # Map model names to OpenRouter model identifiers
+            self.openrouter_models = {
+                'claude-4.5-sonnet': 'anthropic/claude-4.5-sonnet',
+                'gemini-2.5-pro': 'google/gemini-2.5-pro',
+            }
+            self.openrouter_model = self.openrouter_models.get(self.model, self.model)
+            print(f"✅ OpenRouter: {self.model} -> {self.openrouter_model}")
             
-        elif self.provider == 'google':
-            import google.generativeai as genai
-            genai.configure(api_key=self.api_keys['google'])
-            self.client = genai
+        # elif self.provider == 'anthropic':
+        #     from anthropic import Anthropic
+        #     self.client = Anthropic(api_key=self.api_keys['anthropic'])
+            
+        # elif self.provider == 'google':
+        #     import google.generativeai as genai
+        #     genai.configure(api_key=self.api_keys['google'])
+        #     self.client = genai
             
         elif self.provider == 'ollama':
             import ollama
@@ -91,11 +114,13 @@ class LLMClient:
             print(f"✅ Ollama: {self.model}")
     
     def call_api(self, prompt: str, temperature: float = 0.7,
-                 max_tokens: int = 1000, seed: Optional[int] = None) -> Tuple[Optional[str], Dict]:
+                 max_tokens: int = 3200, seed: Optional[int] = None) -> Tuple[Optional[str], Dict]:
         """Call LLM API and return response with usage info."""
         try:
             if self.provider == 'openai':
                 return self._call_openai(prompt, temperature, max_tokens, seed)
+            elif self.provider == 'openrouter':
+                return self._call_openrouter(prompt, temperature, max_tokens, seed)
             elif self.provider == 'anthropic':
                 return self._call_anthropic(prompt, temperature, max_tokens)
             elif self.provider == 'google':
@@ -150,42 +175,85 @@ class LLMClient:
             'provider': 'openai', 'deployment': 'cloud'
         }
     
-    def _call_anthropic(self, prompt: str, temperature: float, max_tokens: int) -> Tuple[str, Dict]:
+    def _call_openrouter(self, prompt: str, temperature: float, max_tokens: int,
+                         seed: Optional[int]) -> Tuple[str, Dict]:
+        """Call OpenRouter API (Claude, Gemini, etc.)"""
+        params = {
+            "model": self.openrouter_model,
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": temperature,
+            "max_tokens": max_tokens
+        }
+        if seed:
+            params["seed"] = seed
+        
         start = time.time()
-        resp = self.client.messages.create(
-            model=self.model, max_tokens=max_tokens, temperature=temperature,
-            messages=[{"role": "user", "content": prompt}]
-        )
+        resp = self.client.chat.completions.create(**params)
         latency = time.time() - start
         
-        pt, ct = resp.usage.input_tokens, resp.usage.output_tokens
+        pt, ct, total = resp.usage.prompt_tokens, resp.usage.completion_tokens, resp.usage.total_tokens
         cost = calculate_cost(self.model, pt, ct)
         
-        self._update_stats(pt, ct, pt + ct, latency, cost)
+        self._update_stats(pt, ct, total, latency, cost)
         
-        return resp.content[0].text, {
-            'prompt_tokens': pt, 'completion_tokens': ct, 'total_tokens': pt + ct,
-            'latency': latency, 'cost': cost, 'provider': 'anthropic', 'deployment': 'cloud'
+        content = resp.choices[0].message.content
+        finish_reason = resp.choices[0].finish_reason
+        
+        # Debug: Check if response was truncated
+        if finish_reason == 'length':
+            print(f"[WARNING] Response truncated due to max_tokens limit!")
+            print(f"  Requested max_tokens: {max_tokens}")
+            print(f"  Actual completion_tokens: {ct}")
+            print(f"  Response length: {len(content)} chars")
+        elif ct < 100:
+            print(f"[WARNING] Very short response detected!")
+            print(f"  Completion tokens: {ct}")
+            print(f"  Response length: {len(content)} chars")
+            print(f"  Finish reason: {finish_reason}")
+        
+        return content, {
+            'prompt_tokens': pt, 'completion_tokens': ct, 'total_tokens': total,
+            'latency': latency, 'cost': cost, 'seed': seed,
+            'provider': 'openrouter', 'deployment': 'cloud',
+            'finish_reason': finish_reason
         }
     
-    def _call_google(self, prompt: str, temperature: float, max_tokens: int) -> Tuple[str, Dict]:
-        start = time.time()
-        model = self.client.GenerativeModel(self.model)
-        resp = model.generate_content(prompt, generation_config={
-            'temperature': temperature, 'max_output_tokens': max_tokens
-        })
-        latency = time.time() - start
+    # def _call_anthropic(self, prompt: str, temperature: float, max_tokens: int) -> Tuple[str, Dict]:
+    #     start = time.time()
+    #     resp = self.client.messages.create(
+    #         model=self.model, max_tokens=max_tokens, temperature=temperature,
+    #         messages=[{"role": "user", "content": prompt}]
+    #     )
+    #     latency = time.time() - start
         
-        text = resp.text
-        pt, ct = estimate_tokens(prompt), estimate_tokens(text)
-        cost = calculate_cost(self.model, pt, ct)
+    #     pt, ct = resp.usage.input_tokens, resp.usage.output_tokens
+    #     cost = calculate_cost(self.model, pt, ct)
         
-        self._update_stats(pt, ct, pt + ct, latency, cost)
+    #     self._update_stats(pt, ct, pt + ct, latency, cost)
         
-        return text, {
-            'prompt_tokens': pt, 'completion_tokens': ct, 'total_tokens': pt + ct,
-            'latency': latency, 'cost': cost, 'provider': 'google', 'deployment': 'cloud'
-        }
+    #     return resp.content[0].text, {
+    #         'prompt_tokens': pt, 'completion_tokens': ct, 'total_tokens': pt + ct,
+    #         'latency': latency, 'cost': cost, 'provider': 'anthropic', 'deployment': 'cloud'
+    #     }
+    
+    # def _call_google(self, prompt: str, temperature: float, max_tokens: int) -> Tuple[str, Dict]:
+    #     start = time.time()
+    #     model = self.client.GenerativeModel(self.model)
+    #     resp = model.generate_content(prompt, generation_config={
+    #         'temperature': temperature, 'max_output_tokens': max_tokens
+    #     })
+    #     latency = time.time() - start
+        
+    #     text = resp.text
+    #     pt, ct = estimate_tokens(prompt), estimate_tokens(text)
+    #     cost = calculate_cost(self.model, pt, ct)
+        
+    #     self._update_stats(pt, ct, pt + ct, latency, cost)
+        
+    #     return text, {
+    #         'prompt_tokens': pt, 'completion_tokens': ct, 'total_tokens': pt + ct,
+    #         'latency': latency, 'cost': cost, 'provider': 'google', 'deployment': 'cloud'
+    #     }
     
     def _call_ollama(self, prompt: str, temperature: float, max_tokens: int) -> Tuple[str, Dict]:
         start = time.time()
