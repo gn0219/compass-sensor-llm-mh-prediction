@@ -15,6 +15,7 @@ tiktoken>=0.5.0            # Token counting for OpenAI models
 # Statistical Analysis
 scipy>=1.11.0
 statsmodels>=0.14.0
+fastdtw>=0.3.4  # For DTW-based similarity in ICL
 
 # Development
 pytest>=7.4.0

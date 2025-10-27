@@ -84,123 +84,141 @@ class LLMReasoner:
             return None
     
     # ========================================================================
-    # REASONING STRATEGY: Self-Consistency
+    # REASONING STRATEGY: Self-Feedback (Self-Evolving)
     # ========================================================================
-    def predict_with_self_consistency(self, prompt: str, n_samples: int = 5, temperature: float = 0.9,
-                                     seed: Optional[int] = None) -> Tuple[Optional[Dict], List[Dict]]:
+    def predict_with_self_feedback(self, prompt: str, max_iterations: int = 3,
+                                   seed: Optional[int] = None) -> Tuple[Optional[Dict], List[Dict]]:
         """
-        Self-Consistency Reasoning Strategy.
+        Self-Feedback Reasoning Strategy.
         
-        Sample multiple diverse reasoning paths and take a majority vote.
-        Higher temperature encourages diverse reasoning paths.
+        Iteratively refines predictions based on self-assessed difficulty.
+        - Easy: Stop after first iteration
+        - Medium/Hard: Continue refining up to max_iterations
         
         Args:
             prompt: Complete prompt string
-            n_samples: Number of samples to generate (default: 5)
-            temperature: Sampling temperature (default: 0.9 for diversity)
-            seed: Optional base seed (each sample uses seed+i)
-        
-        Returns:
-            Tuple of (final_prediction, all_samples)
-        """
-        samples = []
-        
-        print(f"  🔄 Generating {n_samples} diverse reasoning paths...")
-        for i in range(n_samples):
-            # Use different seed for each sample if base seed provided
-            sample_seed = seed + i if seed is not None else None
-            response_text, usage_info = self.call_llm(
-                prompt, 
-                temperature=temperature,
-                seed=sample_seed
-            )
-            
-            if response_text is None:
-                print(f"     ⚠️  Sample {i+1} failed")
-                continue
-            
-            parsed = self.parse_response(response_text)
-            if parsed is not None:
-                parsed['usage'] = usage_info
-                samples.append(parsed)
-                print(f"     ✓ Sample {i+1}: Anx={parsed['Prediction']['Anxiety_binary']}, "
-                      f"Dep={parsed['Prediction']['Depression_binary']}")
-        
-        if len(samples) == 0:
-            print("  ❌ All samples failed")
-            return None, []
-        
-        # Majority vote
-        anxiety_votes = [s['Prediction']['Anxiety_binary'] for s in samples]
-        depression_votes = [s['Prediction']['Depression_binary'] for s in samples]
-        
-        anxiety_final = 1 if sum(anxiety_votes) > len(anxiety_votes) / 2 else 0
-        depression_final = 1 if sum(depression_votes) > len(depression_votes) / 2 else 0
-        
-        print(f"  📊 Majority Vote: Anxiety {anxiety_votes} → {anxiety_final}")
-        print(f"  📊 Majority Vote: Depression {depression_votes} → {depression_final}")
-        
-        final_prediction = {
-            'Prediction': {
-                'Anxiety': 'High Risk' if anxiety_final == 1 else 'Low Risk',
-                'Depression': 'High Risk' if depression_final == 1 else 'Low Risk',
-                'Anxiety_binary': anxiety_final,
-                'Depression_binary': depression_final
-            },
-            'Reasoning': {
-                'method': 'self_consistency',
-                'n_samples': len(samples),
-                'anxiety_votes': anxiety_votes,
-                'depression_votes': depression_votes
-            }
-        }
-        
-        return final_prediction, samples
-    
-    # ========================================================================
-    # REASONING STRATEGY: Tree-of-Thoughts (ToT)
-    # ========================================================================
-    def predict_with_tree_of_thoughts(self, prompt: str, depth: int = 2, breadth: int = 3,
-                                     temperature: float = 0.7, seed: Optional[int] = None) -> Tuple[Optional[Dict], Dict]:
-        """
-        Tree-of-Thoughts Reasoning Strategy.
-        
-        Explores multiple reasoning paths in a tree structure, evaluating each path
-        and selecting the best one.
-        
-        Args:
-            prompt: Complete prompt string
-            depth: How deep to explore the tree (default: 2)
-            breadth: How many branches at each node (default: 3)
-            temperature: Sampling temperature
+            max_iterations: Maximum number of refinement iterations (default: 3)
             seed: Optional seed for reproducibility
         
         Returns:
-            Tuple of (best_prediction, tree_structure)
-        
-        Note: This is a simplified implementation. Full ToT requires:
-        - State evaluation at each node
-        - Pruning of unpromising branches
-        - Backtracking when needed
+            Tuple of (final_prediction, all_iterations)
         """
-        print(f"  🌳 Exploring Tree-of-Thoughts (depth={depth}, breadth={breadth})...")
+        iterations = []
+        current_prompt = prompt
         
-        # TODO: Implement full Tree-of-Thoughts
-        # For now, this is a placeholder that uses self-consistency as a fallback
-        print("  ⚠️  Full ToT not yet implemented, using Self-Consistency as fallback")
+        print(f"  [Self-Feedback] Starting iterative reasoning (max {max_iterations} iterations)...")
         
-        final_prediction, samples = self.predict_with_self_consistency(
-            prompt, n_samples=breadth, temperature=temperature, seed=seed
-        )
+        for iteration in range(max_iterations):
+            print(f"  [Iteration {iteration + 1}] Generating prediction...")
+            
+            # Call LLM with increased max_tokens for refinement iterations
+            max_tokens = 6000 if iteration > 0 else 3200
+            response_text, usage_info = self.call_llm(
+                current_prompt,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                seed=seed
+            )
+            
+            if response_text is None:
+                print(f"  [ERROR] Iteration {iteration + 1} failed")
+                break
+            
+            # Parse response
+            parsed = self.parse_response(response_text)
+            if parsed is None:
+                print(f"  [ERROR] Could not parse iteration {iteration + 1}")
+                break
+            
+            # Add metadata
+            parsed['usage'] = usage_info
+            parsed['iteration'] = iteration + 1
+            iterations.append(parsed)
+            
+            # Extract difficulty assessment
+            difficulty = parsed.get('Difficulty', 'Hard')
+            if isinstance(difficulty, dict):
+                difficulty = difficulty.get('value', 'Hard')
+            
+            confidence_anx = parsed.get('Confidence', {}).get('Anxiety', 'Low')
+            confidence_dep = parsed.get('Confidence', {}).get('Depression', 'Low')
+            
+            print(f"  [Iteration {iteration + 1}] Difficulty: {difficulty} | "
+                  f"Confidence - Anx: {confidence_anx}, Dep: {confidence_dep}")
+            
+            # If Easy difficulty, stop iteration
+            if difficulty == 'Easy':
+                print(f"  [Self-Feedback] Stopping - prediction marked as Easy")
+                break
+            
+            # If this is the last iteration, stop
+            if iteration >= max_iterations - 1:
+                print(f"  [Self-Feedback] Reached maximum iterations")
+                break
+            
+            # Prepare refinement prompt for next iteration
+            print(f"  [Self-Feedback] Difficulty {difficulty} - preparing refinement prompt...")
+            refinement_prompt = self._build_refinement_prompt(prompt, response_text, difficulty)
+            current_prompt = refinement_prompt
         
-        tree_structure = {
-            'method': 'tree_of_thoughts',
-            'depth': depth,
-            'breadth': breadth,
-            'note': 'Simplified implementation using Self-Consistency'
+        if len(iterations) == 0:
+            print("  [ERROR] All iterations failed")
+            return None, []
+        
+        # Use the last iteration as final prediction
+        final_iteration = iterations[-1]
+        
+        # Build final prediction dict
+        final_pred = final_iteration.get('Refined_Prediction') or final_iteration.get('Prediction')
+        
+        final_prediction = {
+            'Prediction': final_pred,
+            'Reasoning': {
+                'method': 'self_feedback',
+                'total_iterations': len(iterations),
+                'final_difficulty': final_iteration.get('Difficulty', 'Unknown'),
+                'all_iterations': iterations
+            }
         }
         
-        return final_prediction, tree_structure
+        print(f"  [Self-Feedback] Completed with {len(iterations)} iteration(s)")
+        
+        return final_prediction, iterations
+    
+    def _build_refinement_prompt(self, original_prompt: str, previous_response: str, difficulty: str) -> str:
+        """Build a refinement prompt for the next iteration."""
+        refinement_instruction = f"""
+You previously made a prediction that was marked as {difficulty}. Here is your previous analysis:
+
+---
+{previous_response}
+---
+
+Now, conduct a deeper analysis focusing on the challenges and areas identified above. Consider:
+1. Re-examine the conflicting signals or ambiguous patterns
+2. Look for subtle indicators that might have been missed
+3. Consider the temporal dynamics and trends more carefully
+4. Integrate insights from similar examples if provided
+
+Please provide your refined response in the following JSON format:
+{{
+  "Refined_Prediction": {{
+    "Anxiety": "Low Risk" or "High Risk",
+    "Depression": "Low Risk" or "High Risk"
+  }},
+  "Confidence": {{
+    "Anxiety": "High" or "Medium" or "Low",
+    "Depression": "High" or "Medium" or "Low"
+  }},
+  "Refined_Analysis": "Explain how your deeper analysis led to this prediction",
+  "Difficulty": "Easy" or "Medium" or "Hard",
+  "Changes_from_Initial": "Describe what changed (if anything) and why"
+}}
+"""
+        
+        # Combine original data with refinement instruction
+        return original_prompt + "\n\n" + refinement_instruction
+    
     
     def get_usage_summary(self) -> Dict:
         """Get summary of API usage and costs."""

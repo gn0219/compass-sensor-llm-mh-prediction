@@ -47,23 +47,27 @@ example_format:
 # ICL STRATEGIES
 # ============================================================================
 strategies:
-  personalized:
-    description: "Use examples from the same user's history"
-    example_selection: "same_user"
-    n_examples: 4
-    temporal_constraint: "previous_timepoints_only"
-  
-  generalized:
-    description: "Use examples from different users"
+  cross_random:
+    description: "Randomly selected examples from other users"
     example_selection: "diverse_users"
     n_examples: 4
-    diversity_metric: "behavioral_similarity"
   
-  hybrid:
-    description: "Mix of personal and general examples"
+  cross_retrieval:
+    description: "DTW-based similarity selection from other users"
+    example_selection: "similar_users"
+    n_examples: 4
+  
+  personal_recent:
+    description: "Most recent examples from the target user's history"
+    example_selection: "same_user"
+    n_examples: 4
+    temporal_constraint: "most_recent"
+  
+  hybrid_blend:
+    description: "Mix of personal recent and cross-user examples"
     example_selection: "mixed"
     n_examples: 4
-    ratio_personal_to_general: "1:1"
+    ratio_personal_to_cross: "1:1"
   
   zero_shot:
     description: "No examples provided"

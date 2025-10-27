@@ -262,6 +262,10 @@ def _aggregate_compass_features(feat_df: pd.DataFrame, user_feats: pd.DataFrame,
     semantic_feats = feature_set.get('semantic', {})
     temporal_feats = feature_set.get('temporal_descriptor', {})
     
+    # Handle 'None' string from JSON config
+    if temporal_feats == 'None':
+        temporal_feats = None
+    
     # ========== 1. STATISTICAL & STRUCTURAL FEATURES ==========
     for feat_col, feat_name in statistical_feats.items():
         if feat_col not in user_feats.columns:
@@ -274,10 +278,10 @@ def _aggregate_compass_features(feat_df: pd.DataFrame, user_feats: pd.DataFrame,
         
         # Statistical: mean, std, min, max over 28 days
         stats = {
-            'mean': round(np.nanmean(values), 2),
-            'std': round(np.nanstd(values), 2),
-            'min': round(np.nanmin(values), 2),
-            'max': round(np.nanmax(values), 2)
+            'mean': round(np.nanmean(values), 1),
+            'std': round(np.nanstd(values), 1),
+            'min': round(np.nanmin(values), 1),
+            'max': round(np.nanmax(values), 1)
         }
         
         # Structural: slopes for past 2 weeks (28~15 days) and recent 2 weeks (14~1 days)
@@ -343,7 +347,7 @@ def _aggregate_compass_features(feat_df: pd.DataFrame, user_feats: pd.DataFrame,
             values = user_feats[feat_col].values
             mean_val = np.nanmean(values)
             
-            semantic_groups[base_name][period] = round(mean_val, 2) if not np.isnan(mean_val) else None
+            semantic_groups[base_name][period] = round(mean_val, 1) if not np.isnan(mean_val) else None
     
     # Build semantic feature descriptions
     for base_name, periods in semantic_groups.items():
@@ -406,15 +410,17 @@ def _aggregate_compass_features(feat_df: pd.DataFrame, user_feats: pd.DataFrame,
             result['semantic_features'][base_name] = semantic_info
     
     # ========== 3. TEMPORAL DESCRIPTORS ==========
-    # Get last 7 days as daily arrays
-    last_7_days = user_feats.tail(7)
-    
-    for feat_col, feat_name in temporal_feats.items():
-        if feat_col in last_7_days.columns:
-            values = last_7_days[feat_col].tolist()
-            # Round and handle None
-            values = [round(v, 2) if pd.notna(v) else None for v in values]
-            result['temporal_descriptors'][feat_name] = values
+    # Only process if temporal_feats is not None and not 'None' string
+    if temporal_feats and temporal_feats != 'None':
+        # Get last 7 days as daily arrays
+        last_7_days = user_feats.tail(7)
+        
+        for feat_col, feat_name in temporal_feats.items():
+            if feat_col in last_7_days.columns:
+                values = last_7_days[feat_col].tolist()
+                # Round and handle None
+                values = [round(v, 2) if pd.notna(v) else None for v in values]
+                result['temporal_descriptors'][feat_name] = values
     
     return result
 
@@ -714,28 +720,36 @@ def features_to_text(agg_feats, cols: Dict, include_stats: bool = True) -> str:
         statistical = agg_feats.get('statistical_features', {})
         structural = agg_feats.get('structural_features', {})
         
+        text += "28 day summary features (P2W slope and R2W slope are calculated based on the past 2 weeks and recent 2 weeks trend):\n"
         for feat_name in statistical.keys():
             stats = statistical.get(feat_name, {})
             struct = structural.get(feat_name, {})
             
-            text += f"{feat_name}\n"
-            text += f"- {window_days} day mean: {stats.get('mean', 'N/A')}, "
-            text += f"std: {stats.get('std', 'N/A')}, "
-            text += f"min: {stats.get('min', 'N/A')}, "
-            text += f"max: {stats.get('max', 'N/A')}\n"
+            # text += f"{feat_name}\n"
+            # text += f"- {window_days} day mean: {stats.get('mean', 'N/A')}, "
+            # text += f"std: {stats.get('std', 'N/A')}, "
+            # text += f"min: {stats.get('min', 'N/A')}, "
+            # text += f"max: {stats.get('max', 'N/A')}\n"
             
+
+            text += f"{feat_name}: "
+            text += f"mean={stats.get('mean', 'N/A')}, "
+            text += f"sd={stats.get('std', 'N/A')}, "
+            text += f"min={stats.get('min', 'N/A')}, "
+            text += f"max={stats.get('max', 'N/A')}\n"
+
             # Slopes
             past_dir = struct.get('past_2weeks_direction', 'stable')
             past_slope = struct.get('past_2weeks_slope', 'N/A')
             recent_dir = struct.get('recent_2weeks_direction', 'stable')
             recent_slope = struct.get('recent_2weeks_slope', 'N/A')
-            text += f"- Past 2 weeks slope: ({past_dir}, {past_slope}), Recent 2 weeks slope: ({recent_dir}, {recent_slope})\n\n"
+            text += f"- P2W slope=({past_dir}, {past_slope}), R2W slope=({recent_dir}, {recent_slope})\n\n"
         
         # 2. Semantic features
         semantic = agg_feats.get('semantic_features', {})
         if semantic:
             text += "The following shows weekday/weekend patterns, 28-day circadian rhythms, "
-            text += "and yesterday's transitions (morning/afternoon/evening/night) for some features.\n\n"
+            text += "and yesterday's transitions (morning/afternoon/evening/night).\n\n"
             
             for feat_name, sem_info in semantic.items():
                 text += f"- {feat_name}\n"
@@ -754,7 +768,7 @@ def features_to_text(agg_feats, cols: Dict, include_stats: bool = True) -> str:
                     text += f"  - 28 day rhythms (mean):\n"
                     for period in ['morning', 'afternoon', 'evening', 'night']:
                         if period in circ:
-                            text += f"    - {period}: {circ[period]}\n"
+                            text += f"    - {period}={circ[period]}\n"
                 
                 # Yesterday transition
                 if 'yesterday_transition' in sem_info:
@@ -766,9 +780,9 @@ def features_to_text(agg_feats, cols: Dict, include_stats: bool = True) -> str:
                 
                 text += "\n"
         
-        # 3. Temporal descriptors
+        # 3. Temporal descriptors (only if available)
         temporal = agg_feats.get('temporal_descriptors', {})
-        if temporal:
+        if temporal and temporal != 'None':
             text += "Here are some recent variables (last 7 days):\n"
             for feat_name, values in temporal.items():
                 value_str = ', '.join([str(v) if v is not None else 'N/A' for v in values])
@@ -786,32 +800,6 @@ def features_to_text(agg_feats, cols: Dict, include_stats: bool = True) -> str:
                 text += f"    [{value_str}]\n"
             else:
                 text += f"    [all missing]\n"
-    
-    # ========== STATISTICS FORMAT ==========
-    elif mode == 'statistics':
-        window_days = agg_feats.get('window_days', 'N')
-        use_immediate = agg_feats.get('use_immediate_window', False)
-        immediate_window_days = agg_feats.get('immediate_window_days', 7)
-        
-        if use_immediate:
-            text += f"(Statistics over {window_days} days, with recent {immediate_window_days}-day window)\n\n"
-        else:
-            text += f"(Statistics over {window_days} days)\n\n"
-        
-        for feat_name, feat_stats in agg_feats.get('features', {}).items():
-            simple_name = _simplify_feature_name(feat_name)
-            text += f"  - {simple_name}:\n"
-            
-            for stat_name, stat_value in feat_stats.items():
-                if stat_name.startswith('last_'):
-                    if isinstance(stat_value, list):
-                        value_str = ', '.join([str(v) if v is not None else 'missing' for v in stat_value])
-                        text += f"    * {stat_name}: [{value_str}]\n"
-                else:
-                    if stat_value is not None and pd.notna(stat_value):
-                        text += f"    * {stat_name}: {stat_value}\n"
-                    else:
-                        text += f"    * {stat_name}: missing\n"
     
     return text
 

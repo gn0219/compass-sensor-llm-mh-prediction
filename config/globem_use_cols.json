@@ -18,7 +18,7 @@
                 "f_steps:fitbit_steps_intraday_rapids_countepisodeactivebout:allday": "Steps - count episodes active bout",
                 "f_steps:fitbit_steps_intraday_rapids_sumdurationactivebout:allday": "Steps - sum duration active bout",
                 "f_slp:fitbit_sleep_intraday_rapids_sumdurationasleepunifiedmain:allday": "Sleep - sum duration asleep unified main",
-                "f_slp:fitbit_sleep_intraday_rapids_sumdurationawakeunifiedmain:allday": "Sleep - sum duration awake unified main",
+                "f_slp:fitbit_sleep_intraday_rapids_sumdurationawakeunifiedmain:allday": "Sleep - sum duration awake unified main"
             },
             "structural": "None",
             "semantic": {

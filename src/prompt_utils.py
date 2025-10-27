@@ -13,35 +13,33 @@ from .utils import NumpyEncoder
 from . import config
 
 
-def build_experiment_prefix(n_shot: int, source: str, *, dataset: str = None,
-                            sensor_format: str = None, selection: str = None, 
-                            beta: float = None, seed: int = None) -> str:
-    """Build dataset_sensor_nshot_source_selection_seed{seed} prefix.
+def build_experiment_prefix(n_shot: int, strategy: str, *, dataset: str = None,
+                            sensor_format: str = None, reasoning: str = None,
+                            seed: int = None) -> str:
+    """Build dataset_sensor_nshot_strategy_reasoning_seed{seed} prefix.
 
     Examples:
-        - globem_structured_5shot_generalized_diversity00_seed50  (diversity with beta=0.0)
-        - globem_structured_5shot_generalized_diversity02_seed50  (diversity with beta=0.2)
-        - globem_structured_5shot_personalized_temporal_seed42    (temporal selection)
-        - globem_structured_5shot_hybrid_similarity_seed42        (similarity selection)
-        - globem_structured_5shot_hybrid_random_seed42            (random selection)
+        - globem_compass_zeroshot_none_direct_seed42
+        - globem_compass_4shot_crossrandom_cot_seed42
+        - globem_compass_4shot_crossretrieval_cot_seed999
+        - globem_compass_4shot_personalrecent_cot_seed42
+        - globem_compass_4shot_hybridblend_self_feedback_seed42
     """
     dataset = dataset or config.DATASET_NAME
     sensor_format = sensor_format or config.DEFAULT_TARGET
     shot_str = f"{n_shot}shot" if n_shot > 0 else "zeroshot"
     seed_str = f"seed{seed}" if seed is not None else "seedNone"
     
-    # Build selection string
-    if selection and selection != 'random':
-        if selection == 'diversity' and beta is not None:
-            # Format beta as integer percentage (0.0 -> 00, 0.1 -> 01, 0.2 -> 02, 0.3 -> 03, etc.)
-            beta_str = f"{int(beta * 10):02d}"
-            selection_str = f"{selection}{beta_str}"
-        else:
-            selection_str = selection
+    # Handle zero-shot case
+    if n_shot == 0:
+        strategy_str = "none"
     else:
-        selection_str = selection or 'random'
+        strategy_str = strategy.replace('_', '')
     
-    return f"{dataset}_{sensor_format}_{shot_str}_{source}_{selection_str}_{seed_str}"
+    # Add reasoning method
+    reasoning_str = reasoning.replace('_', '') or 'direct'
+    
+    return f"{dataset}_{sensor_format}_{shot_str}_{strategy_str}_{reasoning_str}_{seed_str}"
 
 def get_experiment_name(n_shot: int, source: str = 'hybrid', reasoning_method: str = 'cot',
                             dataset: str = None, sensor_format: str = None, seed: int = None, llm_seed: int = None) -> str:
@@ -58,8 +56,13 @@ def get_experiment_name(n_shot: int, source: str = 'hybrid', reasoning_method: s
 
 def build_prompt(prompt_manager: PromptManager, input_sample: Dict, cols: Dict,
                 icl_examples: Optional[List[Dict]] = None, icl_strategy: str = "zero_shot",
-                reasoning_method: str = "cot", target_label: str = "fctci", feat_df=None) -> str:
+                reasoning_method: str = "cot", target_label: str = "fctci", feat_df=None, step_timings=None) -> str:
     """Build complete prompt from components."""
+    import time
+    
+    # Track feature extraction time separately
+    feat_start = time.time()
+    
     # Convert input sample to text
     input_text = sample_to_prompt(input_sample, cols, format_type=config.DEFAULT_TARGET, feat_df=feat_df)
     
@@ -82,6 +85,13 @@ def build_prompt(prompt_manager: PromptManager, input_sample: Dict, cols: Dict,
                 'anxiety_label': anxiety_label,
                 'depression_label': depression_label
             })
+    
+    # Record feature engineering time
+    if step_timings is not None:
+        feat_time = time.time() - feat_start
+        if 'feature_engineering' not in step_timings:
+            step_timings['feature_engineering'] = []
+        step_timings['feature_engineering'].append(feat_time)
     
     # Build complete prompt using PromptManager's method
     prompt = prompt_manager.build_complete_prompt(
@@ -109,7 +119,7 @@ def save_prompts_to_disk(prompts: List[str], labels: List, experiment_name: str,
         experiment_name: Name of the experiment
         seed: Random seed used
         output_dir: Directory to save prompts
-        step_timings: Optional dict of timing arrays for data_sampling, icl_selection, prompt_building
+        step_timings: Optional dict of timing arrays for loading, test_sampling, feature_engineering, icl_selection, prompt_building
     """
 
     save_dir = Path(output_dir) / experiment_name
@@ -136,7 +146,7 @@ def save_prompts_to_disk(prompts: List[str], labels: List, experiment_name: str,
     if step_timings:
         metadata['step_timings'] = {
             k: v for k, v in step_timings.items() 
-            if k in ['data_sampling', 'icl_selection', 'prompt_building']
+            if k in ['loading', 'test_sampling', 'feature_engineering', 'icl_selection', 'prompt_building']
         }
     
     metadata_file = save_dir / "metadata.json"

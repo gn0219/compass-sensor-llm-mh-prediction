@@ -58,38 +58,64 @@ reasoning_methods:
       }
   
   # -------------------------
-  # 4. Self-Consistency
+  # 3. Self-Feedback (Self-Evolving)
   # -------------------------
-  sc:
-    name: "Self-Consistency"
-    description: "Generate multiple reasoning paths and aggregate"
-    instruction: |
-      Please provide THREE independent reasoning chains that consider the 
-      behavioral data from different perspectives.
+  self_feedback:
+    name: "Self-Feedback"
+    description: "Iterative reasoning with self-assessment and refinement"
+    initial_instruction: |
+      Based on the behavioral data and any examples provided, analyze the patterns carefully and make your prediction.
+      
+      IMPORTANT: After your prediction, you must provide:
+      1. Your confidence level for each prediction
+      2. Key insights from the data
+      3. Difficulty assessment
+      4. Explanation of what made this prediction challenging (if applicable)
     
-    output_format: |
+    initial_output_format: |
       Please provide your response in the following JSON format:
       {
-        "Reasoning_Path_1": {
-          "Perspective": "Focus on sleep and activity patterns",
-          "Analysis": "Your analysis",
-          "Prediction": {"Anxiety": "X", "Depression": "Y"}
-        },
-        "Reasoning_Path_2": {
-          "Perspective": "Focus on social engagement patterns",
-          "Analysis": "Your analysis",
-          "Prediction": {"Anxiety": "X", "Depression": "Y"}
-        },
-        "Reasoning_Path_3": {
-          "Perspective": "Focus on mobility and location patterns",
-          "Analysis": "Your analysis",
-          "Prediction": {"Anxiety": "X", "Depression": "Y"}
-        },
         "Prediction": {
           "Anxiety": "Low Risk" or "High Risk",
-          "Depression": "Low Risk" or "High Risk",
-          "Confidence": "Explanation of consistency across paths"
-        }
+          "Depression": "Low Risk" or "High Risk"
+        },
+        "Confidence": {
+          "Anxiety": "High" or "Medium" or "Low",
+          "Depression": "High" or "Medium" or "Low"
+        },
+        "Key_Insights": "Summarize the main patterns and indicators you observed in 2-3 sentences",
+        "Difficulty": "Easy" or "Medium" or "Hard",
+        "Challenges": "If Medium or Hard: explain what made this prediction difficult - ambiguous patterns, conflicting signals, limited data, etc.",
+        "Focus_Areas_for_Refinement": "If Medium or Hard: what aspects should be examined more carefully in a second analysis?"
+      }
+    
+    refinement_instruction: |
+      You previously made a prediction that was marked as {difficulty}. Here is your previous analysis:
+      
+      {previous_response}
+      
+      ---
+      
+      Now, conduct a deeper analysis focusing on the challenges and areas identified above. Consider:
+      1. Re-examine the conflicting signals or ambiguous patterns
+      2. Look for subtle indicators that might have been missed
+      3. Consider the temporal dynamics and trends more carefully
+      4. Integrate insights from similar examples if provided
+    
+    refinement_output_format: |
+      Please provide your refined response in the following JSON format:
+      {
+        "Refined_Prediction": {
+          "Anxiety": "Low Risk" or "High Risk",
+          "Depression": "Low Risk" or "High Risk"
+        },
+        "Confidence": {
+          "Anxiety": "High" or "Medium" or "Low",
+          "Depression": "High" or "Medium" or "Low"
+        },
+        "Refined_Analysis": "Explain how your deeper analysis led to this prediction, addressing the previously identified challenges",
+        "Difficulty": "Easy" or "Medium" or "Hard",
+        "Changes_from_Initial": "Describe what changed (if anything) and why"
       }
 
 # Output constraints

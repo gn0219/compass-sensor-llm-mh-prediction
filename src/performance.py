@@ -309,7 +309,7 @@ def print_metrics_summary(metrics: Dict):
     print("="*60 + "\n")
 
 
-def save_predictions_to_csv(predictions: List[Dict], filepath: str):
+def save_predictions_to_csv(predictions: List[Dict], filepath: str, reasoning_method: str = 'direct'):
     """
     Save prediction results to CSV file.
     
@@ -317,25 +317,46 @@ def save_predictions_to_csv(predictions: List[Dict], filepath: str):
         predictions: List of prediction dictionaries with user_id, ema_date, 
                     true_anxiety, true_depression, pred_anxiety, pred_depression
         filepath: Output CSV file path
+        reasoning_method: Reasoning method used ('direct', 'cot', 'self_feedback')
     """
-    data = {
-        'uid': [],
-        'date': [],
-        'y_anx_real': [],
-        'y_anx_pred': [],
-        'y_dep_real': [],
-        'y_dep_pred': []
-    }
+    records = []
     
     for pred in predictions:
-        data['uid'].append(pred['user_id'])
-        data['date'].append(pred['ema_date'].strftime('%Y-%m-%d') if hasattr(pred['ema_date'], 'strftime') else str(pred['ema_date']))
-        data['y_anx_real'].append(pred['true_anxiety'])
-        data['y_anx_pred'].append(pred['pred_anxiety'])
-        data['y_dep_real'].append(pred['true_depression'])
-        data['y_dep_pred'].append(pred['pred_depression'])
+        record = {
+            'uid': pred['user_id'],
+            'date': pred['ema_date'].strftime('%Y-%m-%d') if hasattr(pred['ema_date'], 'strftime') else str(pred['ema_date']),
+            'y_anx_real': pred['true_anxiety'],
+            'y_dep_real': pred['true_depression']
+        }
+        
+        # For self_feedback, save all iteration results
+        if reasoning_method == 'self_feedback' and 'llm_response' in pred:
+            llm_resp = pred['llm_response']
+            if llm_resp and 'Reasoning' in llm_resp:
+                reasoning = llm_resp['Reasoning']
+                all_iterations = reasoning.get('all_iterations', [])
+                
+                # Save each iteration's prediction and confidence
+                for i, iteration in enumerate(all_iterations, 1):
+                    iter_pred = iteration.get('Refined_Prediction') or iteration.get('Prediction')
+                    iter_conf = iteration.get('Confidence', {})
+                    
+                    if iter_pred:
+                        anx_pred = 1 if iter_pred.get('Anxiety') == 'High Risk' else 0
+                        dep_pred = 1 if iter_pred.get('Depression') == 'High Risk' else 0
+                        
+                        record[f'y_anx_pred_{i}'] = anx_pred
+                        record[f'y_dep_pred_{i}'] = dep_pred
+                        record[f'y_anx_conf_{i}'] = iter_conf.get('Anxiety', 'N/A')
+                        record[f'y_dep_conf_{i}'] = iter_conf.get('Depression', 'N/A')
+        
+        # Always save final prediction
+        record['y_anx_pred'] = pred['pred_anxiety']
+        record['y_dep_pred'] = pred['pred_depression']
+        
+        records.append(record)
     
-    df = pd.DataFrame(data)
+    df = pd.DataFrame(records)
     df.to_csv(filepath, index=False)
     print(f"✅ Predictions saved: {filepath}")
 
@@ -384,7 +405,7 @@ def save_metrics_to_csv(metrics: Dict, filepath: str):
     print(f"Metrics saved to: {filepath}")
 
 
-def export_comprehensive_report(report: Dict, base_filepath: str, predictions: List[Dict] = None):
+def export_comprehensive_report(report: Dict, base_filepath: str, predictions: List[Dict] = None, reasoning_method: str = 'direct'):
     """Export comprehensive report to JSON and CSV formats."""
     # JSON export with NumpyEncoder to handle DataFrames and numpy types
     json_path = f"{base_filepath}.json"
@@ -431,7 +452,7 @@ def export_comprehensive_report(report: Dict, base_filepath: str, predictions: L
     # Predictions CSV
     if predictions:
         pred_path = f"{base_filepath}_predictions.csv"
-        save_predictions_to_csv(predictions, pred_path)
+        save_predictions_to_csv(predictions, pred_path, reasoning_method=reasoning_method)
 
 
 def compare_experiments(reports: List[Dict], names: Optional[List[str]] = None) -> pd.DataFrame:

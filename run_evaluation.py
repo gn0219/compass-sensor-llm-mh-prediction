@@ -46,16 +46,13 @@ def main():
                        help='Number of test samples (batch mode only)')
     parser.add_argument('--n_shot', type=int, default=config.DEFAULT_N_SHOT,
                        help='Number of ICL examples')
-    parser.add_argument('--source', type=str, default=config.DEFAULT_ICL_SOURCE,
-                       choices=['personalized', 'generalized', 'hybrid'],
-                       help='ICL source strategy')
-    parser.add_argument('--selection', type=str, default=config.DEFAULT_SELECTION_METHOD,
-                       choices=['random', 'similarity', 'temporal', 'diversity'],
-                       help='ICL selection method')
-    parser.add_argument('--beta', type=float, default=0.0,
-                       help='Label balance penalty for diversity selection (0.0=no penalty, 0.1-0.3=recommended)')
+    parser.add_argument('--strategy', type=str, default='cross_random',
+                       choices=['cross_random', 'cross_retrieval', 'personal_recent', 'hybrid_blend', 'none'],
+                       help='ICL strategy: cross_random (random from others), cross_retrieval (DTW from others), personal_recent (recent from self), hybrid_blend (mix), none (zero-shot)')
+    parser.add_argument('--use-dtw', action='store_true',
+                       help='For hybrid_blend: use DTW for cross-user part (default: random)')
     parser.add_argument('--reasoning', type=str, default=config.DEFAULT_REASONING_METHOD,
-                       choices=['direct', 'cot', 'sc'],
+                       choices=['direct', 'cot', 'self_feedback'],
                        help='LLM reasoning method')
     parser.add_argument('--model', type=str, default=config.DEFAULT_MODEL,
                        choices=config.SUPPORTED_MODELS,
@@ -86,8 +83,8 @@ def main():
     args = parser.parse_args()
     
     # Validate arguments
-    if args.selection == 'diversity' and args.beta < 0:
-        raise ValueError(f"Beta must be >= 0 for diversity selection, got {args.beta}")
+    if args.n_shot > 0 and args.strategy == 'none':
+        print("Warning: n_shot > 0 but strategy is 'none'. Will use zero-shot.")
     
     if args.save_prompts_only:
         if args.mode == 'single':
@@ -103,7 +100,7 @@ def main():
     print("="*60)
     print(f"  Mode: {args.mode} | Model: {args.model}")
     if not args.load_prompts:
-        print(f"  ICL: {args.source} | Selection: {args.selection} | N-Shot: {args.n_shot}")
+        print(f"  ICL Strategy: {args.strategy} | N-Shot: {args.n_shot}")
         print(f"  Reasoning: {args.reasoning}")
         if args.mode == 'batch':
             print(f"  Samples: {args.n_samples} | Stratified: {config.USE_STRATIFIED_SAMPLING}")
@@ -122,11 +119,16 @@ def main():
         print("  Skipping data loading (not needed)")
         print("  Skipping prompt manager (prompts pre-generated)")
         feat_df, lab_df, cols, prompt_manager = None, None, None, None
+        initial_timings = {'loading': 0.0, 'test_sampling': 0.0}
     else:
+        import time
+        initial_timings = {}
+        
         print("\n[Loading GLOBEM dataset...]")
         
         # Check if multi-institution testset mode is enabled
         if config.USE_MULTI_INSTITUTION_TESTSET:
+            t0_total = time.time()
             feat_df, lab_df, cols = sample_multiinstitution_testset(
                 institutions_config=config.MULTI_INSTITUTION_CONFIG,
                 min_ema_per_user=config.MIN_EMA_PER_USER,
@@ -134,18 +136,26 @@ def main():
                 random_state=args.seed,
                 target=config.DEFAULT_TARGET
             )
+            total_time = time.time() - t0_total
+            # For multi-institution, loading and sampling happen together
+            # Approximate: 30% loading, 70% sampling
+            initial_timings['loading'] = total_time * 0.3
+            initial_timings['test_sampling'] = total_time * 0.7
         else:
+            t0_load = time.time()
             feat_df, lab_df, cols = load_globem_data(institution=config.DEFAULT_INSTITUTION, target=config.DEFAULT_TARGET)
+            initial_timings['loading'] = time.time() - t0_load
+            
             print(f"  Target: {config.DEFAULT_TARGET}")
             print(f"  Features: {feat_df.shape[0]} rows | Labels: {lab_df.shape[0]} rows")
             
             # Filter test set by historical labels (for fair ICL comparison)
+            t0_sampling = time.time()
             if config.FILTER_TESTSET_BY_HISTORY:
                 lab_df = filter_testset_by_historical_labels(
                     lab_df, cols, min_historical=config.MIN_HISTORICAL_LABELS
                 )
-            else:
-                print(f"\n[Warning: Test set filtering disabled - personalized ICL may fail]")
+            initial_timings['test_sampling'] = time.time() - t0_sampling
         
         print("\n[Initializing Prompt Manager...]")
         prompt_manager = PromptManager()
@@ -162,17 +172,17 @@ def main():
     
     model_name = args.model.replace('/', '_').replace('-', '_').replace('.', '_')
     # Common prefix per spec - include selection and beta
-    # Always pass beta for diversity, even if 0.0 (to distinguish diversity00, diversity01, etc.)
-    exp_prefix = build_experiment_prefix(args.n_shot, args.source, selection=args.selection, 
-                                        beta=args.beta if args.selection == 'diversity' else None, 
+    # Build experiment prefix with new strategy naming
+    exp_prefix = build_experiment_prefix(args.n_shot, args.strategy, 
+                                        reasoning=args.reasoning, 
                                         seed=args.seed)
     # Run evaluation
     if args.mode == 'single':
         result = run_single_prediction(
             prompt_manager, reasoner, feat_df, lab_df, cols, 
-            n_shot=args.n_shot, source=args.source, selection=args.selection, 
+            n_shot=args.n_shot, strategy=args.strategy, use_dtw=args.use_dtw,
             reasoning_method=args.reasoning, random_state=args.seed, 
-            llm_seed=args.llm_seed, beta=args.beta, verbose=args.verbose
+            llm_seed=args.llm_seed, verbose=args.verbose
         )
         
         if result:
@@ -215,26 +225,28 @@ def main():
             result = run_batch_prompts_only(
                 prompt_manager, feat_df, lab_df, cols,
                 n_samples=args.n_samples, n_shot=args.n_shot,
-                source=args.source, selection=args.selection,
+                strategy=args.strategy, use_dtw=args.use_dtw,
                 reasoning_method=args.reasoning, random_state=args.seed,
-                beta=args.beta, verbose=args.verbose,
-                use_all_samples=config.USE_MULTI_INSTITUTION_TESTSET
+                verbose=args.verbose,
+                use_all_samples=config.USE_MULTI_INSTITUTION_TESTSET,
+                initial_timings=initial_timings
             )
-            exp_prefix = build_experiment_prefix(args.n_shot, args.source, selection=args.selection,
-                                                beta=args.beta if args.selection == 'diversity' else None,
+            exp_prefix = build_experiment_prefix(args.n_shot, args.strategy,
+                                                reasoning=args.reasoning,
                                                 seed=args.seed)
         else:
             result = run_batch_evaluation(
                 prompt_manager, reasoner, feat_df, lab_df, cols, 
                 n_samples=args.n_samples, n_shot=args.n_shot, 
-                source=args.source, selection=args.selection,
+                strategy=args.strategy, use_dtw=args.use_dtw,
                 reasoning_method=args.reasoning, random_state=args.seed, 
-                llm_seed=args.llm_seed, beta=args.beta,
+                llm_seed=args.llm_seed,
                 collect_prompts=args.save_prompts, verbose=args.verbose,
-                use_all_samples=config.USE_MULTI_INSTITUTION_TESTSET
+                use_all_samples=config.USE_MULTI_INSTITUTION_TESTSET,
+                initial_timings=initial_timings
             )
-            exp_prefix = build_experiment_prefix(args.n_shot, args.source, selection=args.selection,
-                                                beta=args.beta if args.selection == 'diversity' else None,
+            exp_prefix = build_experiment_prefix(args.n_shot, args.strategy,
+                                                reasoning=args.reasoning,
                                                 seed=args.seed)
             
         if result:

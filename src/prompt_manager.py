@@ -111,9 +111,10 @@ class PromptManager:
         
         # Add strategy description
         strategy_descriptions = {
-            'personalized': "The following examples are from the target user's historical data.",
-            'generalized': "The following examples are from other users.",
-            'hybrid': "The following examples include both the target user's historical data and data from other users."
+            'cross_random': "The following examples are randomly selected from other users.",
+            'cross_retrieval': "The following examples are selected from other users based on temporal similarity to the target user.",
+            'personal_recent': "The following examples are the most recent data from the target user's historical records.",
+            'hybrid_blend': "The following examples include both recent data from the target user and similar cases from other users."
         }
         
         if strategy in strategy_descriptions:
@@ -159,10 +160,23 @@ class PromptManager:
             raise ValueError(f"Unknown reasoning method: {method}. Available: {list(methods.keys())}")
         
         m = methods[method]
-        return {
-            'name': m['name'], 'description': m['description'],
-            'instruction': m['instruction'].strip(), 'output_format': m['output_format'].strip()
-        }
+        
+        # Handle different reasoning method structures
+        if method == 'self_feedback':
+            # Self-feedback has initial_instruction instead of instruction
+            return {
+                'name': m['name'],
+                'description': m['description'],
+                'instruction': m.get('initial_instruction', m.get('instruction', '')).strip(),
+                'output_format': m.get('initial_output_format', m.get('output_format', '')).strip()
+            }
+        else:
+            return {
+                'name': m['name'],
+                'description': m['description'],
+                'instruction': m.get('instruction', '').strip(),
+                'output_format': m.get('output_format', '').strip()
+            }
     
     # def get_output_constraints(self) -> str:
     #     """Get formatted output constraints (DO/DON'T guidelines)."""

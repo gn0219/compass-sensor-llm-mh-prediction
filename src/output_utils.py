@@ -8,20 +8,6 @@ Provides consistent formatting for console output.
 from typing import Dict, List
 
 
-# def print_section_header(title: str, verbose: bool = True):
-#     """Print a section header."""
-#     if verbose:
-#         print("\n" + "="*60 + title + "\n" + "="*60)
-#         print(title)
-#         print("="*60)
-
-
-# def print_subsection(title: str, verbose: bool = True):
-#     """Print a subsection header."""
-#     if verbose:
-#         print(f"\n{title}")
-
-
 def print_input_sample_info(input_sample: Dict, timing: float, verbose: bool = True):
     """Print information about the sampled input."""
     if verbose:
@@ -107,27 +93,33 @@ def print_timing_breakdown(step_timings: Dict, reasoning_method: str, verbose: b
         times = step_timings.get(key, [])
         return times[-1] if times else 0.0
     
-    data_sampling_time = get_timing('data_sampling')
+    loading_time = get_timing('loading')
+    test_sampling_time = get_timing('test_sampling')
+    feature_engineering_time = get_timing('feature_engineering')
     icl_selection_time = get_timing('icl_selection')
     prompt_building_time = get_timing('prompt_building')
     llm_call_time = get_timing('llm_call')
     response_parsing_time = get_timing('response_parsing')
     
-    print(f"  1. Data Sampling:      {data_sampling_time:.3f}s  "
-          f"({data_sampling_time/total_time*100:.1f}%)")
-    print(f"  2. ICL Selection:      {icl_selection_time:.3f}s  "
+    print(f"  1. Data Loading:       {loading_time:.3f}s  "
+          f"({loading_time/total_time*100:.1f}%)")
+    print(f"  2. Test Sampling:      {test_sampling_time:.3f}s  "
+          f"({test_sampling_time/total_time*100:.1f}%)")
+    print(f"  3. Feature Eng.:       {feature_engineering_time:.3f}s  "
+          f"({feature_engineering_time/total_time*100:.1f}%)")
+    print(f"  4. ICL Selection:      {icl_selection_time:.3f}s  "
           f"({icl_selection_time/total_time*100:.1f}%)")
-    print(f"  3. Prompt Building:    {prompt_building_time:.3f}s  "
+    print(f"  5. Prompt Building:    {prompt_building_time:.3f}s  "
           f"({prompt_building_time/total_time*100:.1f}%)")
     
     if reasoning_method == 'self_consistency':
-        print(f"  4. LLM Call:           {llm_call_time:.3f}s  "
+        print(f"  6. LLM Call:           {llm_call_time:.3f}s  "
               f"({llm_call_time/total_time*100:.1f}%) *includes parsing + voting")
-        print(f"  5. Response Parsing:   {response_parsing_time:.3f}s  (included above)")
+        print(f"  7. Response Parsing:   {response_parsing_time:.3f}s  (included above)")
     else:
-        print(f"  4. LLM Call:           {llm_call_time:.3f}s  "
+        print(f"  6. LLM Call:           {llm_call_time:.3f}s  "
               f"({llm_call_time/total_time*100:.1f}%)")
-        print(f"  5. Response Parsing:   {response_parsing_time:.3f}s  "
+        print(f"  7. Response Parsing:   {response_parsing_time:.3f}s  "
               f"({response_parsing_time/total_time*100:.1f}%)")
     
     print(f"  {'─' * 60}")
@@ -162,16 +154,20 @@ def print_batch_timing_summary(all_step_timings: Dict, verbose: bool = True):
     print("\n" + "="*80)
     print("⏱️  AVERAGE TIMING BREAKDOWN PER SAMPLE")
     print("="*80)
-    print(f"  1. Data Sampling:      {avg_timings['data_sampling']:.3f}s  "
-          f"({avg_timings['data_sampling']/total_avg_time*100:.1f}%)")
-    print(f"  2. ICL Selection:      {avg_timings['icl_selection']:.3f}s  "
-          f"({avg_timings['icl_selection']/total_avg_time*100:.1f}%)")
-    print(f"  3. Prompt Building:    {avg_timings['prompt_building']:.3f}s  "
-          f"({avg_timings['prompt_building']/total_avg_time*100:.1f}%)")
-    print(f"  4. LLM Call:           {avg_timings['llm_call']:.3f}s  "
-          f"({avg_timings['llm_call']/total_avg_time*100:.1f}%)")
-    print(f"  5. Response Parsing:   {avg_timings['response_parsing']:.3f}s  "
-          f"({avg_timings['response_parsing']/total_avg_time*100:.1f}%)")
+    print(f"  1. Data Loading:       {avg_timings.get('loading', 0):.3f}s  "
+          f"({avg_timings.get('loading', 0)/total_avg_time*100:.1f}%)")
+    print(f"  2. Test Sampling:      {avg_timings.get('test_sampling', 0):.3f}s  "
+          f"({avg_timings.get('test_sampling', 0)/total_avg_time*100:.1f}%)")
+    print(f"  3. Feature Eng.:       {avg_timings.get('feature_engineering', 0):.3f}s  "
+          f"({avg_timings.get('feature_engineering', 0)/total_avg_time*100:.1f}%)")
+    print(f"  4. ICL Selection:      {avg_timings.get('icl_selection', 0):.3f}s  "
+          f"({avg_timings.get('icl_selection', 0)/total_avg_time*100:.1f}%)")
+    print(f"  5. Prompt Building:    {avg_timings.get('prompt_building', 0):.3f}s  "
+          f"({avg_timings.get('prompt_building', 0)/total_avg_time*100:.1f}%)")
+    print(f"  6. LLM Call:           {avg_timings.get('llm_call', 0):.3f}s  "
+          f"({avg_timings.get('llm_call', 0)/total_avg_time*100:.1f}%)")
+    print(f"  7. Response Parsing:   {avg_timings.get('response_parsing', 0):.3f}s  "
+          f"({avg_timings.get('response_parsing', 0)/total_avg_time*100:.1f}%)")
     print(f"  {'─' * 78}")
     print(f"  TOTAL AVG:             {total_avg_time:.3f}s")
     print(f"  TOTAL ALL SAMPLES:     {sum(sum(times) for times in all_step_timings.values()):.2f}s")
