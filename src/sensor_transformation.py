@@ -379,8 +379,20 @@ def _aggregate_compass_features(feat_df: pd.DataFrame, user_feats: pd.DataFrame,
             yesterday_values = {}
             for period in circadian_periods:
                 # Find corresponding column in semantic_feats
+                # Match by checking if the feature is related to the base name
                 for feat_col in semantic_feats.keys():
-                    if base_name.lower().replace(' ', '') in feat_col.lower() and f':{period}' in feat_col:
+                    # Match based on keywords in base_name
+                    match = False
+                    if 'Physical activity' in base_name and 'steps' in feat_col.lower():
+                        match = True
+                    elif 'Sleep' in base_name and 'sleep' in feat_col.lower():
+                        match = True
+                    elif 'Location entropy' in base_name and 'locationentropy' in feat_col.lower():
+                        match = True
+                    elif 'Phone usage' in base_name and 'unlock' in feat_col.lower():
+                        match = True
+                    
+                    if match and f':{period}' in feat_col:
                         if feat_col in yesterday_data.columns:
                             val = yesterday_data[feat_col].iloc[0]
                             if pd.notna(val):
@@ -1200,13 +1212,14 @@ def sample_multiinstitution_testset(
             last_n_samples = user_labs.tail(samples_per_user)
             inst_testset_indices.extend(last_n_samples.index.tolist())
         
-        # Filter dataframes
+        # Filter dataframes for testset
         lab_df_testset = lab_df_inst.loc[inst_testset_indices].copy()
         
         # Add institution column for tracking
         lab_df_testset['institution'] = institution
         feat_df_inst['institution'] = institution
         
+        # Store full feature data and only testset labels
         all_feat_dfs.append(feat_df_inst)
         all_lab_dfs.append(lab_df_testset)
         
@@ -1217,7 +1230,7 @@ def sample_multiinstitution_testset(
     
     # Combine all institutions
     combined_feat_df = pd.concat(all_feat_dfs, ignore_index=True)
-    combined_lab_df = pd.concat(all_lab_dfs, ignore_index=True)
+    combined_lab_df = pd.concat(all_lab_dfs, ignore_index=True)  # Only testset samples (414 total)
     
     # Select only required feature columns
     feat_cols = [cols['user_id'], cols['date'], 'institution']
@@ -1239,12 +1252,13 @@ def sample_multiinstitution_testset(
     print("TESTSET SUMMARY")
     print("="*80)
     print(f"  Total users selected: {total_users_selected}")
-    print(f"  Total samples collected: {total_samples_collected}")
+    print(f"  Total testset samples: {total_samples_collected}")
     print(f"  Samples per institution:")
     for inst in institutions_config.keys():
         inst_count = len(combined_lab_df[combined_lab_df['institution'] == inst])
         inst_users = combined_lab_df[combined_lab_df['institution'] == inst][cols['user_id']].nunique()
         print(f"    {inst}: {inst_count} samples from {inst_users} users")
+    print(f"  Note: ICL examples will be drawn from each user's historical data (before testset)")
     print("="*80 + "\n")
     
     return combined_feat_df, combined_lab_df, cols

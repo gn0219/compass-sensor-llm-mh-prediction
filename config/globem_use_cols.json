@@ -7,6 +7,61 @@
                 "f_loc:phone_locations_doryab_totaldistance:allday": "Location - total distance",
                 "f_loc:phone_locations_doryab_timeathome:allday": "Location - time at home",
                 "f_loc:phone_locations_doryab_locationentropy:allday": "Location - entropy",
+                "f_screen:phone_screen_rapids_sumdurationunlock:allday": "Screen - sum duration unlock",
+                "f_screen:phone_screen_rapids_avgdurationunlock:allday": "Screen - average duration unlock",
+                "f_call:phone_calls_rapids_incoming_sumduration:allday": "Call - sum duration incoming",
+                "f_call:phone_calls_rapids_outgoing_sumduration:allday": "Call - sum duration outgoing",
+                "f_blue:phone_bluetooth_doryab_uniquedevicesothers:allday": "Bluetooth - unique devices others",
+                "f_steps:fitbit_steps_intraday_rapids_sumsteps:allday": "Steps - sum steps",
+                "f_steps:fitbit_steps_intraday_rapids_countepisodesedentarybout:allday": "Steps - count episodes sedentary bout",
+                "f_steps:fitbit_steps_intraday_rapids_sumdurationsedentarybout:allday": "Steps - sum duration sedentary bout",
+                "f_steps:fitbit_steps_intraday_rapids_countepisodeactivebout:allday": "Steps - count episodes active bout",
+                "f_steps:fitbit_steps_intraday_rapids_sumdurationactivebout:allday": "Steps - sum duration active bout",
+                "f_slp:fitbit_sleep_intraday_rapids_sumdurationasleepunifiedmain:allday": "Sleep - sum duration asleep unified main",
+                "f_slp:fitbit_sleep_intraday_rapids_sumdurationawakeunifiedmain:allday": "Sleep - sum duration awake unified main",
+            },
+            "structural": "None",
+            "semantic": {
+                "f_slp:fitbit_sleep_intraday_rapids_sumdurationasleepunifiedmain:weekday": "Sleep - weekday sleep duration",
+                "f_slp:fitbit_sleep_intraday_rapids_sumdurationasleepunifiedmain:weekend": "Sleep - weekend sleep duration",
+                "f_steps:fitbit_steps_intraday_rapids_sumsteps:weekday": "Steps - sum steps weekday",
+                "f_steps:fitbit_steps_intraday_rapids_sumsteps:weekend": "Steps - sum steps weekend",
+                "f_steps:fitbit_steps_intraday_rapids_sumsteps:morning": "Steps - sum steps morning",
+                "f_steps:fitbit_steps_intraday_rapids_sumsteps:afternoon": "Steps - sum steps afternoon",
+                "f_steps:fitbit_steps_intraday_rapids_sumsteps:evening": "Steps - sum steps evening",
+                "f_steps:fitbit_steps_intraday_rapids_sumsteps:night": "Steps - sum steps night",
+                "f_loc:phone_locations_doryab_locationentropy:weekday": "Location - entropy weekday",
+                "f_loc:phone_locations_doryab_locationentropy:weekend": "Location - entropy weekend",
+                "f_loc:phone_locations_doryab_locationentropy:morning": "Location - entropy morning",
+                "f_loc:phone_locations_doryab_locationentropy:afternoon": "Location - entropy afternoon",
+                "f_loc:phone_locations_doryab_locationentropy:evening": "Location - entropy evening",
+                "f_loc:phone_locations_doryab_locationentropy:night": "Location - entropy night",
+                "f_screen:phone_screen_rapids_sumdurationunlock:weekday": "Screen - sum duration unlock weekday",
+                "f_screen:phone_screen_rapids_sumdurationunlock:weekend": "Screen - sum duration unlock weekend",
+                "f_screen:phone_screen_rapids_sumdurationunlock:morning": "Screen - sum duration unlock morning",
+                "f_screen:phone_screen_rapids_sumdurationunlock:afternoon": "Screen - sum duration unlock afternoon",
+                "f_screen:phone_screen_rapids_sumdurationunlock:evening": "Screen - sum duration unlock evening",
+                "f_screen:phone_screen_rapids_sumdurationunlock:night": "Screen - sum duration unlock night"
+            },
+            "temporal_descriptor": "None"
+        },
+        "labels": [
+            "phq4_anxiety_EMA",
+            "phq4_depression_EMA"
+        ],
+        "threshold": {
+            "phq4_anxiety_EMA": 2,
+            "phq4_depression_EMA": 2
+        }
+    },
+    "compass_old": {
+        "user_id": "pid",
+        "date": "date",
+        "feature_set": {
+            "statistical": {
+                "f_loc:phone_locations_doryab_totaldistance:allday": "Location - total distance",
+                "f_loc:phone_locations_doryab_timeathome:allday": "Location - time at home",
+                "f_loc:phone_locations_doryab_locationentropy:allday": "Location - entropy",
                 "f_loc:phone_locations_doryab_numberofsignificantplaces:allday": "Location - number of significant places",
                 "f_screen:phone_screen_rapids_countepisodeunlock:allday": "Screen - count episode unlock",
                 "f_screen:phone_screen_rapids_avgdurationunlock:allday": "Screen - average duration unlock",

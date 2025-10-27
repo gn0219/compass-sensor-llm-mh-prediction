@@ -292,12 +292,30 @@ def _similarity_selection(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: D
         print(f"Warning: Only {len(candidates)} valid candidates for similarity selection")
         return [c['sample'] for c in candidates]
     
-    # Extract feature vectors from candidates
-    candidate_vectors = np.vstack([c['features'] for c in candidates])
+    # Extract feature vectors from candidates and pad to same length
+    all_vectors = [c['features'] for c in candidates] + [target_vector]
+    max_length = max(len(v) for v in all_vectors)
+    
+    # Pad candidate vectors to max length
+    padded_candidates = []
+    for vec in [c['features'] for c in candidates]:
+        if len(vec) < max_length:
+            padded = np.pad(vec, (0, max_length - len(vec)), mode='constant', constant_values=0)
+        else:
+            padded = vec
+        padded_candidates.append(padded)
+    
+    # Pad target vector to max length
+    if len(target_vector) < max_length:
+        target_vector_padded = np.pad(target_vector, (0, max_length - len(target_vector)), mode='constant', constant_values=0)
+    else:
+        target_vector_padded = target_vector
+    
+    candidate_vectors = np.vstack(padded_candidates)
     
     scaler = StandardScaler()
     candidates_norm = scaler.fit_transform(candidate_vectors)
-    target_norm = scaler.transform(target_vector.reshape(1, -1))
+    target_norm = scaler.transform(target_vector_padded.reshape(1, -1))
 
     # Handle NaN from features with zero variance (constant features)
     # Replace NaN with 0 (these features don't contribute to similarity)
@@ -589,40 +607,90 @@ def _extract_feature_vector(agg_feats, cols: Dict, fill_strategy: str = 'zero') 
     Returns:
         1D numpy array of feature values
     """
-    # Handle new Dict format
-    if isinstance(agg_feats, dict) and 'features' in agg_feats:
-        mode = agg_feats.get('aggregation_mode', 'statistics')
+    # Handle Dict format
+    if isinstance(agg_feats, dict):
+        mode = agg_feats.get('aggregation_mode', 'unknown')
         
-        if mode == 'array':
-            # For array mode, flatten all arrays into one vector
+        # COMPASS format
+        if mode == 'compass':
+            feature_values = []
+            
+            # Extract statistical features
+            stat_feats = agg_feats.get('statistical_features', {})
+            for feat_name, stats in stat_feats.items():
+                for stat_name, stat_value in stats.items():
+                    val = stat_value if stat_value is not None else np.nan
+                    feature_values.append(val)
+            
+            # Extract structural features
+            struct_feats = agg_feats.get('structural_features', {})
+            for feat_name, struct in struct_feats.items():
+                for struct_name, struct_value in struct.items():
+                    if isinstance(struct_value, (int, float)):
+                        val = struct_value if struct_value is not None else np.nan
+                        feature_values.append(val)
+                    # Skip string values like 'increasing', 'stable', etc.
+            
+            # Extract semantic features (flatten nested structure)
+            semantic_feats = agg_feats.get('semantic_features', {})
+            for feat_name, semantic_info in semantic_feats.items():
+                for key, value in semantic_info.items():
+                    if isinstance(value, dict):
+                        for sub_key, sub_value in value.items():
+                            if isinstance(sub_value, (int, float)):
+                                val = sub_value if sub_value is not None else np.nan
+                                feature_values.append(val)
+                    elif isinstance(value, (int, float)):
+                        val = value if value is not None else np.nan
+                        feature_values.append(val)
+            
+            # Extract temporal descriptors
+            temporal_feats = agg_feats.get('temporal_descriptors', {})
+            for feat_name, values_list in temporal_feats.items():
+                if isinstance(values_list, list):
+                    for v in values_list:
+                        val = v if v is not None else np.nan
+                        feature_values.append(val)
+            
+            feature_vector = np.array(feature_values, dtype=float)
+        
+        # ARRAY mode
+        elif mode == 'array':
             feature_values = []
             for feat_name, feat_values_list in agg_feats['features'].items():
-                # Convert None to np.nan, then append
                 values = [v if v is not None else np.nan for v in feat_values_list]
                 feature_values.extend(values)
             feature_vector = np.array(feature_values, dtype=float)
         
-        elif mode == 'statistics':
-            # For statistics mode, extract all numeric statistics
+        # STATISTICS mode or RAW mode
+        elif mode == 'statistics' or mode == 'raw':
             feature_values = []
-            for feat_name, feat_stats in agg_feats['features'].items():
-                for stat_name, stat_value in feat_stats.items():
-                    # Skip arrays (last_N) - only use scalar statistics
-                    if not stat_name.startswith('last_'):
-                        val = stat_value if stat_value is not None else np.nan
-                        feature_values.append(val)
+            features_dict = agg_feats.get('features', {})
+            for feat_name, feat_stats in features_dict.items():
+                if isinstance(feat_stats, dict):
+                    for stat_name, stat_value in feat_stats.items():
+                        if not stat_name.startswith('last_'):
+                            val = stat_value if stat_value is not None else np.nan
+                            feature_values.append(val)
+                elif isinstance(feat_stats, (int, float)):
+                    val = feat_stats if feat_stats is not None else np.nan
+                    feature_values.append(val)
+            
+            # If no features, return a minimal vector
+            if not feature_values:
+                feature_values = [0.0]
+            
             feature_vector = np.array(feature_values, dtype=float)
+        
         else:
             raise ValueError(f"Unknown aggregation mode: {mode}")
     
     # Handle legacy DataFrame format
     elif isinstance(agg_feats, pd.DataFrame):
-        # Get feature columns (exclude user_id and date)
         feature_cols = [col for col in agg_feats.columns 
-                       if col not in [cols['user_id'], cols['date']]]
-        
-        # Extract values
+                       if col not in [cols.get('user_id'), cols.get('date')]]
         feature_vector = agg_feats[feature_cols].values.flatten()
+    
     else:
         raise ValueError(f"Unsupported agg_feats type: {type(agg_feats)}")
     
@@ -667,6 +735,16 @@ def _build_candidate_pool(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: D
             'adaptive_window': config.USE_ADAPTIVE_WINDOW
         }
     
+    # Force 'statistics' mode for similarity calculation (faster and sufficient)
+    # Use 28-day window for consistency
+    similarity_agg_params = {
+        'window_days': 28,
+        'mode': 'statistics',
+        'use_immediate_window': False,
+        'immediate_window_days': 0,
+        'adaptive_window': False
+    }
+    
     # Limit pool size for efficiency
     if len(lab_pool) > max_pool_size:
         if random_state is not None:
@@ -681,14 +759,14 @@ def _build_candidate_pool(feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: D
         user_id = row[cols['user_id']]
         ema_date = row[cols['date']]
         
-        # Get aggregated features
+        # Get aggregated features (use statistics mode for faster similarity calculation)
         agg_feats = aggregate_window_features(
             feat_df, user_id, ema_date, cols,
-            window_days=agg_params['window_days'],
-            mode=agg_params['aggregation_mode'],
-            use_immediate_window=agg_params['use_immediate_window'],
-            immediate_window_days=agg_params['immediate_window_days'],
-            adaptive_window=agg_params['adaptive_window']
+            window_days=similarity_agg_params['window_days'],
+            mode=similarity_agg_params['mode'],
+            use_immediate_window=similarity_agg_params['use_immediate_window'],
+            immediate_window_days=similarity_agg_params['immediate_window_days'],
+            adaptive_window=similarity_agg_params['adaptive_window']
         )
         
         # Check if valid

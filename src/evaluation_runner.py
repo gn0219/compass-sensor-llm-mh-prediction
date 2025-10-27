@@ -8,6 +8,7 @@ Evaluation Runner Module (refined)
 import os
 import time
 import numpy as np
+import pandas as pd
 from contextlib import contextmanager
 from typing import Dict, List, Optional, Tuple
 
@@ -279,15 +280,36 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
     all_step_timings = new_step_timings()
     collected_prompts, collected_metadata = ([], []) if collect_prompts else (None, None)
     
+    # For multi-institution testset, load historical data for ICL
+    lab_df_for_icl = None
+    if use_all_samples and config.USE_MULTI_INSTITUTION_TESTSET:
+        # Load full historical data for ICL (all weeks, not just testset)
+        from .sensor_transformation import load_globem_data
+        if verbose:
+            print("  [Loading historical data for ICL...]")
+        
+        all_historical_dfs = []
+        for institution in config.MULTI_INSTITUTION_CONFIG.keys():
+            _, hist_lab, _ = load_globem_data(
+                institution=institution, 
+                target=config.DEFAULT_TARGET
+            )
+            hist_lab['institution'] = institution
+            all_historical_dfs.append(hist_lab)
+        
+        lab_df_for_icl = pd.concat(all_historical_dfs, ignore_index=True)
+        if verbose:
+            print(f"  Loaded {len(lab_df_for_icl)} historical samples for ICL")
+    
     # Sample input data
     if verbose:
         print("[Data] Sampling input data...")
     
     with timeit(all_step_timings, 'data_sampling'):
-        # If use_all_samples is True, use all samples in lab_df
+        # If use_all_samples is True, use all testset samples (414)
         if use_all_samples:
             if verbose:
-                print("  [Note: Using ALL samples without missing data filtering]")
+                print(f"  [Using {len(lab_df)} pre-selected testset samples]")
             input_samples = []
             for idx, row in lab_df.iterrows():
                 user_id = row[cols['user_id']]
@@ -389,9 +411,10 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
     all_predictions, failed_count = [], 0
     for i, input_sample in enumerate(input_samples):
 
-        # ICL
+        # ICL - use lab_df_for_icl if available (full historical data)
+        icl_lab_df = lab_df_for_icl if (use_all_samples and lab_df_for_icl is not None) else lab_df
         icl_examples, icl_strategy = select_icl(
-            feat_df, lab_df, cols, input_sample, n_shot, source, selection,
+            feat_df, icl_lab_df, cols, input_sample, n_shot, source, selection,
             (random_state + i * 1000) if random_state else None,
             all_step_timings, verbose, beta
         )
@@ -478,15 +501,36 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
     all_step_timings = new_step_timings()
     collected_prompts, collected_metadata = [], []
     
+    # For multi-institution testset, load historical data for ICL
+    lab_df_for_icl = None
+    if use_all_samples and config.USE_MULTI_INSTITUTION_TESTSET:
+        # Load full historical data for ICL (all weeks, not just testset)
+        from .sensor_transformation import load_globem_data
+        if verbose:
+            print("  [Loading historical data for ICL...]")
+        
+        all_historical_dfs = []
+        for institution in config.MULTI_INSTITUTION_CONFIG.keys():
+            _, hist_lab, _ = load_globem_data(
+                institution=institution, 
+                target=config.DEFAULT_TARGET
+            )
+            hist_lab['institution'] = institution
+            all_historical_dfs.append(hist_lab)
+        
+        lab_df_for_icl = pd.concat(all_historical_dfs, ignore_index=True)
+        if verbose:
+            print(f"  Loaded {len(lab_df_for_icl)} historical samples for ICL")
+    
     # Sample input data
     if verbose:
         print("[Data] Sampling input data...")
     
     with timeit(all_step_timings, 'data_sampling'):
-        # If use_all_samples is True, use all samples in lab_df
+        # If use_all_samples is True, use all testset samples (414)
         if use_all_samples:
             if verbose:
-                print("  [Note: Using ALL samples without missing data filtering]")
+                print(f"  [Using {len(lab_df)} pre-selected testset samples]")
             input_samples = []
             for idx, row in lab_df.iterrows():
                 user_id = row[cols['user_id']]
@@ -585,9 +629,10 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
         if verbose and (i + 1) % 10 == 0:
             print(f"  Progress: {i+1}/{len(input_samples)} prompts generated...")
 
-        # ICL
+        # ICL - use lab_df_for_icl if available (full historical data)
+        icl_lab_df = lab_df_for_icl if (use_all_samples and lab_df_for_icl is not None) else lab_df
         icl_examples, icl_strategy = select_icl(
-            feat_df, lab_df, cols, input_sample, n_shot, source, selection,
+            feat_df, icl_lab_df, cols, input_sample, n_shot, source, selection,
             (random_state + i * 1000) if random_state else None,
             all_step_timings, False, beta  # verbose=False for cleaner output
         )
