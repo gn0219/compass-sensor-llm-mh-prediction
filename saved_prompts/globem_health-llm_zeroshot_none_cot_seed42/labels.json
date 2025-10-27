@@ -1,0 +1,5384 @@
+[
+  {
+    "user_id": "INS-W_336",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_336",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_336",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_336",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_336",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_336",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_522",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_522",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_522",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_522",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_522",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_522",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_481",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_481",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_481",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_481",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_481",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_481",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_392",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_392",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_392",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_392",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_392",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_392",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_372",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_372",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_372",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_372",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_372",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_372",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_570",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_570",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_570",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_570",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_570",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_570",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_353",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_353",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_353",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_353",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_353",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_353",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_537",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_537",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_537",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_537",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_537",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_537",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_312",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_312",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_312",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_312",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_312",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_312",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_429",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_429",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_429",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_429",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_429",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_429",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_478",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_478",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_478",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_478",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_478",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_478",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_543",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_543",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_543",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_543",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_543",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_543",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_500",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_500",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_500",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_500",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_500",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_500",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_401",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_401",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_401",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_401",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_401",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_401",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_319",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_319",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_319",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_319",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_319",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_319",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_557",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_557",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_557",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_557",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_557",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_557",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_511",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_511",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_511",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_511",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_511",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_511",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_322",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_322",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_322",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_322",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_322",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_322",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_571",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_571",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_571",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_571",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_571",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_571",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_407",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_407",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_407",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_407",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_407",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_407",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_398",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_398",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_398",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_398",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_398",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_398",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_365",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_365",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_365",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_365",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_365",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_365",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_489",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_489",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_489",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_489",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_489",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_489",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_567",
+    "ema_date": "2019-05-08 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_567",
+      "ema_date": "2019-05-08T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_567",
+    "ema_date": "2019-05-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_567",
+      "ema_date": "2019-05-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_567",
+    "ema_date": "2019-05-19 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_567",
+      "ema_date": "2019-05-19T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_491",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_491",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_491",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_491",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_491",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_491",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_484",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_484",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_484",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_484",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_484",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_484",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_331",
+    "ema_date": "2019-05-20 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_331",
+      "ema_date": "2019-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_331",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_331",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_331",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_331",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_438",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_438",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_438",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_438",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_438",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_438",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_320",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_320",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_320",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_320",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_320",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_320",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_529",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_529",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_529",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_529",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_529",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_529",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_476",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_476",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_476",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_476",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_476",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_476",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_465",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_465",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_465",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_465",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_465",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_465",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_443",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_443",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_443",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_443",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_443",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_443",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_383",
+    "ema_date": "2019-05-08 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_383",
+      "ema_date": "2019-05-08T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_383",
+    "ema_date": "2019-05-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_383",
+      "ema_date": "2019-05-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_383",
+    "ema_date": "2019-05-15 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_383",
+      "ema_date": "2019-05-15T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_390",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_390",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_390",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_390",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_390",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_390",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_488",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_488",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_488",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_488",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_488",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_488",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_534",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_534",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_534",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_534",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_534",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_534",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_418",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_418",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_418",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_418",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_418",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_418",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_544",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_544",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_544",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_544",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_544",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_544",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_414",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_414",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_414",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_414",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_414",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_414",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_449",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_449",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_449",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_449",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_449",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_449",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_507",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_507",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_507",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_507",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_507",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_507",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_550",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_550",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_550",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_550",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_550",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_550",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_467",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_467",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_467",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_467",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_467",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_467",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_442",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_442",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_442",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_442",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_442",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_442",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_385",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_385",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_385",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_385",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_385",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_385",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_404",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_404",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_404",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_404",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_404",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_404",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_421",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_421",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_421",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_421",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_421",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_421",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_430",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_430",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_430",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_430",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_430",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_430",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_344",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_344",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_344",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_344",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_344",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_344",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_330",
+    "ema_date": "2019-05-05 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_330",
+      "ema_date": "2019-05-05T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_330",
+    "ema_date": "2019-05-08 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_330",
+      "ema_date": "2019-05-08T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_330",
+    "ema_date": "2019-05-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_330",
+      "ema_date": "2019-05-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_538",
+    "ema_date": "2019-05-15 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_538",
+      "ema_date": "2019-05-15T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_538",
+    "ema_date": "2019-05-19 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_538",
+      "ema_date": "2019-05-19T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_538",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_538",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_452",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_452",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_452",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_452",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_452",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_452",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_335",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_335",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_335",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_335",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_335",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_335",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_323",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_323",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_323",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_323",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_323",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_323",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_539",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_539",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_539",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_539",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_539",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_539",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_416",
+    "ema_date": "2019-05-22 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_416",
+      "ema_date": "2019-05-22T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_416",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_416",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_416",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_416",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_380",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_380",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_380",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_380",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_380",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_380",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_378",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_378",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_378",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_378",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_378",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_378",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_306",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_306",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_306",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_306",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_306",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_306",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_517",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_517",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_517",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_517",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_517",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_517",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_366",
+    "ema_date": "2019-05-22 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_366",
+      "ema_date": "2019-05-22T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_366",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_366",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_366",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_366",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_422",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_422",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_422",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_422",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_422",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_422",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_502",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_502",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_502",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_502",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_502",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_502",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_554",
+    "ema_date": "2019-05-26 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_554",
+      "ema_date": "2019-05-26T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_554",
+    "ema_date": "2019-05-29 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_554",
+      "ema_date": "2019-05-29T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_554",
+    "ema_date": "2019-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_554",
+      "ema_date": "2019-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_761",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_761",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_761",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_761",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_761",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_761",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_731",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_731",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_731",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_731",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_731",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_731",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_705",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_705",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_705",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_705",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_705",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_705",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_609",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_609",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_609",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_609",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_609",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_609",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_712",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_712",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_712",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_712",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_712",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_712",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_718",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_718",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_718",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_718",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_718",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_718",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_726",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_726",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_726",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_726",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_726",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_726",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_667",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_667",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_667",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_667",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_667",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_667",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_614",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_614",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_614",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_614",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_614",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_614",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_722",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_722",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_722",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_722",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_722",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_722",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_649",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_649",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_649",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_649",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_649",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_649",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_740",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_740",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_740",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_740",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_740",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_740",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_746",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_746",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_746",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_746",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_746",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_746",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_701",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_701",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_701",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_701",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_701",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_701",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_612",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_612",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_612",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_612",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_612",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_612",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_666",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_666",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_666",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_666",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_666",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_666",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_720",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_720",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_720",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_720",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_720",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_720",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_689",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_689",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_689",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_689",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_689",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_689",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_626",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_626",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_626",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_626",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_626",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_626",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_605",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_605",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_605",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_605",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_605",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_605",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_692",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_692",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_692",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_692",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_692",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_692",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_760",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_760",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_760",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_760",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_760",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_760",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_651",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_651",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_651",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_651",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_651",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_651",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_698",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_698",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_698",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_698",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_698",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_698",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_713",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_713",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_713",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_713",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_713",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_713",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_655",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_655",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_655",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_655",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_655",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_655",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_737",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_737",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_737",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_737",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_737",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_737",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_742",
+    "ema_date": "2020-05-20 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_742",
+      "ema_date": "2020-05-20T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_742",
+    "ema_date": "2020-05-24 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_742",
+      "ema_date": "2020-05-24T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_742",
+    "ema_date": "2020-05-27 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_742",
+      "ema_date": "2020-05-27T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_962",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_962",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_962",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_962",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_962",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_962",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_932",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_932",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_932",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_932",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_932",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_932",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1028",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1028",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1028",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1028",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1028",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1028",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_966",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_966",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_966",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_966",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_966",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_966",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1212",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1212",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1212",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1212",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1212",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1212",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1044",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1044",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1044",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1044",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1044",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1044",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1045",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1045",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1045",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1045",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1045",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1045",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_919",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_919",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_919",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_919",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_919",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_919",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1014",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1014",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1014",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1014",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1014",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1014",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_942",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_942",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_942",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_942",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_942",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_942",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1077",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1077",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1077",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1077",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1077",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1077",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_989",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_989",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_989",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_989",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_989",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_989",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_971",
+    "ema_date": "2021-06-06 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_971",
+      "ema_date": "2021-06-06T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_971",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_971",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_971",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_971",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_973",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_973",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_973",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_973",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_973",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_973",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1217",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1217",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1217",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1217",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1217",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1217",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_950",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_950",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_950",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_950",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_950",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_950",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1023",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1023",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1023",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1023",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1023",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1023",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1011",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1011",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1011",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1011",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1011",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1011",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1047",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1047",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1047",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1047",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1047",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1047",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1018",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1018",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1018",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1018",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1018",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1018",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1219",
+    "ema_date": "2021-06-06 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1219",
+      "ema_date": "2021-06-06T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1219",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1219",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1219",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1219",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1007",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1007",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1007",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1007",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1007",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1007",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_920",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_920",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_920",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_920",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_920",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_920",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_931",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_931",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_931",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_931",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_931",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_931",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_961",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_961",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_961",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_961",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_961",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_961",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_941",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_941",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_941",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_941",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_941",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_941",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1083",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1083",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1083",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1083",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1083",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1083",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1203",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1203",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1203",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1203",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1203",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1203",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1041",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1041",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1041",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1041",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1041",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1041",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_939",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_939",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_939",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_939",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_939",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_939",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1209",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1209",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1209",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1209",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1209",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1209",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_917",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_917",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_917",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_917",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_917",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_917",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1079",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1079",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1079",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1079",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1079",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1079",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_929",
+    "ema_date": "2021-05-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_929",
+      "ema_date": "2021-05-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_929",
+    "ema_date": "2021-05-19 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_929",
+      "ema_date": "2021-05-19T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_929",
+    "ema_date": "2021-06-02 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_929",
+      "ema_date": "2021-06-02T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1034",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1034",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1034",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1034",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1034",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1034",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1200",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1200",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1200",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1200",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1200",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1200",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_922",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_922",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_922",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_922",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_922",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_922",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1204",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1204",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1204",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1204",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1204",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1204",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1072",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1072",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1072",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1072",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1072",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1072",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1049",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1049",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1049",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1049",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1049",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1049",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_964",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_964",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_964",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_964",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_964",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_964",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1003",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1003",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1003",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1003",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1003",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1003",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1205",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1205",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1205",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1205",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1205",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1205",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1040",
+    "ema_date": "2021-06-06 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1040",
+      "ema_date": "2021-06-06T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1040",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1040",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1040",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1040",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_994",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_994",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_994",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_994",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  },
+  {
+    "user_id": "INS-W_994",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_994",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "raw",
+      "window_days": 28,
+      "features": {}
+    }
+  }
+]
