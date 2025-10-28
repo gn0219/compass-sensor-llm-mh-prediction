@@ -3,10 +3,9 @@ Reasoning Strategies Module - Advanced LLM reasoning methods.
 
 Handles:
 - Response parsing (extracting JSON predictions)
-- Self-Consistency (multiple samples + majority vote)
-- Tree-of-Thoughts (exploring multiple reasoning paths)
-- Chain-of-Thought (via prompt engineering, no special logic needed)
-- Direct prediction (via prompt engineering, no special logic needed)
+- Self-Feedback (iterative refinement)
+- Chain-of-Thought
+- Direct prediction
 """
 
 import json
@@ -22,7 +21,7 @@ class LLMReasoner:
         self.client = LLMClient(model=model)
         self.model = model
     
-    def call_llm(self, prompt: str, temperature: float = 0.7, max_tokens: int = 3200,
+    def call_llm(self, prompt: str, temperature: float = 0.7, max_tokens: int = 6000,
                 seed: Optional[int] = None) -> Tuple[Optional[str], Dict]:
         """Call LLM API via client."""
         return self.client.call_api(prompt, temperature, max_tokens, seed)
@@ -186,7 +185,7 @@ class LLMReasoner:
             print(f"  [Iteration {iteration + 1}/{max_iterations}] Generating prediction...")
             
             # Call LLM with increased max_tokens for refinement iterations
-            max_tokens = 6000 if iteration > 0 else 3200
+            max_tokens = 12000 if iteration > 0 else 6000
             response_text, usage_info = self.call_llm(
                 current_prompt,
                 temperature=temperature,
