@@ -6,6 +6,7 @@ Extracted from sensor_transformation.py for better code organization.
 """
 
 import json
+import os
 import pandas as pd
 import numpy as np
 from typing import Optional, Tuple, Dict
@@ -24,6 +25,535 @@ def binarize_labels(df: pd.DataFrame, labels: list, thresholds: Dict[str, int]) 
         if label in df.columns:
             df[label] = (df[label] > thresholds[label]).astype(int)
     return df
+
+def load_ces_data(use_cols_path: str = './config/ces_use_cols.json') -> Tuple[pd.DataFrame, pd.DataFrame, Dict]:
+    """Load CES dataset with feature and label data - Returns AGGREGATED data."""
+    aggregated_path = '../dataset/CES/aggregated_ces.csv'
+    
+    # Check if aggregated data already exists
+    if os.path.exists(aggregated_path):
+        print(f"Loading cached aggregated CES data from {aggregated_path}")
+        agg_df = pd.read_csv(aggregated_path, low_memory=False)
+        
+        # Convert date column
+        agg_df['date'] = pd.to_datetime(agg_df['date'])
+        
+        # Load column configuration
+        with open(use_cols_path, 'r') as f:
+            use_cols = json.load(f)
+        cols = use_cols['compass']
+        
+        # Split into features and labels
+        label_cols = [cols['user_id'], cols['date']] + cols['labels']
+        lab_df = agg_df[label_cols].copy()
+        
+        # Feature columns: everything except pure label columns (but keep user_id, date, gender)
+        feat_cols = [c for c in agg_df.columns if c not in cols['labels']]
+        feat_df = agg_df[feat_cols].copy()
+        
+        print(f"  Loaded {len(feat_df)} samples with {len(feat_df.columns)-3} aggregated features")
+        return feat_df, lab_df, cols
+    
+    print(f"Aggregated data not found. Building from raw CES data...")
+    feat_df, lab_df, cols = _aggregate_ces_data(use_cols_path)
+    
+    # Save aggregated data
+    print(f"Saving aggregated data to {aggregated_path}")
+    # Merge features and labels for saving
+    merged_df = feat_df.merge(lab_df, on=[cols['user_id'], cols['date']], how='inner')
+    merged_df.to_csv(aggregated_path, index=False)
+    
+    return feat_df, lab_df, cols
+
+
+def _aggregate_ces_data(use_cols_path: str = './config/ces_use_cols.json') -> Tuple[pd.DataFrame, pd.DataFrame, Dict]:
+    """Build aggregated CES data from raw sensing, steps, and EMA data."""
+    import os
+    from datetime import timedelta
+    
+    print("\n" + "="*80)
+    print("BUILDING AGGREGATED CES DATASET")
+    print("="*80)
+    
+    # Load paths
+    demographic_path = '../dataset/CES/Demographics/demographics.csv'
+    sensing_path = '../dataset/CES/Sensing/sensing.csv'
+    steps_path = '../dataset/CES/Sensing/steps.csv'
+    ema_path = '../dataset/CES/EMA/general_ema.csv'
+    
+    print(f"Loading raw data files...")
+    demo_df = pd.read_csv(demographic_path)
+    # Load sensing in chunks to handle large file
+    print(f"  Loading sensing.csv (large file, may take time)...")
+    sensing_df = pd.read_csv(sensing_path, low_memory=False)
+    steps_df = pd.read_csv(steps_path)
+    ema_df = pd.read_csv(ema_path)
+    
+    print(f"  Demographics: {len(demo_df)} users")
+    print(f"  Sensing: {len(sensing_df)} rows")
+    print(f"  Steps: {len(steps_df)} rows")
+    print(f"  EMA: {len(ema_df)} rows")
+    
+    # Load column configuration
+    with open(use_cols_path, 'r') as f:
+        use_cols = json.load(f)
+    cols = use_cols['compass']
+
+    # Convert date columns
+    sensing_df['day'] = pd.to_datetime(sensing_df['day'], format='%Y%m%d', errors='coerce')
+    steps_df['day'] = pd.to_datetime(steps_df['day'], format='%Y%m%d', errors='coerce')
+    ema_df['day'] = pd.to_datetime(ema_df['day'], format='%Y%m%d', errors='coerce')
+    
+    # Merge sensing and steps
+    print(f"\nMerging sensing and steps data...")
+    feat_df = sensing_df.merge(steps_df, on=['uid', 'day'], how='outer')
+    print(f"  Merged: {len(feat_df)} rows")
+    
+    # Process EMA labels
+    print(f"\nProcessing EMA labels...")
+    # Create derived labels: phq4_anxiety_EMA and phq4_depression_EMA
+    ema_df['phq4_anxiety_EMA'] = ema_df['phq4-1'] + ema_df['phq4-2']
+    ema_df['phq4_depression_EMA'] = ema_df['phq4-3'] + ema_df['phq4-4']
+    
+    # Keep only rows with valid labels
+    ema_df = ema_df.dropna(subset=['phq4_anxiety_EMA', 'phq4_depression_EMA', 'stress'])
+    print(f"  Valid EMA samples: {len(ema_df)}")
+    
+    # Binarize labels
+    ema_df = binarize_labels(ema_df, ['phq4_anxiety_EMA', 'phq4_depression_EMA', 'stress'], cols['threshold'])
+    
+    # Rename user ID for readability (user1, user2, ...)
+    print(f"\nRenaming user IDs to readable format...")
+    unique_users = sorted(ema_df['uid'].unique())
+    user_mapping = {uid: f"user{i+1}" for i, uid in enumerate(unique_users)}
+    
+    ema_df['uid'] = ema_df['uid'].map(user_mapping)
+    feat_df['uid'] = feat_df['uid'].map(user_mapping)
+    demo_df['uid'] = demo_df['uid'].map(user_mapping)
+    
+    print(f"  Mapped {len(unique_users)} users to user1...user{len(unique_users)}")
+    
+    # Build aggregated features
+    print(f"\nBuilding aggregated features (28-day windows)...")
+    print(f"  This may take a while...")
+    
+    agg_rows = []
+    total_ema = len(ema_df)
+    
+    for count, (idx, ema_row) in enumerate(ema_df.iterrows(), 1):
+        if count % 100 == 0 or count == total_ema:
+            print(f"  Progress: {count}/{total_ema} ({count/total_ema*100:.1f}%)")
+        
+        user_id = ema_row['uid']
+        ema_date = ema_row['day']
+        
+        # Get user's features for past 28 days
+        start_date = ema_date - timedelta(days=28)
+        user_feats = feat_df[
+            (feat_df['uid'] == user_id) & 
+            (feat_df['day'] >= start_date) & 
+            (feat_df['day'] < ema_date)
+        ].sort_values('day')
+        
+        # Must have full 28 days of data
+        if len(user_feats) < 28:
+            continue
+        
+        # Build aggregated row
+        agg_row = _build_ces_aggregated_row(user_feats, user_id, ema_date, ema_row, demo_df, cols)
+        
+        if agg_row is not None:
+            agg_rows.append(agg_row)
+    
+    print(f"\n  Built {len(agg_rows)} aggregated samples")
+    
+    # Convert to DataFrame
+    agg_df = pd.DataFrame(agg_rows)
+    
+    # Split into features and labels
+    label_cols = [cols['user_id'], cols['date']] + cols['labels']
+    lab_df = agg_df[label_cols].copy()
+    
+    # Feature columns: everything except pure label columns
+    feat_cols = [c for c in agg_df.columns if c not in cols['labels']]
+    feat_df = agg_df[feat_cols].copy()
+    
+    print(f"\n  Final feature set: {len(feat_df.columns)-3} features")
+    print(f"  Final samples: {len(feat_df)}")
+    print("="*80 + "\n")
+    
+    return feat_df, lab_df, cols
+
+
+def _build_ces_aggregated_row(user_feats: pd.DataFrame, user_id: str, ema_date: pd.Timestamp,
+                               ema_row: pd.Series, demo_df: pd.DataFrame, cols: Dict) -> Optional[Dict]:
+    """
+    Build a single aggregated row for CES data.
+    
+    Aggregation includes:
+    - Statistical: mean, std, min, max over 28 days
+    - Structural: p2w_slope, r2w_slope (past 2 weeks, recent 2 weeks trend)
+    - Semantic: weekday/weekend averages, ep1/2/3 patterns
+    - Raw: before1day ~ before28day for TimeRAG retrieval
+    """
+    if len(user_feats) == 0:
+        return None
+    
+    # Get gender from demographics
+    user_demo = demo_df[demo_df['uid'] == user_id]
+    gender = user_demo['gender'].iloc[0] if len(user_demo) > 0 else 'unknown'
+    
+    # Initialize aggregated row
+    agg_row = {
+        'uid': user_id,
+        'date': ema_date,
+        'gender': gender,
+    }
+    
+    # Get feature list from config
+    stat_features = cols['feature_set']['statistical']
+    semantic_features = cols['feature_set']['semantic']
+    
+    # Process each statistical feature
+    for feat_col, feat_name in stat_features.items():
+        if feat_col not in user_feats.columns:
+            continue
+        
+        values = user_feats[feat_col].values
+        
+        # Skip if too much missing data
+        if np.sum(~np.isnan(values)) < len(values) * 0.5:
+            continue
+        
+        # === STATISTICAL FEATURES ===
+        agg_row[f"{feat_col}_28mean"] = np.nanmean(values)
+        agg_row[f"{feat_col}_28std"] = np.nanstd(values)
+        agg_row[f"{feat_col}_28min"] = np.nanmin(values)
+        agg_row[f"{feat_col}_28max"] = np.nanmax(values)
+        
+        # === STRUCTURAL FEATURES ===
+        # Calculate slopes for past 2 weeks and recent 2 weeks
+        if len(values) >= 28:
+            past_2weeks = values[:14]
+            recent_2weeks = values[-14:]
+            
+            past_slope, _ = _calculate_normalized_slope_ces(past_2weeks)
+            recent_slope, _ = _calculate_normalized_slope_ces(recent_2weeks)
+            
+            agg_row[f"{feat_col}_p2wslope"] = past_slope if not np.isnan(past_slope) else None
+            agg_row[f"{feat_col}_r2wslope"] = recent_slope if not np.isnan(recent_slope) else None
+        else:
+            # If less than 28 days, compute single slope
+            slope, _ = _calculate_normalized_slope_ces(values)
+            agg_row[f"{feat_col}_p2wslope"] = None
+            agg_row[f"{feat_col}_r2wslope"] = slope if not np.isnan(slope) else None
+        
+        # === RAW FEATURES (for TimeRAG retrieval) ===
+        # Store last 28 days in reverse order (before1day, before2day, ...)
+        for i in range(min(28, len(user_feats))):
+            day_value = user_feats.iloc[-(i+1)][feat_col] if i < len(user_feats) else None
+            agg_row[f"{feat_col}_before{i+1}day"] = day_value
+    
+    # === SEMANTIC FEATURES ===
+    # Process semantic features: weekday/weekend and ep1/2/3 patterns
+    
+    # For sleep and ep_0 features: compute weekday/weekend
+    for feat_col, feat_name in semantic_features.items():
+        if feat_col not in user_feats.columns:
+            continue
+        
+        # Identify feature type
+        is_sleep = 'sleep' in feat_col
+        is_ep0 = feat_col.endswith('_ep_0') or feat_col.endswith('_ep0')
+        is_ep1 = feat_col.endswith('_ep_1') or feat_col.endswith('_ep1')
+        is_ep2 = feat_col.endswith('_ep_2') or feat_col.endswith('_ep2')
+        is_ep3 = feat_col.endswith('_ep_3') or feat_col.endswith('_ep3')
+        
+        # Get base feature name (without ep suffix)
+        if is_ep0:
+            base_col = feat_col.replace('_ep_0', '').replace('_ep0', '')
+        elif is_ep1:
+            base_col = feat_col.replace('_ep_1', '').replace('_ep1', '')
+        elif is_ep2:
+            base_col = feat_col.replace('_ep_2', '').replace('_ep2', '')
+        elif is_ep3:
+            base_col = feat_col.replace('_ep_3', '').replace('_ep3', '')
+        else:
+            base_col = feat_col
+        
+        # Compute weekday/weekend for sleep and ep_0 features
+        if is_sleep or is_ep0:
+            weekday_mask = user_feats['day'].dt.dayofweek < 5
+            weekend_mask = user_feats['day'].dt.dayofweek >= 5
+            
+            weekday_values = user_feats.loc[weekday_mask, feat_col].values
+            weekend_values = user_feats.loc[weekend_mask, feat_col].values
+            
+            if len(weekday_values) > 0:
+                agg_row[f"{feat_col}_28weekday"] = np.nanmean(weekday_values)
+            if len(weekend_values) > 0:
+                agg_row[f"{feat_col}_28weekend"] = np.nanmean(weekend_values)
+        
+        # For ep1/2/3 features: compute 28-day mean and yesterday value
+        if is_ep1 or is_ep2 or is_ep3:
+            # 28-day mean
+            agg_row[f"{feat_col}_28mean"] = np.nanmean(user_feats[feat_col].values)
+            
+            # Yesterday value (most recent day)
+            if len(user_feats) > 0:
+                yesterday_val = user_feats.iloc[-1][feat_col]
+                agg_row[f"{feat_col}_yesterday"] = yesterday_val if pd.notna(yesterday_val) else None
+    
+    # Add labels
+    for label in cols['labels']:
+        if label in ema_row:
+            agg_row[label] = ema_row[label]
+        else:
+            agg_row[label] = None
+    
+    return agg_row
+
+
+def _calculate_normalized_slope_ces(values: np.ndarray) -> Tuple[float, str]:
+    """
+    Calculate normalized slope for CES data (same as GLOBEM implementation).
+    
+    Returns:
+        Tuple of (normalized_slope, direction)
+    """
+    valid_mask = ~np.isnan(values)
+    if np.sum(valid_mask) < 2:
+        return np.nan, 'stable'
+    
+    y = values[valid_mask]
+    mean_val = np.mean(y)
+    
+    if mean_val == 0:
+        return np.nan, 'stable'
+    
+    x = np.arange(len(y))
+    slope, _ = np.polyfit(x, y, 1)
+    
+    # Normalize by mean to make slope scale-independent
+    normalized_slope = slope / abs(mean_val)
+    
+    # Determine direction
+    if normalized_slope > 0.05:  # 5% increase per day
+        direction = 'increasing'
+    elif normalized_slope < -0.05:  # 5% decrease per day
+        direction = 'decreasing'
+    else:
+        direction = 'stable'
+    
+    return normalized_slope, direction
+
+
+def sample_ces_testset(
+    n_users: int = 60,
+    min_ema_per_user: int = 9,
+    samples_per_user: int = 5,
+    random_state: Optional[int] = None,
+    use_cols_path: str = './config/ces_use_cols.json'
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, Dict]:
+    """
+    Sample test set from CES dataset with gender-balanced user selection.
+    
+    Args:
+        n_users: Number of users to sample (default: 60)
+        min_ema_per_user: Minimum number of EMA samples required (default: 9, to allow 4 ICL + 5 test)
+        samples_per_user: Number of samples per user for testset (default: 5)
+        random_state: Random seed for reproducibility
+        use_cols_path: Path to column configuration
+        
+    Returns:
+        Tuple of (feat_df_all, test_df, train_df, cols)
+        - feat_df_all: Full feature dataframe (for ICL retrieval)
+        - test_df: Test samples (n_users * samples_per_user rows)
+        - train_df: Training samples (remaining samples for ICL)
+        - cols: Column configuration
+    """
+    print("\n" + "="*80)
+    print("CES TESTSET SAMPLING (GENDER-BALANCED)")
+    print("="*80)
+    print(f"  Target users: {n_users}")
+    print(f"  Min EMA per user: {min_ema_per_user}")
+    print(f"  Samples per user: {samples_per_user}")
+    if random_state:
+        print(f"  Random seed: {random_state}")
+    print("="*80 + "\n")
+    
+    if random_state is not None:
+        rng = np.random.RandomState(random_state)
+    else:
+        rng = np.random.RandomState()
+    
+    # Load CES data (aggregated)
+    feat_df, lab_df, cols = load_ces_data(use_cols_path)
+    
+    # Count EMAs per user
+    user_ema_counts = lab_df.groupby(cols['user_id']).size()
+    
+    # Filter users with sufficient EMAs
+    users_with_emas = user_ema_counts[user_ema_counts >= min_ema_per_user].index.tolist()
+    
+    print(f"Total users in dataset: {lab_df[cols['user_id']].nunique()}")
+    print(f"Users with >= {min_ema_per_user} EMAs: {len(users_with_emas)}")
+    
+    if len(users_with_emas) < n_users:
+        print(f"[WARNING] Only {len(users_with_emas)} eligible users, requested {n_users}")
+        print(f"          Using all {len(users_with_emas)} eligible users")
+        n_users = len(users_with_emas)
+    
+    # Get gender information
+    user_genders = feat_df.groupby(cols['user_id'])['gender'].first()
+    
+    # Count gender distribution
+    gender_counts = user_genders[user_genders.index.isin(users_with_emas)].value_counts()
+    print(f"\nGender distribution in eligible users:")
+    for gender, count in gender_counts.items():
+        print(f"  {gender}: {count} ({count/len(users_with_emas)*100:.1f}%)")
+    
+    # Sample users proportionally by gender
+    selected_users = []
+    for gender, count in gender_counts.items():
+        # Calculate proportional allocation
+        gender_users = user_genders[
+            (user_genders == gender) & (user_genders.index.isin(users_with_emas))
+        ].index.tolist()
+        
+        # Proportional number of users to sample from this gender
+        n_from_gender = int(n_users * (count / len(users_with_emas)))
+        
+        # Ensure we don't request more than available
+        n_from_gender = min(n_from_gender, len(gender_users))
+        
+        # Sample
+        sampled = rng.choice(gender_users, size=n_from_gender, replace=False)
+        selected_users.extend(sampled.tolist())
+    
+    # If we haven't reached n_users yet (due to rounding), sample more
+    if len(selected_users) < n_users:
+        remaining_users = [u for u in users_with_emas if u not in selected_users]
+        n_remaining = n_users - len(selected_users)
+        if len(remaining_users) >= n_remaining:
+            additional = rng.choice(remaining_users, size=n_remaining, replace=False)
+            selected_users.extend(additional.tolist())
+    
+    print(f"\nSelected {len(selected_users)} users")
+    
+    # Verify gender balance
+    selected_genders = user_genders[user_genders.index.isin(selected_users)].value_counts()
+    print(f"Gender distribution in selected users:")
+    for gender, count in selected_genders.items():
+        print(f"  {gender}: {count} ({count/len(selected_users)*100:.1f}%)")
+    
+    # For each selected user, sample test samples with stratified sampling
+    print(f"\nSampling {samples_per_user} test samples per user (from 5th EMA onwards)...")
+    
+    # Build candidate pool: for each user, collect samples from 5th EMA onwards
+    candidate_pool = []
+    
+    for user_id in selected_users:
+        user_labs = lab_df[lab_df[cols['user_id']] == user_id].sort_values(cols['date'])
+        
+        # Only consider samples from 5th EMA onwards (index 4+) to ensure at least 4 samples for ICL
+        if len(user_labs) >= 5:
+            eligible_samples = user_labs.iloc[4:]  # Skip first 4 samples
+            
+            # Add to candidate pool with stratification key
+            for idx in eligible_samples.index:
+                row = eligible_samples.loc[idx]
+                # Create stratification key: anxiety_depression_stress (e.g., "0_1_1")
+                strat_key = f"{row[cols['labels'][0]]}_{row[cols['labels'][1]]}_{row[cols['labels'][2]]}"
+                candidate_pool.append({
+                    'index': idx,
+                    'user_id': user_id,
+                    'strat_key': strat_key
+                })
+    
+    # Group candidates by user and stratification key
+    from collections import defaultdict
+    user_strat_candidates = defaultdict(lambda: defaultdict(list))
+    
+    for candidate in candidate_pool:
+        user_strat_candidates[candidate['user_id']][candidate['strat_key']].append(candidate['index'])
+    
+    # For each user, sample samples_per_user trying to maintain stratification
+    test_indices = []
+    
+    for user_id in selected_users:
+        user_candidates = user_strat_candidates[user_id]
+        
+        if not user_candidates:
+            # No eligible samples (< 5 EMAs), skip this user
+            print(f"  [Warning] User {user_id} has < 5 EMAs, skipping")
+            continue
+        
+        # Get all strat keys for this user
+        all_strat_keys = list(user_candidates.keys())
+        
+        # Try to sample proportionally from each strat group
+        sampled = []
+        
+        if len(all_strat_keys) == 1:
+            # Only one strat group, sample randomly
+            indices = user_candidates[all_strat_keys[0]]
+            n_to_sample = min(samples_per_user, len(indices))
+            sampled = rng.choice(indices, size=n_to_sample, replace=False).tolist()
+        else:
+            # Multiple strat groups, try to sample proportionally
+            total_available = sum(len(indices) for indices in user_candidates.values())
+            
+            for strat_key in all_strat_keys:
+                indices = user_candidates[strat_key]
+                # Proportional allocation
+                proportion = len(indices) / total_available
+                n_from_strat = max(1, int(samples_per_user * proportion))  # At least 1 from each group
+                n_from_strat = min(n_from_strat, len(indices))
+                
+                sampled_from_strat = rng.choice(indices, size=n_from_strat, replace=False).tolist()
+                sampled.extend(sampled_from_strat)
+            
+            # If we have too many, randomly remove some
+            if len(sampled) > samples_per_user:
+                sampled = rng.choice(sampled, size=samples_per_user, replace=False).tolist()
+            # If we have too few, add more from largest group
+            elif len(sampled) < samples_per_user:
+                n_needed = samples_per_user - len(sampled)
+                # Find largest group with remaining samples
+                for strat_key in sorted(all_strat_keys, key=lambda k: len(user_candidates[k]), reverse=True):
+                    remaining = [idx for idx in user_candidates[strat_key] if idx not in sampled]
+                    if remaining:
+                        additional = min(n_needed, len(remaining))
+                        sampled.extend(rng.choice(remaining, size=additional, replace=False).tolist())
+                        n_needed -= additional
+                        if n_needed == 0:
+                            break
+        
+        test_indices.extend(sampled)
+    
+    # Split into test and train
+    test_df = lab_df.loc[test_indices].copy()
+    train_df = lab_df[~lab_df.index.isin(test_indices)].copy()
+    
+    print(f"\nTest set: {len(test_df)} samples from {len([u for u in selected_users if u in test_df[cols['user_id']].values])} users")
+    print(f"Train set: {len(train_df)} samples")
+    
+    # Print stratification distribution in test set
+    if len(test_df) > 0:
+        print(f"\nTest set stratification (Anxiety_Depression_Stress):")
+        test_strat_keys = test_df.apply(
+            lambda row: f"{row[cols['labels'][0]]}_{row[cols['labels'][1]]}_{row[cols['labels'][2]]}", 
+            axis=1
+        )
+        strat_counts = test_strat_keys.value_counts().sort_index()
+        for strat_key, count in strat_counts.items():
+            print(f"  {strat_key}: {count} ({count/len(test_df)*100:.1f}%)")
+    print(f"  (Train set used for ICL example selection)")
+    print("="*80 + "\n")
+    
+    return feat_df, test_df, train_df, cols
+
 
 def load_globem_data(institution: str = 'INS-W_2', target: str = 'compass',
                     use_cols_path: str = './config/globem_use_cols.json') -> Tuple[pd.DataFrame, pd.DataFrame, Dict]:
@@ -316,7 +846,7 @@ def sample_multiinstitution_testset(
 
 
 def sample_batch_stratified(feat_df: pd.DataFrame, lab_df: pd.DataFrame, cols: Dict, n_samples: int,
-                            random_state: Optional[int] = None, max_attempts: int = 5000) -> list[Dict]:
+                            random_state: Optional[int] = None, max_attempts: int = 5000, dataset: str = 'globem') -> list[Dict]:
     """
     Sample a batch of data points with stratified sampling across ALL labels.
     Combines all labels into stratification groups (e.g., anxiety_depression: 0_0, 0_1, 1_0, 1_1).
@@ -423,11 +953,23 @@ def sample_batch_stratified(feat_df: pd.DataFrame, lab_df: pd.DataFrame, cols: D
             user_id = sample_lab.iloc[0][cols['user_id']]
             ema_date = sample_lab.iloc[0][cols['date']]
             
-            agg_feats = aggregate_window_features(feat_df, user_id, ema_date, cols)
-            
-            if agg_feats is None or not check_missing_ratio(agg_feats):
-                attempts += 1
-                continue
+            # Get aggregated features (different for CES vs GLOBEM)
+            if dataset == 'ces':
+                # For CES, aggregated_features is already in feat_df
+                feat_row = feat_df[
+                    (feat_df[cols['user_id']] == user_id) & 
+                    (feat_df[cols['date']] == ema_date)
+                ]
+                if len(feat_row) == 0:
+                    attempts += 1
+                    continue
+                agg_feats = feat_row.iloc[0].to_dict()
+            else:
+                # For GLOBEM, compute on-the-fly
+                agg_feats = aggregate_window_features(feat_df, user_id, ema_date, cols)
+                if agg_feats is None or not check_missing_ratio(agg_feats):
+                    attempts += 1
+                    continue
             
             labels = sample_lab[cols['labels']].iloc[0].to_dict()
             

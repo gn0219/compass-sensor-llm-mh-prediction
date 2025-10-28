@@ -55,7 +55,7 @@ def select_icl(
     feat_df, lab_df, cols: Dict, input_sample: Dict,
     n_shot: int, strategy: str, use_dtw: bool, random_state: Optional[int],
     step_timings: Dict[str, List[float]], verbose: bool,
-    retrieval_candidates: Optional[List[Dict]] = None
+    retrieval_candidates: Optional[List[Dict]] = None, dataset: str = 'globem'
 ):
     """
     Select ICL examples if needed, append timing, and return (icl_examples, icl_strategy).
@@ -64,6 +64,7 @@ def select_icl(
         strategy: 'cross_random', 'cross_retrieval', 'personal_recent', 'hybrid_blend', or 'none'
         use_dtw: For hybrid_blend, whether to use DTW for cross-user part
         retrieval_candidates: Prebuilt candidate pool for retrieval strategies
+        dataset: Dataset type ('globem' or 'ces')
     """
     icl_examples = None
     icl_strategy = 'zero_shot'
@@ -81,7 +82,7 @@ def select_icl(
                 input_sample['user_id'], input_sample['ema_date'],
                 n_shot=n_shot, strategy=strategy, use_dtw=use_dtw,
                 random_state=random_state, target_sample=input_sample,
-                retrieval_candidates=retrieval_candidates
+                retrieval_candidates=retrieval_candidates, dataset=dataset
             )
         if icl_examples is None:
             if verbose:
@@ -213,7 +214,7 @@ def run_single_prediction(prompt_manager: PromptManager, reasoner: LLMReasoner,
                           feat_df, lab_df, cols: Dict, n_shot: int = 5, strategy: str = 'cross_random',
                           use_dtw: bool = False, reasoning_method: str = 'cot', 
                           random_state: Optional[int] = None, llm_seed: Optional[int] = None,
-                          verbose: bool = True) -> Optional[Dict]:
+                          verbose: bool = True, dataset: str = 'globem') -> Optional[Dict]:
     """Run a single prediction for demonstration."""
     if verbose:
         print(f"\n🔍 SINGLE SAMPLE PREDICTION")
@@ -231,7 +232,7 @@ def run_single_prediction(prompt_manager: PromptManager, reasoner: LLMReasoner,
     # ICL
     icl_examples, icl_strategy = select_icl(
         feat_df, lab_df, cols, input_sample, n_shot, strategy, use_dtw,
-        random_state, all_step_timings, verbose, None  # No prebuilt pool for single prediction
+        random_state, all_step_timings, verbose, None, dataset  # No prebuilt pool for single prediction
     )
 
     # Prompt
@@ -281,7 +282,8 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
                          strategy: str = 'cross_random', use_dtw: bool = False, reasoning_method: str = 'cot', 
                          random_state: Optional[int] = 42, llm_seed: Optional[int] = None, 
                          collect_prompts: bool = False, verbose: bool = True,
-                         use_all_samples: bool = False, initial_timings: Optional[Dict[str, float]] = None) -> Optional[Dict]:
+                         use_all_samples: bool = False, initial_timings: Optional[Dict[str, float]] = None,
+                         dataset: str = 'globem') -> Optional[Dict]:
     """Run batch evaluation on multiple samples.
     
     Args:
@@ -313,9 +315,14 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
     
     collected_prompts, collected_metadata = ([], []) if collect_prompts else (None, None)
     
-    # For multi-institution testset, load historical data for ICL
+    # For multi-institution testset or CES, load historical data for ICL
     lab_df_for_icl = None
-    if use_all_samples and config.USE_MULTI_INSTITUTION_TESTSET:
+    if dataset == 'ces' and hasattr(config, 'CES_TRAIN_DF'):
+        # For CES, use train_df for ICL examples
+        lab_df_for_icl = config.CES_TRAIN_DF
+        if verbose:
+            print(f"  [Using CES train set for ICL: {len(lab_df_for_icl)} samples]")
+    elif use_all_samples and config.USE_MULTI_INSTITUTION_TESTSET:
         # Load full historical data for ICL (all weeks, not just testset)
         from .sensor_transformation import load_globem_data
         if verbose:
@@ -349,7 +356,8 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
         retrieval_candidates = build_retrieval_candidate_pool(
             feat_df, trainset, cols,
             max_pool_size=500,
-            random_state=random_state
+            random_state=random_state,
+            dataset=dataset
         )
         
         if verbose and retrieval_candidates:
@@ -368,14 +376,28 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
             user_id = row[cols['user_id']]
             ema_date = row[cols['date']]
             
-            agg_feats = aggregate_window_features(
-                feat_df, user_id, ema_date, cols,
-                window_days=config.AGGREGATION_WINDOW_DAYS,
-                mode=config.DEFAULT_AGGREGATION_MODE,
-                use_immediate_window=config.USE_IMMEDIATE_WINDOW,
-                immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
-                adaptive_window=config.USE_ADAPTIVE_WINDOW
-            )
+            # Get aggregated features (different for CES vs GLOBEM)
+            if dataset == 'ces':
+                # For CES, aggregated_features is already in feat_df
+                feat_row = feat_df[
+                    (feat_df[cols['user_id']] == user_id) & 
+                    (feat_df[cols['date']] == ema_date)
+                ]
+                if len(feat_row) > 0:
+                    agg_feats = feat_row.iloc[0].to_dict()
+                else:
+                    # No data for this sample
+                    agg_feats = None
+            else:
+                # For GLOBEM, compute on-the-fly
+                agg_feats = aggregate_window_features(
+                    feat_df, user_id, ema_date, cols,
+                    window_days=config.AGGREGATION_WINDOW_DAYS,
+                    mode=config.DEFAULT_AGGREGATION_MODE,
+                    use_immediate_window=config.USE_IMMEDIATE_WINDOW,
+                    immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
+                    adaptive_window=config.USE_ADAPTIVE_WINDOW
+                )
             
             # For pre-selected testset: include ALL samples even if agg_feats is None
             if agg_feats is None:
@@ -402,7 +424,7 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
             try:
                 input_samples = sample_batch_stratified(
                     feat_df, lab_df, cols, n_samples,
-                    random_state=random_state
+                    random_state=random_state, dataset=dataset
                 )
             except Exception as e:
                 if verbose:
@@ -464,7 +486,7 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
         icl_examples, icl_strategy = select_icl(
             feat_df, icl_lab_df, cols, input_sample, n_shot, strategy, use_dtw,
             (random_state + i * 1000) if random_state else None,
-            all_step_timings, verbose, retrieval_candidates
+            all_step_timings, verbose, retrieval_candidates, dataset
         )
 
         # Prompt
@@ -475,13 +497,34 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
 
         if collect_prompts:
             collected_prompts.append(prompt)
-            collected_metadata.append({
+            
+            # Filter out before#day columns from aggregated_features for CES data
+            agg_feats = input_sample.get('aggregated_features', {})
+            if isinstance(agg_feats, dict) and dataset == 'ces':
+                # Exclude columns ending with before#day (e.g., loc_dist_ep_0_before1day)
+                agg_feats_filtered = {
+                    k: v for k, v in agg_feats.items()
+                    if not (isinstance(k, str) and 'before' in k and k.split('_')[-1].startswith('before'))
+                }
+            else:
+                agg_feats_filtered = agg_feats
+            
+            # Get stress label if available (for CES)
+            true_stress = input_sample['labels'].get('stress', None)
+            
+            metadata_entry = {
                 'user_id': input_sample['user_id'],
                 'ema_date': str(input_sample['ema_date']),
                 'true_anxiety': input_sample['labels']['phq4_anxiety_EMA'],
                 'true_depression': input_sample['labels']['phq4_depression_EMA'],
-                'aggregated_features': input_sample.get('aggregated_features'),
-            })
+                'aggregated_features': agg_feats_filtered,
+            }
+            
+            # Add stress if available
+            if true_stress is not None:
+                metadata_entry['true_stress'] = true_stress
+            
+            collected_metadata.append(metadata_entry)
 
         # Predict
         all_predictions, all_step_timings, failed_count, last_pred = predict(
@@ -526,7 +569,8 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
                            use_dtw: bool = False, reasoning_method: str = 'cot',
                            random_state: Optional[int] = 42, 
                            verbose: bool = True, use_all_samples: bool = False,
-                           initial_timings: Optional[Dict[str, float]] = None) -> Dict:
+                           initial_timings: Optional[Dict[str, float]] = None,
+                           dataset: str = 'globem') -> Dict:
     """
     Generate and save prompts only without calling LLM.
     Returns prompts and metadata for saving to disk.
@@ -558,9 +602,14 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
     
     collected_prompts, collected_metadata = [], []
     
-    # For multi-institution testset, load historical data for ICL
+    # For multi-institution testset or CES, load historical data for ICL
     lab_df_for_icl = None
-    if use_all_samples and config.USE_MULTI_INSTITUTION_TESTSET:
+    if dataset == 'ces' and hasattr(config, 'CES_TRAIN_DF'):
+        # For CES, use train_df for ICL examples
+        lab_df_for_icl = config.CES_TRAIN_DF
+        if verbose:
+            print(f"  [Using CES train set for ICL: {len(lab_df_for_icl)} samples]")
+    elif use_all_samples and config.USE_MULTI_INSTITUTION_TESTSET:
         # Load full historical data for ICL (all weeks, not just testset)
         from .sensor_transformation import load_globem_data
         if verbose:
@@ -594,7 +643,8 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
         retrieval_candidates = build_retrieval_candidate_pool(
             feat_df, trainset, cols,
             max_pool_size=300,
-            random_state=random_state
+            random_state=random_state,
+            dataset=dataset
         )
         
         if verbose and retrieval_candidates:
@@ -613,14 +663,28 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
             user_id = row[cols['user_id']]
             ema_date = row[cols['date']]
             
-            agg_feats = aggregate_window_features(
-                feat_df, user_id, ema_date, cols,
-                window_days=config.AGGREGATION_WINDOW_DAYS,
-                mode=config.DEFAULT_AGGREGATION_MODE,
-                use_immediate_window=config.USE_IMMEDIATE_WINDOW,
-                immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
-                adaptive_window=config.USE_ADAPTIVE_WINDOW
-            )
+            # Get aggregated features (different for CES vs GLOBEM)
+            if dataset == 'ces':
+                # For CES, aggregated_features is already in feat_df
+                feat_row = feat_df[
+                    (feat_df[cols['user_id']] == user_id) & 
+                    (feat_df[cols['date']] == ema_date)
+                ]
+                if len(feat_row) > 0:
+                    agg_feats = feat_row.iloc[0].to_dict()
+                else:
+                    # No data for this sample
+                    agg_feats = None
+            else:
+                # For GLOBEM, compute on-the-fly
+                agg_feats = aggregate_window_features(
+                    feat_df, user_id, ema_date, cols,
+                    window_days=config.AGGREGATION_WINDOW_DAYS,
+                    mode=config.DEFAULT_AGGREGATION_MODE,
+                    use_immediate_window=config.USE_IMMEDIATE_WINDOW,
+                    immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
+                    adaptive_window=config.USE_ADAPTIVE_WINDOW
+                )
             
             # For pre-selected testset: include ALL samples even if agg_feats is None
             if agg_feats is None:
@@ -647,7 +711,7 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
             try:
                 input_samples = sample_batch_stratified(
                     feat_df, lab_df, cols, n_samples,
-                    random_state=random_state
+                    random_state=random_state, dataset=dataset
                 )
             except Exception as e:
                 if verbose:
@@ -708,7 +772,7 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
         icl_examples, icl_strategy = select_icl(
             feat_df, icl_lab_df, cols, input_sample, n_shot, strategy, use_dtw,
             (random_state + i * 1000) if random_state else None,
-            all_step_timings, False, retrieval_candidates  # verbose=False, pass retrieval pool
+            all_step_timings, False, retrieval_candidates, dataset  # verbose=False, pass retrieval pool
         )
 
         # Prompt
@@ -718,13 +782,34 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
         )
 
         collected_prompts.append(prompt)
-        collected_metadata.append({
+        
+        # Filter out before#day columns from aggregated_features for CES data
+        agg_feats = input_sample.get('aggregated_features', {})
+        if isinstance(agg_feats, dict) and dataset == 'ces':
+            # Exclude columns ending with before#day (e.g., loc_dist_ep_0_before1day)
+            agg_feats_filtered = {
+                k: v for k, v in agg_feats.items()
+                if not (isinstance(k, str) and 'before' in k and k.split('_')[-1].startswith('before'))
+            }
+        else:
+            agg_feats_filtered = agg_feats
+        
+        # Get stress label if available (for CES)
+        true_stress = input_sample['labels'].get('stress', None)
+        
+        metadata_entry = {
             'user_id': input_sample['user_id'],
             'ema_date': str(input_sample['ema_date']),
             'true_anxiety': input_sample['labels']['phq4_anxiety_EMA'],
             'true_depression': input_sample['labels']['phq4_depression_EMA'],
-            'aggregated_features': input_sample.get('aggregated_features'),
-        })
+            'aggregated_features': agg_feats_filtered,
+        }
+        
+        # Add stress if available
+        if true_stress is not None:
+            metadata_entry['true_stress'] = true_stress
+        
+        collected_metadata.append(metadata_entry)
 
     if verbose:
         print(f"\n[OK] Generated {len(collected_prompts)} prompts successfully\n")

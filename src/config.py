@@ -14,19 +14,34 @@ DEFAULT_OUTPUT_DIR = './results'
 
 # Dataset paths (relative to project root)
 GLOBEM_BASE_PATH = '../dataset/Globem'
+CES_BASE_PATH = '../dataset/CES'
 
 DEFAULT_INSTITUTION = 'INS-W_2'
 SAMPLING_USER = 28
 
-# Multi-institution testset configuration
+# Dataset selection: 'globem' or 'ces'
+DATASET_TYPE = 'ces'  # Change to 'ces' to use CES dataset
+
+# Multi-institution testset configuration (GLOBEM)
 USE_MULTI_INSTITUTION_TESTSET = True  # Set to True to use multi-institution testset
 MULTI_INSTITUTION_CONFIG = {
     'INS-W_2': 65,
     'INS-W_3': 28,
     'INS-W_4': 45
 }
-MIN_EMA_PER_USER = 10  # Minimum EMAs required per user
-SAMPLES_PER_USER = 3  # Number of last EMA samples per user for testset
+MIN_EMA_PER_USER = 10  # Minimum EMAs required per user (GLOBEM)
+SAMPLES_PER_USER = 3  # Number of last EMA samples per user for testset (GLOBEM)
+
+# CES testset configuration
+CES_N_USERS = 60  # Number of users to sample for CES testset
+CES_MIN_EMA_PER_USER = 9  # Minimum EMAs required per user (to allow 4 ICL + 5 test)
+CES_SAMPLES_PER_USER = 5  # Number of samples per user for testset
+
+# CES TimeRAG quarterly chunking parameters
+CES_TIMERAG_MIN_SAMPLES_THRESHOLD = 20  # Min samples to trigger clustering
+CES_TIMERAG_MIN_K = 5  # Minimum K for clustering
+CES_TIMERAG_MAX_K_PER_CHUNK = 30  # Maximum K per quarterly chunk
+CES_TIMERAG_MAX_RAW_SAMPLES = 100  # Max raw samples in current quarter before clustering
 
 # TimeRAG Retrieval Configuration
 TIMERAG_POOL_SIZE = 300  # Number of representative samples for DTW candidate pool (via clustering)
@@ -41,7 +56,8 @@ DEFAULT_TARGET = 'compass'
 
 # Configuration files
 PROMPT_CONFIGS_PATH = '../config/prompt_configs.yaml'
-USE_COLS_PATH = '../config/globem_use_cols.json'
+USE_COLS_PATH = '../config/globem_use_cols.json'  # Default for GLOBEM
+CES_USE_COLS_PATH = '../config/ces_use_cols.json'  # For CES
 
 # ============================================================================
 # DATA PROCESSING
@@ -115,6 +131,7 @@ SUPPORTED_MODELS = [
     'mistral-7b',          # Ollama (on-device)
     'qwen3-4b',            # Ollama (on-device)
     'gemma2-9b',           # Ollama (on-device)
+    'gpt-oss-20b',         # OpenRouter (OpenAI)
 ]
 
 # Default temperature for generation
@@ -153,8 +170,8 @@ N_BOOTSTRAP_SAMPLES = 1000
 # EXPERIMENT NAMING
 # ============================================================================
 
-# Dataset name for result files
-DATASET_NAME = 'globem'
+# Dataset name for result files (set automatically based on DATASET_TYPE)
+DATASET_NAME = DATASET_TYPE  # 'globem' or 'ces'
 
 # ============================================================================
 # FEATURE NAMES MAPPING

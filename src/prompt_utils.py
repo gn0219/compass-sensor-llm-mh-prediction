@@ -63,8 +63,11 @@ def build_prompt(prompt_manager: PromptManager, input_sample: Dict, cols: Dict,
     # Track feature extraction time separately
     feat_start = time.time()
     
+    # Determine dataset type
+    dataset = config.DATASET_TYPE if hasattr(config, 'DATASET_TYPE') else 'globem'
+    
     # Convert input sample to text
-    input_text = sample_to_prompt(input_sample, cols, format_type=config.DEFAULT_TARGET, feat_df=feat_df)
+    input_text = sample_to_prompt(input_sample, cols, format_type=config.DEFAULT_TARGET, feat_df=feat_df, dataset=dataset)
     
     # Format ICL examples if provided
     formatted_examples = None
@@ -72,19 +75,27 @@ def build_prompt(prompt_manager: PromptManager, input_sample: Dict, cols: Dict,
         formatted_examples = []
         for ex in icl_examples:
             # Convert example to text format (exclude user_info since it's added by PromptManager)
-            ex_text = sample_to_prompt(ex, cols, format_type=config.DEFAULT_TARGET, include_labels=False, feat_df=feat_df, include_user_info=False)
+            ex_text = sample_to_prompt(ex, cols, format_type=config.DEFAULT_TARGET, include_labels=False, feat_df=feat_df, include_user_info=False, dataset=dataset)
             
             # Extract labels
             anxiety_label = "High Risk" if ex['labels'].get('phq4_anxiety_EMA', 0) == 1 else "Low Risk"
             depression_label = "High Risk" if ex['labels'].get('phq4_depression_EMA', 0) == 1 else "Low Risk"
             
-            formatted_examples.append({
+            # For CES, also include stress label
+            example_dict = {
                 'user_id': ex['user_id'],
                 'date': ex['ema_date'].strftime('%Y-%m-%d') if hasattr(ex['ema_date'], 'strftime') else str(ex['ema_date']),
                 'features_text': ex_text,
                 'anxiety_label': anxiety_label,
                 'depression_label': depression_label
-            })
+            }
+            
+            # Add stress label for CES
+            if dataset == 'ces':
+                stress_label = "High Risk" if ex['labels'].get('stress', 0) == 1 else "Low Risk"
+                example_dict['stress_label'] = stress_label
+            
+            formatted_examples.append(example_dict)
     
     # Record feature engineering time
     if step_timings is not None:

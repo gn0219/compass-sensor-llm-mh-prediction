@@ -30,6 +30,8 @@ PRICING = {
     'mistral-7b': {'input': 0.0, 'output': 0.0},
     'qwen3-4b': {'input': 0.0, 'output': 0.0},
     'gemma2-9b': {'input': 0.0, 'output': 0.0},
+    'gpt-oss-20b': {'input': 0.0, 'output': 0.0},
+    'mistral-7b-instruct': {'input': 0.0, 'output': 0.0},
 }
 
 
@@ -79,7 +81,9 @@ class LLMClient:
         'llama-3.2-3b': 'ollama',
         'mistral-7b': 'ollama',
         'qwen3-4b': 'ollama',
-        'gemma2-9b': 'ollama',
+        'gemma2-9b': 'openrouter',
+        'gpt-oss-20b': 'openrouter',
+        'mistral-7b-instruct': 'openrouter',
     }
     
     OLLAMA_MODELS = {
@@ -87,7 +91,8 @@ class LLMClient:
         'llama-3.2-3b': 'llama3.2:3b',
         'mistral-7b': 'mistral:7b',
         'qwen3-4b': 'qwen3:4b',
-        'gemma2-9b': 'gemma2:9b',
+        # 'gemma2-9b': 'gemma2:9b',
+        'mistral-7b-instruct': 'mistral:7b-instruct',
     }
     
     def __init__(self, model: str = "gpt-5-nano"):
@@ -129,6 +134,8 @@ class LLMClient:
             self.openrouter_models = {
                 'claude-4.5-sonnet': 'anthropic/claude-4.5-sonnet',
                 'gemini-2.5-pro': 'google/gemini-2.5-pro',
+                'gpt-oss-20b': 'openai/gpt-oss-20b:free',
+                'mistral-7b-instruct': 'mistralai/mistral-7b-instruct:free'
             }
             self.openrouter_model = self.openrouter_models.get(self.model, self.model)
             print(f"✅ OpenRouter: {self.model} -> {self.openrouter_model}")

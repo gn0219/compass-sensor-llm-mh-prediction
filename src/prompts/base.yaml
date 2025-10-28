@@ -28,6 +28,10 @@ task:
   objective: |
     Predict mental health risk levels (anxiety and depression) from smartphone and wearable sensor-derived behavioral features.
   
+  # CES-specific task objective
+  objective_ces: |
+    Predict mental health risk levels (anxiety, depression, and stress) from smartphone sensor-derived behavioral features collected from college students.
+  
   targets_header: "**Prediction Targets:**"
   output_targets:
     - name: "Anxiety"
@@ -36,11 +40,31 @@ task:
     - name: "Depression"
       classes: ["Low Risk", "High Risk"]
       threshold: "PHQ-4 depression score > 2"
+  
+  # CES-specific targets (includes stress)
+  output_targets_ces:
+    - name: "Anxiety"
+      classes: ["Low Risk", "High Risk"]
+      threshold: "PHQ-4 anxiety score > 2"
+    - name: "Depression"
+      classes: ["Low Risk", "High Risk"]
+      threshold: "PHQ-4 depression score > 2"
+    - name: "Stress"
+      classes: ["Low Risk", "High Risk"]
+      threshold: "Stress score > 2"
 
 # Context definition
 context:
   background: |
     Behavioral patterns from smartphones and wearables can serve as digital biomarkers for mental health conditions. Use the following symptom–feature mappings as soft guidelines, not absolute rules, since sensor data may be noisy or incomplete.
+  
+  # CES-specific background (includes college student context)
+  background_ces: |
+    The data is from college students. Academic schedule and social life may affect their behavior patterns, 
+    but avoid assuming specific causes without supporting evidence.
+
+    Note that depression and anxiety are typically assessed over the past two weeks, reflecting longer-term affective trends, whereas stress levels often represent current or recent states.
+    Use the following symptom–feature mappings as soft guidelines, not absolute rules, since sensor data may be noisy or incomplete.
   
   clinical_header: "**Clinical Associations:**"
   clinical_associations:
@@ -78,6 +102,22 @@ context:
         - indicator: "Sleep disturbance"
           features: "Sleep duration, Sleep efficiency, Duration in bed"
           patterns: "Difficulty initiating or maintaining sleep, fragmented sleep patterns"
+    
+    stress:
+      title: "Stress Indicators"
+      patterns:
+        - indicator: "Physiological arousal"
+          features: "Movement patterns, Sleep quality"
+          patterns: "Heightened restlessness, erratic activity, reduced sleep quality"
+        - indicator: "Avoidance and withdrawal behaviors"
+          features: "Time at home, Social interactions, Daily activity levels"
+          patterns: "Reduced mobility, limited social engagement, and withdrawal from usual routines reflecting coping or exhaustion"
+        - indicator: "Cognitive overload"
+          features: "Screen usage patterns, App session duration, App switching"
+          patterns: "Distracted attention, increased phone checking, difficulty focusing"
+        - indicator: "Disrupted daily rhythm"
+          features: "Sleep timing, Activity timing, Location transitions"
+          patterns: "Irregular schedules, inconsistent activity timing, and unstable routine patterns"
   
 # Important notes
 notes_header: "**Notes:**"

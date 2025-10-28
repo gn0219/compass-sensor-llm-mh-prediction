@@ -27,6 +27,17 @@ reasoning_methods:
           "Depression": "Low Risk" or "High Risk"
         }
       }
+    
+    # CES-specific output format (includes Stress)
+    output_format_ces: |
+      Please provide your prediction in the following JSON format:
+      {
+        "Prediction": {
+          "Anxiety": "Low Risk" or "High Risk",
+          "Depression": "Low Risk" or "High Risk",
+          "Stress": "Low Risk" or "High Risk"
+        }
+      }
   
   # -------------------------
   # 2. Chain-of-Thought (CoT)
@@ -54,6 +65,21 @@ reasoning_methods:
         "Prediction": {
           "Anxiety": "Low Risk" or "High Risk",
           "Depression": "Low Risk" or "High Risk"
+        }
+      }
+    
+    # CES-specific output format (includes Stress)
+    output_format_ces: |
+      Please provide your response in the following JSON format:
+      {
+        "Step1_ObservePatterns": "Description of observed behavioral patterns",
+        "Step2_CompareToClinicalKnowledge": "How these patterns compare to the clinical knowledge",
+        "Step3_IdentifyRiskFactors": "Key risk or protective factors identified",
+        "Step4_MakePrediction": "Final reasoning and prediction",
+        "Prediction": {
+          "Anxiety": "Low Risk" or "High Risk",
+          "Depression": "Low Risk" or "High Risk",
+          "Stress": "Low Risk" or "High Risk"
         }
       }
   
@@ -91,6 +117,26 @@ reasoning_methods:
         "Focus_Areas_for_Refinement": "If Medium or Hard: what aspects should be examined more carefully in a second analysis?"
       }
     
+    # CES-specific initial output format (includes Stress)
+    initial_output_format_ces: |
+      Please provide your response in the following JSON format:
+      {
+        "Prediction": {
+          "Anxiety": "Low Risk" or "High Risk",
+          "Depression": "Low Risk" or "High Risk",
+          "Stress": "Low Risk" or "High Risk"
+        },
+        "Confidence": {
+          "Anxiety": "High" or "Medium" or "Low",
+          "Depression": "High" or "Medium" or "Low",
+          "Stress": "High" or "Medium" or "Low"
+        },
+        "Key_Insights": "Summarize the main patterns and indicators you observed in 2-3 sentences",
+        "Difficulty": "Easy" or "Medium" or "Hard",
+        "Challenges": "Explain *why* you chose this difficulty level based on the Rubric (Easy/Medium/Hard). E.g., for 'Easy', explain what made it straightforward. For 'Medium/Hard', explain the conflicting signals, variability, etc.",
+        "Focus_Areas_for_Refinement": "If Medium or Hard: what aspects should be examined more carefully in a second analysis?"
+      }
+    
     refinement_instruction: |
       You previously made a prediction that was marked as difficulty: {difficulty}. Here is your previous analysis:
       
@@ -116,6 +162,25 @@ reasoning_methods:
         "Confidence": {
           "Anxiety": "High" or "Medium" or "Low",
           "Depression": "High" or "Medium" or "Low"
+        },
+        "Refined_Analysis": "Explain how your re-analysis *addressed the previous 'Challenges' and 'Focus_Areas'* and led to the new prediction.",
+        "Difficulty": "Easy" or "Medium" or "Hard",
+        "Changes_from_Initial": "Describe what changed (prediction, confidence, and/or difficulty rating) and why. If no change, explain why."
+      }
+    
+    # CES-specific refinement output format (includes Stress)
+    refinement_output_format_ces: |
+      Please provide your refined response in the following JSON format:
+      {
+        "Refined_Prediction": {
+          "Anxiety": "Low Risk" or "High Risk",
+          "Depression": "Low Risk" or "High Risk",
+          "Stress": "Low Risk" or "High Risk"
+        },
+        "Confidence": {
+          "Anxiety": "High" or "Medium" or "Low",
+          "Depression": "High" or "Medium" or "Low",
+          "Stress": "High" or "Medium" or "Low"
         },
         "Refined_Analysis": "Explain how your re-analysis *addressed the previous 'Challenges' and 'Focus_Areas'* and led to the new prediction.",
         "Difficulty": "Easy" or "Medium" or "Hard",
@@ -160,6 +225,11 @@ task_completion:
   instruction: |
     Now, please analyze the following user's behavioral data and provide your 
     prediction for their anxiety and depression risk levels.
+  
+  # CES-specific instruction (includes stress)
+  instruction_ces: |
+    Now, please analyze the following user's behavioral data and provide your 
+    prediction for their anxiety, depression, and stress risk levels.
   
   data_header: "### User Data to Predict"
   

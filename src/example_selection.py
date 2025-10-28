@@ -20,11 +20,17 @@ from tqdm import tqdm
 
 try:
     from .sensor_transformation import aggregate_window_features, check_missing_ratio, get_user_window_data
-    from .timerag_retrieval import build_retrieval_candidate_pool_timerag, sample_from_timerag_pool_dtw
+    from .timerag_retrieval import (
+        build_retrieval_candidate_pool_timerag, sample_from_timerag_pool_dtw,
+        build_retrieval_candidate_pool_timerag_ces, sample_from_timerag_pool_dtw_ces
+    )
     from . import config
 except ImportError:
     from sensor_transformation import aggregate_window_features, check_missing_ratio, get_user_window_data
-    from timerag_retrieval import build_retrieval_candidate_pool_timerag, sample_from_timerag_pool_dtw
+    from timerag_retrieval import (
+        build_retrieval_candidate_pool_timerag, sample_from_timerag_pool_dtw,
+        build_retrieval_candidate_pool_timerag_ces, sample_from_timerag_pool_dtw_ces
+    )
     import config
 
 
@@ -40,7 +46,8 @@ def _get_statistical_features() -> Optional[List[str]]:
 
 def build_retrieval_candidate_pool(
     feat_df: pd.DataFrame, lab_df: pd.DataFrame, cols: Dict,
-    max_pool_size: Optional[int] = None, random_state: Optional[int] = None
+    max_pool_size: Optional[int] = None, random_state: Optional[int] = None,
+    dataset: str = 'globem', target_sample_date: Optional[pd.Timestamp] = None
 ) -> Optional[List[Dict]]:
     """
     Build candidate pool for DTW retrieval using TimeRAG clustering approach.
@@ -54,6 +61,8 @@ def build_retrieval_candidate_pool(
         cols: Column configuration
         max_pool_size: Maximum number of candidates (default: config.TIMERAG_POOL_SIZE)
         random_state: Random seed
+        dataset: Dataset type ('globem' or 'ces')
+        target_sample_date: Target sample date (for CES quarterly chunking)
         
     Returns:
         List of candidate dicts with 'time_series', 'sample', and metadata
@@ -61,12 +70,24 @@ def build_retrieval_candidate_pool(
     if max_pool_size is None:
         max_pool_size = config.TIMERAG_POOL_SIZE
     
-    # Use TimeRAG's clustering-based approach
-    return build_retrieval_candidate_pool_timerag(
-        feat_df, lab_df, cols,
-        pool_size=max_pool_size,
-        random_state=random_state
-    )
+    # Use dataset-specific TimeRAG implementation
+    if dataset == 'ces':
+        return build_retrieval_candidate_pool_timerag_ces(
+            feat_df, lab_df, cols,
+            target_sample_date=target_sample_date,
+            random_state=random_state,
+            min_samples_threshold=config.CES_TIMERAG_MIN_SAMPLES_THRESHOLD,
+            min_k=config.CES_TIMERAG_MIN_K,
+            max_k_per_chunk=config.CES_TIMERAG_MAX_K_PER_CHUNK,
+            max_raw_samples_threshold=config.CES_TIMERAG_MAX_RAW_SAMPLES
+        )
+    else:
+        # GLOBEM
+        return build_retrieval_candidate_pool_timerag(
+            feat_df, lab_df, cols,
+            pool_size=max_pool_size,
+            random_state=random_state
+        )
 
 
 def select_icl_examples(
@@ -74,7 +95,7 @@ def select_icl_examples(
     target_user_id: str, target_ema_date: pd.Timestamp,
     n_shot: int = 4, strategy: str = 'cross_random', use_dtw: bool = False,
     random_state: Optional[int] = None, target_sample: Optional[Dict] = None,
-    retrieval_candidates: Optional[List[Dict]] = None
+    retrieval_candidates: Optional[List[Dict]] = None, dataset: str = 'globem'
 ) -> Optional[List[Dict]]:
     """
     Select in-context learning examples based on specified strategy.
@@ -91,6 +112,7 @@ def select_icl_examples(
         random_state: Random seed for reproducibility
         target_sample: Target sample dict (required for retrieval-based selection)
         retrieval_candidates: Pre-built candidate pool (for cross_retrieval, avoids rebuilding)
+        dataset: Dataset type ('globem' or 'ces')
     
     Returns:
         List of example dictionaries, or None if insufficient data
@@ -105,15 +127,18 @@ def select_icl_examples(
     examples = []
     
     if strategy == 'cross_random':
-        # Cross-User Random: Random sampling from other users
-        other_users_lab = lab_df[lab_df[cols['user_id']] != target_user_id]
+        # Cross-User Random: Random sampling from other users (before target date)
+        other_users_lab = lab_df[
+            (lab_df[cols['user_id']] != target_user_id) & 
+            (lab_df[cols['date']] < target_ema_date)
+        ]
         
         if len(other_users_lab) < n_shot:
-            print(f"Warning: Not enough data from other users")
+            print(f"Warning: Not enough data from other users (before target date)")
             return None
         
         examples = _sample_cross_random(
-            feat_df, other_users_lab, cols, n_shot, random_state
+            feat_df, other_users_lab, cols, n_shot, random_state, dataset=dataset
         )
     
     elif strategy == 'cross_retrieval':
@@ -126,20 +151,27 @@ def select_icl_examples(
             print(f"Warning: target_sample required for retrieval strategy")
             return None
         
-        # Filter out target user from candidates
+        # Filter out target user from candidates AND samples after target date
         other_user_candidates = [
             c for c in retrieval_candidates 
-            if c['user_id'] != target_user_id
+            if c['user_id'] != target_user_id and c['ema_date'] < target_ema_date
         ]
         
         if len(other_user_candidates) < n_shot:
-            print(f"Warning: Not enough candidates from other users")
+            print(f"Warning: Not enough candidates from other users (before target date)")
             return None
         
-        examples = sample_from_timerag_pool_dtw(
-            feat_df, cols, n_shot, target_sample, other_user_candidates,
-            diversity_factor=config.RETRIEVAL_DIVERSITY_FACTOR
-        )
+        # Use dataset-specific DTW sampling
+        if dataset == 'ces':
+            examples = sample_from_timerag_pool_dtw_ces(
+                feat_df, cols, n_shot, target_sample, other_user_candidates,
+                diversity_factor=config.RETRIEVAL_DIVERSITY_FACTOR
+            )
+        else:
+            examples = sample_from_timerag_pool_dtw(
+                feat_df, cols, n_shot, target_sample, other_user_candidates,
+                diversity_factor=config.RETRIEVAL_DIVERSITY_FACTOR
+            )
     
     elif strategy == 'personal_recent':
         # Personal-Recent: Most recent samples from target user
@@ -153,7 +185,7 @@ def select_icl_examples(
             return None
         
         examples = _sample_personal_recent(
-            feat_df, personal_lab, cols, n_shot, target_ema_date
+            feat_df, personal_lab, cols, n_shot, target_ema_date, dataset=dataset
         )
     
     elif strategy == 'hybrid_blend':
@@ -172,29 +204,39 @@ def select_icl_examples(
             return None
         
         personal_examples = _sample_personal_recent(
-            feat_df, personal_lab, cols, n_personal, target_ema_date
+            feat_df, personal_lab, cols, n_personal, target_ema_date, dataset=dataset
         )
         
         # Get cross-user samples (DTW or random based on use_dtw flag)
-        other_users_lab = lab_df[lab_df[cols['user_id']] != target_user_id]
+        other_users_lab = lab_df[
+            (lab_df[cols['user_id']] != target_user_id) & 
+            (lab_df[cols['date']] < target_ema_date)
+        ]
         
         if len(other_users_lab) < n_cross:
-            print(f"Warning: Not enough cross-user data")
+            print(f"Warning: Not enough cross-user data (before target date)")
             return None
         
         if use_dtw and target_sample is not None and retrieval_candidates is not None:
-            # Use prebuilt pool for DTW
+            # Use prebuilt pool for DTW (filter by user and date)
             other_user_candidates = [
                 c for c in retrieval_candidates 
-                if c['user_id'] != target_user_id
+                if c['user_id'] != target_user_id and c['ema_date'] < target_ema_date
             ]
-            cross_examples = sample_from_timerag_pool_dtw(
-                feat_df, cols, n_cross, target_sample, other_user_candidates,
-                diversity_factor=config.RETRIEVAL_DIVERSITY_FACTOR
-            )
+            # Use dataset-specific DTW sampling
+            if dataset == 'ces':
+                cross_examples = sample_from_timerag_pool_dtw_ces(
+                    feat_df, cols, n_cross, target_sample, other_user_candidates,
+                    diversity_factor=config.RETRIEVAL_DIVERSITY_FACTOR
+                )
+            else:
+                cross_examples = sample_from_timerag_pool_dtw(
+                    feat_df, cols, n_cross, target_sample, other_user_candidates,
+                    diversity_factor=config.RETRIEVAL_DIVERSITY_FACTOR
+                )
         else:
             cross_examples = _sample_cross_random(
-                feat_df, other_users_lab, cols, n_cross, random_state
+                feat_df, other_users_lab, cols, n_cross, random_state, dataset=dataset
             )
         
         if personal_examples is None or cross_examples is None:
@@ -210,12 +252,14 @@ def select_icl_examples(
 
 def _sample_cross_random(
     feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dict,
-    n_samples: int, random_state: Optional[int] = None
+    n_samples: int, random_state: Optional[int] = None, dataset: str = 'globem'
 ) -> Optional[List[Dict]]:
     """
     Random sampling from other users with stratified label distribution.
     
-    Ensures balanced representation of anxiety/depression labels (0_0, 0_1, 1_0, 1_1).
+    Ensures balanced representation of labels.
+    For GLOBEM: anxiety/depression (0_0, 0_1, 1_0, 1_1)
+    For CES: anxiety/depression/stress (0_0_0, 0_0_1, ..., 1_1_1)
     """
     if random_state is not None:
         rng = np.random.RandomState(random_state)
@@ -287,17 +331,29 @@ def _sample_cross_random(
             user_id = row[cols['user_id']]
             ema_date = row[cols['date']]
             
-            # Aggregate features
-            agg_feats = aggregate_window_features(
-                feat_df, user_id, ema_date, cols,
-                window_days=config.AGGREGATION_WINDOW_DAYS,
-                mode=config.DEFAULT_AGGREGATION_MODE,
-                use_immediate_window=config.USE_IMMEDIATE_WINDOW,
-                immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
-                adaptive_window=config.USE_ADAPTIVE_WINDOW
-            )
+            # Aggregate features (different logic for CES vs GLOBEM)
+            if dataset == 'ces':
+                # For CES, aggregated_features is already in feat_df
+                feat_row = feat_df[
+                    (feat_df[cols['user_id']] == user_id) & 
+                    (feat_df[cols['date']] == ema_date)
+                ]
+                if len(feat_row) == 0:
+                    attempts += 1
+                    continue
+                agg_feats = feat_row.iloc[0].to_dict()
+            else:
+                # For GLOBEM, compute on-the-fly
+                agg_feats = aggregate_window_features(
+                    feat_df, user_id, ema_date, cols,
+                    window_days=config.AGGREGATION_WINDOW_DAYS,
+                    mode=config.DEFAULT_AGGREGATION_MODE,
+                    use_immediate_window=config.USE_IMMEDIATE_WINDOW,
+                    immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
+                    adaptive_window=config.USE_ADAPTIVE_WINDOW
+                )
             
-            if agg_feats is not None and check_missing_ratio(agg_feats):
+            if agg_feats is not None and (dataset == 'ces' or check_missing_ratio(agg_feats)):
                 labels = row[cols['labels']].to_dict()
                 examples.append({
                     'aggregated_features': agg_feats,
@@ -525,7 +581,7 @@ def _sample_cross_retrieval(
 
 def _sample_personal_recent(
     feat_df: pd.DataFrame, personal_lab: pd.DataFrame, cols: Dict,
-    n_samples: int, target_date: pd.Timestamp
+    n_samples: int, target_date: pd.Timestamp, dataset: str = 'globem'
 ) -> Optional[List[Dict]]:
     """Select most recent samples from personal history."""
     # Sort by date descending
@@ -540,17 +596,28 @@ def _sample_personal_recent(
         user_id = row[cols['user_id']]
         ema_date = row[cols['date']]
         
-        # Aggregate features
-        agg_feats = aggregate_window_features(
-            feat_df, user_id, ema_date, cols,
-            window_days=config.AGGREGATION_WINDOW_DAYS,
-            mode=config.DEFAULT_AGGREGATION_MODE,
-            use_immediate_window=config.USE_IMMEDIATE_WINDOW,
-            immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
-            adaptive_window=config.USE_ADAPTIVE_WINDOW
-        )
+        # Aggregate features (different logic for CES vs GLOBEM)
+        if dataset == 'ces':
+            # For CES, aggregated_features is already in feat_df
+            feat_row = feat_df[
+                (feat_df[cols['user_id']] == user_id) & 
+                (feat_df[cols['date']] == ema_date)
+            ]
+            if len(feat_row) == 0:
+                continue
+            agg_feats = feat_row.iloc[0].to_dict()
+        else:
+            # For GLOBEM, compute on-the-fly
+            agg_feats = aggregate_window_features(
+                feat_df, user_id, ema_date, cols,
+                window_days=config.AGGREGATION_WINDOW_DAYS,
+                mode=config.DEFAULT_AGGREGATION_MODE,
+                use_immediate_window=config.USE_IMMEDIATE_WINDOW,
+                immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
+                adaptive_window=config.USE_ADAPTIVE_WINDOW
+            )
         
-        if agg_feats is not None and check_missing_ratio(agg_feats):
+        if agg_feats is not None and (dataset == 'ces' or check_missing_ratio(agg_feats)):
             labels = row[cols['labels']].to_dict()
             examples.append({
                 'aggregated_features': agg_feats,

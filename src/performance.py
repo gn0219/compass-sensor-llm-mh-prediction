@@ -75,33 +75,50 @@ def calculate_binary_metrics(y_true: List[int], y_pred: List[int],
 
 
 def calculate_mental_health_metrics(results: List[Dict], anxiety_label_key: str = 'phq4_anxiety_EMA',
-                                    depression_label_key: str = 'phq4_depression_EMA') -> Dict:
-    """Calculate metrics for anxiety and depression predictions."""
-    anxiety_true, anxiety_pred, anxiety_proba = [], [], []
-    depression_true, depression_pred, depression_proba = [], [], []
+                                    depression_label_key: str = 'phq4_depression_EMA',
+                                    stress_label_key: str = 'stress') -> Dict:
+    """Calculate metrics for anxiety, depression, and stress predictions."""
+    # Define targets with their label keys and prediction keys
+    targets = [
+        ('anxiety', anxiety_label_key, 'Anxiety'),
+        ('depression', depression_label_key, 'Depression'),
+        ('stress', stress_label_key, 'Stress')
+    ]
+    
+    # Collect predictions for each target
+    target_data = {name: {'true': [], 'pred': [], 'proba': []} for name, _, _ in targets}
     
     for result in results:
         if 'labels' not in result or 'prediction' not in result:
             continue
         
-        if anxiety_label_key in result['labels'] and 'Anxiety_binary' in result['prediction']:
-            anxiety_true.append(result['labels'][anxiety_label_key])
-            anxiety_pred.append(result['prediction']['Anxiety_binary'])
-            if 'proba' in result and 'Anxiety' in result['proba']:
-                anxiety_proba.append(result['proba']['Anxiety'])
+        for target_name, label_key, pred_key in targets:
+            pred_binary_key = f'{pred_key}_binary'
+            
+            if label_key in result['labels'] and pred_binary_key in result['prediction']:
+                target_data[target_name]['true'].append(result['labels'][label_key])
+                target_data[target_name]['pred'].append(result['prediction'][pred_binary_key])
+                
+                if 'proba' in result and pred_key in result['proba']:
+                    target_data[target_name]['proba'].append(result['proba'][pred_key])
+    
+    # Calculate metrics for each target
+    result_dict = {}
+    for target_name, _, pred_key in targets:
+        true_vals = target_data[target_name]['true']
+        pred_vals = target_data[target_name]['pred']
+        proba_vals = target_data[target_name]['proba']
         
-        if depression_label_key in result['labels'] and 'Depression_binary' in result['prediction']:
-            depression_true.append(result['labels'][depression_label_key])
-            depression_pred.append(result['prediction']['Depression_binary'])
-            if 'proba' in result and 'Depression' in result['proba']:
-                depression_proba.append(result['proba']['Depression'])
+        # Only include if we have predictions for this target
+        if true_vals:
+            metrics = calculate_binary_metrics(
+                true_vals, pred_vals,
+                proba_vals if proba_vals else None,
+                pred_key
+            )
+            result_dict[target_name] = metrics
     
-    anxiety_metrics = calculate_binary_metrics(anxiety_true, anxiety_pred, 
-                                               anxiety_proba if anxiety_proba else None, "Anxiety")
-    depression_metrics = calculate_binary_metrics(depression_true, depression_pred,
-                                                  depression_proba if depression_proba else None, "Depression")
-    
-    return {'anxiety': anxiety_metrics, 'depression': depression_metrics}
+    return result_dict
 
 
 def calculate_classification_metrics(y_true: List[int], y_pred: List[int], target: str = '') -> Dict:
@@ -220,6 +237,11 @@ def generate_comprehensive_report(results: List[Dict], usage_stats: Dict, config
         'avg_latency_sec': efficiency_metrics['latency']['avg_seconds']
     }
     
+    # Add stress metrics if available
+    if 'stress' in classification_metrics:
+        summary['stress_accuracy'] = classification_metrics['stress']['accuracy']
+        summary['stress_f1'] = classification_metrics['stress']['f1_score']
+    
     return {
         'classification_performance': classification_metrics,
         'cost_efficiency': efficiency_metrics,
@@ -248,10 +270,14 @@ def print_comprehensive_report(report: Dict):
     summary = report['summary']
     print(f"  Total Samples:         {summary['total_samples']}")
     print(f"  Total Requests:        {summary['total_requests']}")
-    print(f"  Anxiety Accuracy:      {summary['anxiety_accuracy']:.4f}")
-    print(f"  Anxiety F1 Score:      {summary['anxiety_f1']:.4f}")
-    print(f"  Depression Accuracy:   {summary['depression_accuracy']:.4f}")
-    print(f"  Depression F1 Score:   {summary['depression_f1']:.4f}")
+    
+    # Print accuracy and F1 for each target dynamically
+    for target in ['anxiety', 'depression', 'stress']:
+        if f'{target}_accuracy' in summary:
+            target_display = target.capitalize()
+            print(f"  {target_display} Accuracy:      {summary[f'{target}_accuracy']:.4f}")
+            print(f"  {target_display} F1 Score:      {summary[f'{target}_f1']:.4f}")
+    
     print(f"  Total Cost:            ${summary['total_cost_usd']:.4f}")
     print(f"  Avg Latency:           {summary['avg_latency_sec']:.2f}s")
     
@@ -261,7 +287,11 @@ def print_comprehensive_report(report: Dict):
     print("="*80)
     
     classification = report['classification_performance']
-    for target in ['anxiety', 'depression']:
+    targets = ['anxiety', 'depression']
+    if 'stress' in classification:
+        targets.append('stress')
+    
+    for target in targets:
         metrics = classification[target]
         print(f"\n📊 {target.upper()} PREDICTION")
         print("-" * 80)
@@ -391,33 +421,34 @@ def save_predictions_to_csv(predictions: List[Dict], filepath: str, reasoning_me
 
 
 def metrics_to_dataframe(metrics: Dict) -> pd.DataFrame:
-    """Convert metrics dictionary to pandas DataFrame with confusion matrix values."""
-    data = {
-        'Anxiety': [
-            metrics['anxiety']['accuracy'],
-            metrics['anxiety']['balanced_accuracy'],
-            metrics['anxiety']['precision'],
-            metrics['anxiety']['recall'],
-            metrics['anxiety']['f1_score'],
-            metrics['anxiety']['auroc'] if metrics['anxiety']['auroc'] else 'N/A',
-            metrics['anxiety']['tp'],
-            metrics['anxiety']['tn'],
-            metrics['anxiety']['fp'],
-            metrics['anxiety']['fn']
-        ],
-        'Depression': [
-            metrics['depression']['accuracy'],
-            metrics['depression']['balanced_accuracy'],
-            metrics['depression']['precision'],
-            metrics['depression']['recall'],
-            metrics['depression']['f1_score'],
-            metrics['depression']['auroc'] if metrics['depression']['auroc'] else 'N/A',
-            metrics['depression']['tp'],
-            metrics['depression']['tn'],
-            metrics['depression']['fp'],
-            metrics['depression']['fn']
-        ]
-    }
+    """Convert metrics dictionary to pandas DataFrame with confusion matrix values.
+    
+    Supports anxiety, depression, and stress (if available).
+    """
+    # Define target names and their display names
+    targets = [
+        ('anxiety', 'Anxiety'),
+        ('depression', 'Depression'),
+        ('stress', 'Stress')
+    ]
+    
+    # Build data dictionary dynamically
+    data = {}
+    for target_key, target_display in targets:
+        if target_key in metrics:
+            m = metrics[target_key]
+            data[target_display] = [
+                m['accuracy'],
+                m['balanced_accuracy'],
+                m['precision'],
+                m['recall'],
+                m['f1_score'],
+                m['auroc'] if m['auroc'] else 'N/A',
+                m['tp'],
+                m['tn'],
+                m['fp'],
+                m['fn']
+            ]
     
     index_labels = [
         'Accuracy', 'Balanced Accuracy', 'Precision', 'Recall', 'F1-Score', 'AUROC',

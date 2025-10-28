@@ -1,0 +1,56 @@
+{
+    "compass": {
+        "user_id": "uid",
+        "user_info": "uid",
+        "date": "none",
+        "description": "",
+        "feature_set": {
+            "statistical": {
+                "LOC_CLS#DSC": "Location - total distance",
+                "LOC_LABEL#DSC=home": "Location - time at home",
+                "loc_self_dorm_dur": "Location - time spent at self-dormitory",
+                "loc_social_dur": "Location - duration with social places",
+                "loc_food_dur": "Location - time spent at food places",
+                "loc_work_dur": "Location - time spent at work places",
+                "loc_study_dur": "Location - time spent at study places",
+                "loc_workout_dur": "Location - time spent at workout places (sport center, football field, gym etc.)",
+                "visit_num_ep_0": "Location - visit count",
+                "unlock_duration_ep_0": "Screen - sum duration unlock",
+                "unlock_num_ep_0": "Screen - unlock count",
+                "call_in_duration_ep_0": "Call - sum duration incoming",
+                "call_out_duration_ep_0": "Call - sum duration outgoing",
+                "step_ep_0": "Steps - sum steps",
+                "sleep_duration": "Sleep - duration",
+                "sleep_start": "Sleep - start time",
+                "sleep_end": "Sleep - end time"
+            },
+            "structural": "None",
+            "semantic": {
+                "sleep_duration": "Sleep - weekday sleep duration",
+                "step_ep_0": "Steps - number of steps",
+                "step_ep_1": "Steps - number of steps 12am-9am",
+                "step_ep_2": "Steps - number of steps 9am-6pm",
+                "step_ep_3": "Steps - number of steps 6pm-12am",
+                "unlock_duration_ep_0": "Screen - number of unlock",
+                "unlock_duration_ep_1": "Screen - number of unlock 12am-9am",
+                "unlock_duration_ep_2": "Screen - number of unlock 9am-6pm",
+                "unlock_duration_ep_3": "Screen - number of unlock 6pm-12am",
+                "loc_visit_num_ep_0": "Location - number of visits",
+                "loc_visit_num_ep_1": "Location - number of visits 12am-9am",
+                "loc_visit_num_ep_2": "Location - number of visits 9am-6pm",
+                "loc_visit_num_ep_3": "Location - number of visits 6pm-12am"
+            },
+            "temporal_descriptor": "None"
+        },
+        "labels": [
+            "phq4_anxiety_EMA",
+            "phq4_depression_EMA",
+            "stress"
+        ],
+        "threshold": {
+            "phq4_anxiety_EMA": 2,
+            "phq4_depression_EMA": 2,
+            "stress": 2
+        }
+    }
+}

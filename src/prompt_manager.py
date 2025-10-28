@@ -28,8 +28,12 @@ class PromptManager:
         with open(filepath, 'r', encoding='utf-8') as f:
             return yaml.safe_load(f)
     
-    def get_task_instructions(self) -> str:
-        """Construct the task instructions (Role + Task only)."""
+    def get_task_instructions(self, dataset: str = 'globem') -> str:
+        """Construct the task instructions (Role + Task only).
+        
+        Args:
+            dataset: 'globem' or 'ces' to use appropriate task description
+        """
         t = self.base_template
         parts = [t['structure']['title']]
         
@@ -37,26 +41,54 @@ class PromptManager:
         parts.extend([t['structure']['sections'][0]['header'], t['role']['description'].strip(), ""])
         
         # Task section
-        parts.extend([t['structure']['sections'][1]['header'], t['task']['objective'].strip(), "",
-                     t['task']['targets_header']])
-        for target in t['task']['output_targets']:
+        parts.append(t['structure']['sections'][1]['header'])
+        
+        # Use dataset-specific objective
+        if dataset == 'ces':
+            objective = t['task'].get('objective_ces', t['task']['objective'])
+            output_targets = t['task'].get('output_targets_ces', t['task']['output_targets'])
+        else:
+            objective = t['task']['objective']
+            output_targets = t['task']['output_targets']
+        
+        parts.extend([objective.strip(), "", t['task']['targets_header']])
+        for target in output_targets:
             parts.append(f"- **{target['name']}**: {' or '.join(target['classes'])} (threshold: {target['threshold']})")
         parts.append("")
         
         return "\n".join(parts)
     
-    def get_context_section(self) -> str:
-        """Construct the context section only."""
+    def get_context_section(self, dataset: str = 'globem') -> str:
+        """Construct the context section only.
+        
+        Args:
+            dataset: 'globem' or 'ces' to use appropriate context
+        """
         t = self.base_template
         ctx = t['context']
-        parts = [t['structure']['sections'][2]['header'], ctx['background'].strip(), ""]
+        parts = [t['structure']['sections'][2]['header']]
+        
+        # Use dataset-specific background
+        if dataset == 'ces':
+            background = ctx.get('background_ces', ctx['background'])
+        else:
+            background = ctx['background']
+        
+        parts.extend([background.strip(), ""])
         
         # Clinical associations
-        for condition, info in ctx['clinical_associations'].items():
-            parts.append(f"**{info['title']}:**")
-            for pattern in info['patterns']:
-                parts.extend([f"- {pattern['indicator']}", f"  * {pattern['features']}", f"  * {pattern['patterns']}"])
-            parts.append("")
+        # For CES, include stress indicators
+        conditions_to_include = ['depression', 'anxiety']
+        if dataset == 'ces':
+            conditions_to_include.append('stress')
+        
+        for condition in conditions_to_include:
+            if condition in ctx['clinical_associations']:
+                info = ctx['clinical_associations'][condition]
+                parts.append(f"**{info['title']}:**")
+                for pattern in info['patterns']:
+                    parts.extend([f"- {pattern['indicator']}", f"  * {pattern['features']}", f"  * {pattern['patterns']}"])
+                parts.append("")
         
         # Notes
         parts.append(t['notes_header'])
@@ -131,6 +163,7 @@ class PromptManager:
                     date=example.get('date', 'Unknown')
                 )
                 prompt_parts.append(user_info)
+                prompt_parts.append("")
             
             # Features (assume example has 'features_text' key)
             if 'features_text' in example:
@@ -138,10 +171,17 @@ class PromptManager:
             
             # Labels (if include_labels is True)
             if fmt['include_labels'] and 'anxiety_label' in example:
-                label_text = fmt['label_format'].format(
-                    anxiety_label=example.get('anxiety_label', 'Unknown'),
-                    depression_label=example.get('depression_label', 'Unknown')
-                )
+                # Check if stress label exists (CES dataset)
+                if 'stress_label' in example:
+                    label_text = f"Labels:\n"
+                    label_text += f"  - Anxiety: {example.get('anxiety_label', 'Unknown')}\n"
+                    label_text += f"  - Depression: {example.get('depression_label', 'Unknown')}\n"
+                    label_text += f"  - Stress: {example.get('stress_label', 'Unknown')}"
+                else:
+                    label_text = fmt['label_format'].format(
+                        anxiety_label=example.get('anxiety_label', 'Unknown'),
+                        depression_label=example.get('depression_label', 'Unknown')
+                    )
                 prompt_parts.append(label_text)
             
             # Separator between examples
@@ -153,8 +193,13 @@ class PromptManager:
         
         return "\n".join(prompt_parts)
     
-    def get_reasoning_instruction(self, method: str = "cot") -> Dict[str, str]:
-        """Get reasoning instructions for a specific method."""
+    def get_reasoning_instruction(self, method: str = "cot", dataset: str = 'globem') -> Dict[str, str]:
+        """Get reasoning instructions for a specific method.
+        
+        Args:
+            method: Reasoning method ('cot', 'direct', 'self_feedback')
+            dataset: 'globem' or 'ces' to use appropriate output format
+        """
         methods = self.reasoning_template['reasoning_methods']
         if method not in methods:
             raise ValueError(f"Unknown reasoning method: {method}. Available: {list(methods.keys())}")
@@ -164,18 +209,30 @@ class PromptManager:
         # Handle different reasoning method structures
         if method == 'self_feedback':
             # Self-feedback has initial_instruction instead of instruction
+            # Use CES-specific format if dataset is 'ces' and it exists
+            if dataset == 'ces':
+                initial_output_format = m.get('initial_output_format_ces', m.get('initial_output_format', ''))
+            else:
+                initial_output_format = m.get('initial_output_format', '')
+            
             return {
                 'name': m['name'],
                 'description': m['description'],
                 'instruction': m.get('initial_instruction', m.get('instruction', '')).strip(),
-                'output_format': m.get('initial_output_format', m.get('output_format', '')).strip()
+                'output_format': initial_output_format.strip()
             }
         else:
+            # Use CES-specific format if dataset is 'ces' and it exists
+            if dataset == 'ces':
+                output_format = m.get('output_format_ces', m.get('output_format', ''))
+            else:
+                output_format = m.get('output_format', '')
+            
             return {
                 'name': m['name'],
                 'description': m['description'],
                 'instruction': m.get('instruction', '').strip(),
-                'output_format': m.get('output_format', '').strip()
+                'output_format': output_format.strip()
             }
     
     # def get_output_constraints(self) -> str:
@@ -188,10 +245,21 @@ class PromptManager:
     #     parts.append("")
     #     return "\n".join(parts)
     
-    def get_task_completion_prompt(self) -> str:
-        """Get the task completion section prompt."""
+    def get_task_completion_prompt(self, dataset: str = 'globem') -> str:
+        """Get the task completion section prompt.
+        
+        Args:
+            dataset: 'globem' or 'ces' to use appropriate instruction
+        """
         task = self.reasoning_template['task_completion']
-        return "\n".join([task['header'], task['instruction'].strip(), "", task['reminder'].strip(), ""])
+        
+        # Use CES-specific instruction if dataset is 'ces' and it exists
+        if dataset == 'ces':
+            instruction = task.get('instruction_ces', task.get('instruction', ''))
+        else:
+            instruction = task.get('instruction', '')
+        
+        return "\n".join([task['header'], instruction.strip(), "", task['reminder'].strip(), ""])
     
     def build_complete_prompt(
         self,
@@ -199,7 +267,8 @@ class PromptManager:
         icl_examples: Optional[List[Dict]] = None,
         icl_strategy: str = "generalized",
         reasoning_method: str = "cot",
-        include_constraints: bool = True
+        include_constraints: bool = True,
+        dataset: str = None
     ) -> str:
         """
         Build a complete prompt with all components.
@@ -210,6 +279,7 @@ class PromptManager:
             icl_strategy: ICL strategy to use
             reasoning_method: Reasoning method to use
             include_constraints: Whether to include output constraints
+            dataset: 'globem' or 'ces' (auto-detected from config if None)
         
         Returns:
             Complete formatted prompt
@@ -221,13 +291,18 @@ class PromptManager:
         4. Input Data (User Data)
         5. Output Indicators (Reasoning Method, Guidelines, Output Format)
         """
+        # Auto-detect dataset if not provided
+        if dataset is None:
+            from . import config
+            dataset = getattr(config, 'DATASET_TYPE', 'globem')
+        
         parts = []
         
         # 1. Task Instructions (Role + Task)
-        parts.append(self.get_task_instructions())
+        parts.append(self.get_task_instructions(dataset=dataset))
         
         # 2. Context
-        parts.append(self.get_context_section())
+        parts.append(self.get_context_section(dataset=dataset))
         
         # 3. ICL examples (if provided)
         if icl_examples:
@@ -236,14 +311,21 @@ class PromptManager:
         # 4. Input data (User Data to Predict)
         task_completion = self.reasoning_template['task_completion']
         parts.append(task_completion['header'])
-        parts.append(task_completion['instruction'].strip())
+        
+        # Use CES-specific instruction if dataset is 'ces' and it exists
+        if dataset == 'ces':
+            instruction = task_completion.get('instruction_ces', task_completion.get('instruction', ''))
+        else:
+            instruction = task_completion.get('instruction', '')
+        
+        parts.append(instruction.strip())
         parts.append("")
         parts.append(task_completion['data_header'] + "\n")
         parts.append(input_data_text)
         parts.append("")
         
         # 5. Output Indicators
-        reasoning = self.get_reasoning_instruction(reasoning_method)
+        reasoning = self.get_reasoning_instruction(reasoning_method, dataset=dataset)
         
         # 5a. Reasoning method
         parts.append(f"## Reasoning Method: {reasoning['name']}")

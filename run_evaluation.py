@@ -13,7 +13,10 @@ import os
 from datetime import datetime
 
 from src.sensor_transformation import load_globem_data
-from src.data_utils import sample_multiinstitution_testset, filter_testset_by_historical_labels
+from src.data_utils import (
+    sample_multiinstitution_testset, filter_testset_by_historical_labels,
+    sample_ces_testset
+)
 from src.reasoning import LLMReasoner
 from src.prompt_manager import PromptManager
 from src.prompt_utils import (
@@ -119,38 +122,60 @@ def main():
         import time
         initial_timings = {}
         
-        print("\n[Loading GLOBEM dataset...]")
-        
-        # Check if multi-institution testset mode is enabled
-        if config.USE_MULTI_INSTITUTION_TESTSET:
+        # Load dataset based on config.DATASET_TYPE
+        if config.DATASET_TYPE == 'ces':
+            print("\n[Loading CES dataset...]")
             t0_total = time.time()
-            feat_df, lab_df, cols = sample_multiinstitution_testset(
-                institutions_config=config.MULTI_INSTITUTION_CONFIG,
-                min_ema_per_user=config.MIN_EMA_PER_USER,
-                samples_per_user=config.SAMPLES_PER_USER,
-                random_state=args.seed,
-                target=config.DEFAULT_TARGET
+            feat_df, test_df, train_df, cols = sample_ces_testset(
+                n_users=config.CES_N_USERS,
+                min_ema_per_user=config.CES_MIN_EMA_PER_USER,
+                samples_per_user=config.CES_SAMPLES_PER_USER,
+                random_state=args.seed
             )
+            # For CES, we use test_df as lab_df (testset)
+            # train_df is used for ICL examples - store it globally
+            lab_df = test_df
+            # Store train_df for ICL example selection
+            # We'll pass it via USE_MULTI_INSTITUTION_TESTSET flag and store in config
+            config.CES_TRAIN_DF = train_df
             total_time = time.time() - t0_total
-            # For multi-institution, loading and sampling happen together
-            # Approximate: 30% loading, 70% sampling
             initial_timings['loading'] = total_time * 0.3
             initial_timings['test_sampling'] = total_time * 0.7
-        else:
-            t0_load = time.time()
-            feat_df, lab_df, cols = load_globem_data(institution=config.DEFAULT_INSTITUTION, target=config.DEFAULT_TARGET)
-            initial_timings['loading'] = time.time() - t0_load
+        elif config.DATASET_TYPE == 'globem':
+            print("\n[Loading GLOBEM dataset...]")
             
-            print(f"  Target: {config.DEFAULT_TARGET}")
-            print(f"  Features: {feat_df.shape[0]} rows | Labels: {lab_df.shape[0]} rows")
-            
-            # Filter test set by historical labels (for fair ICL comparison)
-            t0_sampling = time.time()
-            if config.FILTER_TESTSET_BY_HISTORY:
-                lab_df = filter_testset_by_historical_labels(
-                    lab_df, cols, min_historical=config.MIN_HISTORICAL_LABELS
+            # Check if multi-institution testset mode is enabled
+            if config.USE_MULTI_INSTITUTION_TESTSET:
+                t0_total = time.time()
+                feat_df, lab_df, cols = sample_multiinstitution_testset(
+                    institutions_config=config.MULTI_INSTITUTION_CONFIG,
+                    min_ema_per_user=config.MIN_EMA_PER_USER,
+                    samples_per_user=config.SAMPLES_PER_USER,
+                    random_state=args.seed,
+                    target=config.DEFAULT_TARGET
                 )
-            initial_timings['test_sampling'] = time.time() - t0_sampling
+                total_time = time.time() - t0_total
+                # For multi-institution, loading and sampling happen together
+                # Approximate: 30% loading, 70% sampling
+                initial_timings['loading'] = total_time * 0.3
+                initial_timings['test_sampling'] = total_time * 0.7
+            else:
+                t0_load = time.time()
+                feat_df, lab_df, cols = load_globem_data(institution=config.DEFAULT_INSTITUTION, target=config.DEFAULT_TARGET)
+                initial_timings['loading'] = time.time() - t0_load
+                
+                print(f"  Target: {config.DEFAULT_TARGET}")
+                print(f"  Features: {feat_df.shape[0]} rows | Labels: {lab_df.shape[0]} rows")
+                
+                # Filter test set by historical labels (for fair ICL comparison)
+                t0_sampling = time.time()
+                if config.FILTER_TESTSET_BY_HISTORY:
+                    lab_df = filter_testset_by_historical_labels(
+                        lab_df, cols, min_historical=config.MIN_HISTORICAL_LABELS
+                    )
+                initial_timings['test_sampling'] = time.time() - t0_sampling
+        else:
+            raise ValueError(f"Unknown DATASET_TYPE: {config.DATASET_TYPE}. Must be 'globem' or 'ces'")
         
         print("\n[Initializing Prompt Manager...]")
         prompt_manager = PromptManager()
@@ -177,7 +202,8 @@ def main():
             prompt_manager, reasoner, feat_df, lab_df, cols, 
             n_shot=args.n_shot, strategy=args.strategy, use_dtw=args.use_dtw,
             reasoning_method=args.reasoning, random_state=args.seed, 
-            llm_seed=args.llm_seed, verbose=args.verbose
+            llm_seed=args.llm_seed, verbose=args.verbose,
+            dataset=config.DATASET_TYPE
         )
         
         if result:
@@ -224,7 +250,8 @@ def main():
                 reasoning_method=args.reasoning, random_state=args.seed,
                 verbose=args.verbose,
                 use_all_samples=config.USE_MULTI_INSTITUTION_TESTSET,
-                initial_timings=initial_timings
+                initial_timings=initial_timings,
+                dataset=config.DATASET_TYPE
             )
             exp_prefix = build_experiment_prefix(args.n_shot, args.strategy,
                                                 reasoning=args.reasoning,
@@ -238,7 +265,8 @@ def main():
                 llm_seed=args.llm_seed,
                 collect_prompts=args.save_prompts, verbose=args.verbose,
                 use_all_samples=config.USE_MULTI_INSTITUTION_TESTSET,
-                initial_timings=initial_timings
+                initial_timings=initial_timings,
+                dataset=config.DATASET_TYPE
             )
             exp_prefix = build_experiment_prefix(args.n_shot, args.strategy,
                                                 reasoning=args.reasoning,

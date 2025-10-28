@@ -663,6 +663,192 @@ def features_to_text_healthllm(feat_df: pd.DataFrame, user_id: str, ema_date: pd
     return result
 
 
+def features_to_text_ces(agg_feats: Dict, cols: Dict, feat_df: pd.DataFrame = None) -> str:
+    """
+    Convert CES aggregated sensor features to natural language text.
+    
+    CES data is pre-aggregated with columns like:
+    - Statistical: feature_28mean, feature_28std, feature_28min, feature_28max
+    - Structural: feature_p2wslope, feature_r2wslope
+    - Semantic: feature_28weekday, feature_28weekend, feature_ep1_28mean, feature_ep1_yesterday
+    
+    Args:
+        agg_feats: Dictionary containing aggregated features (from aggregated_ces.csv)
+        cols: Column configuration
+        feat_df: Feature DataFrame (not used for CES, but kept for API consistency)
+    
+    Returns:
+        Formatted text representation
+    """
+    text = ""
+    
+    # Get feature configuration
+    stat_features = cols['feature_set']['statistical']
+    semantic_features = cols['feature_set']['semantic']
+    
+    # === STATISTICAL & STRUCTURAL FEATURES ===
+    text += "28 day summary features (P2W slope and R2W slope are calculated based on the past 2 weeks and recent 2 weeks trend):\n"
+    
+    for feat_col, feat_name in stat_features.items():
+        # Check if this feature exists in aggregated data
+        mean_key = f"{feat_col}_28mean"
+        if mean_key not in agg_feats:
+            continue
+        
+        # Statistical values
+        mean_val = agg_feats.get(f"{feat_col}_28mean", 'N/A')
+        std_val = agg_feats.get(f"{feat_col}_28std", 'N/A')
+        min_val = agg_feats.get(f"{feat_col}_28min", 'N/A')
+        max_val = agg_feats.get(f"{feat_col}_28max", 'N/A')
+        
+        # Format statistical values
+        # Note: np is assumed to be imported (e.g., import numpy as np)
+        mean_str = f"{mean_val:.2f}" if isinstance(mean_val, (int, float)) and not np.isnan(mean_val) else 'N/A'
+        std_str = f"{std_val:.2f}" if isinstance(std_val, (int, float)) and not np.isnan(std_val) else 'N/A'
+        min_str = f"{min_val:.2f}" if isinstance(min_val, (int, float)) and not np.isnan(min_val) else 'N/A'
+        max_str = f"{max_val:.2f}" if isinstance(max_val, (int, float)) and not np.isnan(max_val) else 'N/A'
+        
+        # Only add statistical summary to text if at least one value is not 'N/A'
+        if not all(s == 'N/A' for s in [mean_str, std_str, min_str, max_str]):
+            text += f"{feat_name}: "
+            text += f"mean={mean_str}, "
+            text += f"sd={std_str}, "
+            text += f"min={min_str}, "
+            text += f"max={max_str}\n"
+        
+        # Structural: slopes
+        p2w_slope = agg_feats.get(f"{feat_col}_p2wslope", 'N/A')
+        r2w_slope = agg_feats.get(f"{feat_col}_r2wslope", 'N/A')
+        
+        # Determine direction
+        p2w_dir = _get_slope_direction(p2w_slope)
+        r2w_dir = _get_slope_direction(r2w_slope)
+        
+        # Format slope values
+        p2w_slope_str = f"{p2w_slope:.2f}" if isinstance(p2w_slope, (int, float)) and not np.isnan(p2w_slope) else 'N/A'
+        r2w_slope_str = f"{r2w_slope:.2f}" if isinstance(r2w_slope, (int, float)) and not np.isnan(r2w_slope) else 'N/A'
+        
+        # Only add slope information to text if at least one slope value is not 'N/A'
+        if not all(s == 'N/A' for s in [p2w_slope_str, r2w_slope_str]):
+            text += f"- P2W slope=({p2w_dir}, {p2w_slope_str}), R2W slope=({r2w_dir}, {r2w_slope_str})\n\n"
+        else:
+            # If no slope data, still add a newline for consistent formatting if statistical data was present
+            # or if this is the only feature type for this feat_name.
+            # The original code added two newlines, so we'll add one here to match the spacing if slopes are skipped.
+            if not all(s == 'N/A' for s in [mean_str, std_str, min_str, max_str]):
+                text += "\n"
+    
+    # === SEMANTIC FEATURES ===
+    text += "The following shows weekday/weekend patterns, 28-day time-of-day patterns (mean), "
+    text += "and yesterday's transitions (12am-9am/9am-6pm/6pm-12am).\n\n"
+    
+    # Group semantic features by base name
+    processed_bases = set()
+    
+    for feat_col, feat_name in semantic_features.items():
+        # Determine base feature name
+        if feat_col.endswith('_ep_0') or feat_col.endswith('_ep0'):
+            base_col = feat_col.replace('_ep_0', '').replace('_ep0', '')
+        elif feat_col.endswith('_ep_1') or feat_col.endswith('_ep_2') or feat_col.endswith('_ep_3'):
+            # Extract base name (e.g., "step_ep_1" -> "step")
+            base_col = feat_col.rsplit('_ep_', 1)[0]
+        else:
+            base_col = feat_col
+        
+        # Skip if already processed (e.g., if step_ep_0 already processed step, skip step_ep_1/2/3)
+        if base_col in processed_bases:
+            continue
+        processed_bases.add(base_col)
+        
+        # Check for weekday/weekend pattern
+        weekday_key = f"{feat_col}_28weekday"
+        weekend_key = f"{feat_col}_28weekend"
+        
+        has_weekday_weekend = weekday_key in agg_feats or weekend_key in agg_feats
+        
+        # Check for ep1/2/3 patterns
+        ep1_col = f"{base_col}_ep_1" if not base_col.endswith('_ep_1') else feat_col
+        ep2_col = f"{base_col}_ep_2" if not base_col.endswith('_ep_2') else feat_col
+        ep3_col = f"{base_col}_ep_3" if not base_col.endswith('_ep_3') else feat_col
+        
+        has_ep_patterns = (f"{ep1_col}_28mean" in agg_feats or 
+                          f"{ep2_col}_28mean" in agg_feats or 
+                          f"{ep3_col}_28mean" in agg_feats)
+        
+        if not has_weekday_weekend and not has_ep_patterns:
+            continue
+        
+        # Simplify feature name for display
+        display_name = feat_name.split(' - ')[-1] if ' - ' in feat_name else feat_name
+        text += f"- {display_name}\n"
+        
+        # Weekday/weekend pattern
+        if has_weekday_weekend:
+            weekday = agg_feats.get(weekday_key, 'N/A')
+            weekend = agg_feats.get(weekend_key, 'N/A')
+            
+            weekday_str = f"{weekday:.1f}" if isinstance(weekday, (int, float)) and not np.isnan(weekday) else 'N/A'
+            weekend_str = f"{weekend:.1f}" if isinstance(weekend, (int, float)) and not np.isnan(weekend) else 'N/A'
+            
+            if isinstance(weekday, (int, float)) and isinstance(weekend, (int, float)) and not np.isnan(weekday) and not np.isnan(weekend):
+                diff = weekend - weekday
+                text += f"  - Weekday: {weekday_str}, Weekend: {weekend_str} (diff={diff:.2f})\n"
+            else:
+                text += f"  - Weekday: {weekday_str}, Weekend: {weekend_str}\n"
+        
+        # Time-of-day patterns (ep1/2/3)
+        if has_ep_patterns:
+            # 28-day patterns
+            ep1_28mean = agg_feats.get(f"{ep1_col}_28mean", None)
+            ep2_28mean = agg_feats.get(f"{ep2_col}_28mean", None)
+            ep3_28mean = agg_feats.get(f"{ep3_col}_28mean", None)
+            
+            if ep1_28mean is not None or ep2_28mean is not None or ep3_28mean is not None:
+                text += f"  - 28 day patterns: "
+                periods = []
+                if ep1_28mean is not None and not (isinstance(ep1_28mean, float) and np.isnan(ep1_28mean)):
+                    periods.append(f"12am-9am={ep1_28mean:.1f}")
+                if ep2_28mean is not None and not (isinstance(ep2_28mean, float) and np.isnan(ep2_28mean)):
+                    periods.append(f"9am-6pm={ep2_28mean:.1f}")
+                if ep3_28mean is not None and not (isinstance(ep3_28mean, float) and np.isnan(ep3_28mean)):
+                    periods.append(f"6pm-12am={ep3_28mean:.1f}")
+                text += ", ".join(periods) + "\n"
+            
+            # Yesterday transitions
+            ep1_yesterday = agg_feats.get(f"{ep1_col}_yesterday", None)
+            ep2_yesterday = agg_feats.get(f"{ep2_col}_yesterday", None)
+            ep3_yesterday = agg_feats.get(f"{ep3_col}_yesterday", None)
+            
+            if ep1_yesterday is not None or ep2_yesterday is not None or ep3_yesterday is not None:
+                text += f"  - Yesterday transition: "
+                periods = []
+                if ep1_yesterday is not None and not (isinstance(ep1_yesterday, float) and np.isnan(ep1_yesterday)):
+                    periods.append(f"12am-9am={ep1_yesterday:.1f}")
+                if ep2_yesterday is not None and not (isinstance(ep2_yesterday, float) and np.isnan(ep2_yesterday)):
+                    periods.append(f"9am-6pm={ep2_yesterday:.1f}")
+                if ep3_yesterday is not None and not (isinstance(ep3_yesterday, float) and np.isnan(ep3_yesterday)):
+                    periods.append(f"6pm-12am={ep3_yesterday:.1f}")
+                text += ", ".join(periods) + "\n"
+        
+        text += "\n"
+    
+    return text
+
+
+def _get_slope_direction(slope_value) -> str:
+    """Get direction string from slope value."""
+    if slope_value is None or (isinstance(slope_value, float) and np.isnan(slope_value)):
+        return 'stable'
+    if not isinstance(slope_value, (int, float)):
+        return 'stable'
+    if slope_value > 0.05:
+        return 'increasing'
+    elif slope_value < -0.05:
+        return 'decreasing'
+    else:
+        return 'stable'
+
+
 def features_to_text(agg_feats, cols: Dict, include_stats: bool = True) -> str:
     """
     Convert aggregated sensor features to natural language text.
@@ -773,17 +959,18 @@ def features_to_text(agg_feats, cols: Dict, include_stats: bool = True) -> str:
 
 def sample_to_prompt(sample: Dict, cols: Dict, format_type: str = 'structured',
                     include_labels: bool = False, feat_df: pd.DataFrame = None,
-                    include_user_info: bool = True) -> str:
+                    include_user_info: bool = True, dataset: str = 'globem') -> str:
     """
     Convert a sample to prompt text.
     
     Args:
         sample: Sample dictionary with user_id, ema_date, aggregated_features, labels
         cols: Column configuration
-        format_type: Format type ('structured'/'compass', 'fctci', 'health-llm')
+        format_type: Format type ('structured'/'compass', 'fctci', 'health-llm', 'ces')
         include_labels: Whether to include labels
         feat_df: Feature dataframe (required for fctci and health-llm formats)
         include_user_info: Whether to include User ID and Date (default True)
+        dataset: Dataset type ('globem' or 'ces') - for CES, aggregated_features is a row dict
     
     Returns:
         Formatted prompt text
@@ -791,8 +978,7 @@ def sample_to_prompt(sample: Dict, cols: Dict, format_type: str = 'structured',
     prompt = ""
     if include_user_info:
         prompt = f"User ID: {sample['user_id']}\n"
-        prompt += f"Date: {sample['ema_date'].strftime('%Y-%m-%d')}\n"
-        prompt += "\n"
+        prompt += f"Date: {sample['ema_date'].strftime('%Y-%m-%d')}\n\n"
     
     prompt += "Sensor Features:\n"
     
@@ -809,8 +995,12 @@ def sample_to_prompt(sample: Dict, cols: Dict, format_type: str = 'structured',
         prompt += features_to_text_healthllm(
             feat_df, sample['user_id'], sample['ema_date'], cols, period_days=14
         )
+    elif format_type == 'ces' or dataset == 'ces':
+        # CES format: aggregated_features is a row dictionary from aggregated_ces.csv
+        agg_feats = sample['aggregated_features']
+        prompt += features_to_text_ces(agg_feats, cols, feat_df)
     else:
-        # Default: compass/structured format
+        # Default: compass/structured format (GLOBEM)
         agg_feats = sample['aggregated_features']
         if isinstance(agg_feats, dict):
             # window_days = agg_feats.get('window_days', 7)
@@ -824,7 +1014,7 @@ def sample_to_prompt(sample: Dict, cols: Dict, format_type: str = 'structured',
     if include_labels:
         prompt += "\nLabels:\n"
         for label_name, label_value in sample['labels'].items():
-            label_simple = label_name.replace('_EMA', '').replace('phq4_', '').title()
+            label_simple = label_name.replace('_EMA', '').replace('phq4_', '').replace('phq4-', '').title()
             status = "High Risk" if label_value == 1 else "Low Risk"
             prompt += f"  - {label_simple}: {status}\n"
     
