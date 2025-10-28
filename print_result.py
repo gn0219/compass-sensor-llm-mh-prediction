@@ -98,15 +98,15 @@ for file in files:
             seed = parts[5] # e.g., 'seed42'
             model_type = parts[6].upper() # e.g., 'GPT'
             model_version = parts[7] # e.g., '5'
-            cot_value = parts[8] # e.g., '0'
+            reasoning_method = parts[4] # e.g., '0'
 
             # Format components for printing and CSV
             formatted_shot_type = shot_type.replace('shot', '-shot').capitalize()
             formatted_strategy = strategy.capitalize()
             formatted_seed = seed.replace('seed', 'Seed ').capitalize() # 'seed42' -> 'Seed 42'
             formatted_model = f"{model_type}-{model_version}"
-            reasoning_method = 'CoT' if cot_value == '1' else 'DO'
-            icl_strategy = 'none' if shot_type == 'zeroshot' else formatted_strategy
+            # reasoning_method = 'CoT' if cot_value == '1' else 'DO'
+            icl_strategy = 'ZeroShot' if shot_type == 'zeroshot' else formatted_strategy
 
             print_header = (
                 f"{sensor_type} - {formatted_shot_type} - {formatted_strategy} - Random - "
@@ -192,15 +192,15 @@ for file in files:
             current_result['ICL Strategy'] = icl_strategy
             current_result['Reasoning'] = reasoning_method
 
-            current_result['Accuracy (Depression)'] = dep_accuracy
-            current_result['Macro F1 (Depression)'] = dep_f1
-            current_result['Precision (Depression)'] = dep_precision
-            current_result['Recall (Depression)'] = dep_recall
+            current_result['Accuracy (Depression)'] = np.round(dep_accuracy, 4)
+            current_result['Macro F1 (Depression)'] = np.round(dep_f1, 4)
+            current_result['Precision (Depression)'] = np.round(dep_precision, 4)
+            current_result['Recall (Depression)'] = np.round(dep_recall, 4)
 
-            current_result['Accuracy (Anxiety)'] = anx_accuracy
-            current_result['Macro F1 (Anxiety)'] = anx_f1
-            current_result['Precision (Anxiety)'] = anx_precision
-            current_result['Recall (Anxiety)'] = anx_recall
+            current_result['Accuracy (Anxiety)'] = np.round(anx_accuracy, 4)
+            current_result['Macro F1 (Anxiety)'] = np.round(anx_f1, 4)
+            current_result['Precision (Anxiety)'] = np.round(anx_precision, 4)
+            current_result['Recall (Anxiety)'] = np.round(anx_recall, 4)
 
             # Resource Usage
             avg_latency = get_resource_usage_value(efficiency_df, 'Avg Latency (s)')
@@ -211,19 +211,19 @@ for file in files:
             std_cost_per_sample = get_resource_usage_value(efficiency_df, 'Std Cost per Sample ($)')
             current_result['Cost ($)'] = f"{cost_per_sample:.4f}±{std_cost_per_sample:.4f}"
 
-            current_result['Input Token (Avg)'] = get_resource_usage_value(efficiency_df, 'Prompt Tokens (Avg)')
-            current_result['Output Token (Avg)'] = get_resource_usage_value(efficiency_df, 'Completion Tokens (Avg)')
-            current_result['Throughput (Tokens/Sec)'] = get_resource_usage_value(efficiency_df, 'Tokens/Second')
-            current_result['Throughput (Samples/Minute)'] = get_resource_usage_value(efficiency_df, 'Samples/Minute')
-            current_result['Total Token'] = get_resource_usage_value(efficiency_df, 'Total Tokens')
-            current_result['Total Latency (sec) - Experiment'] = get_resource_usage_value(efficiency_df, 'Total Latency (s)')
-            current_result['Total Cost ($) - Experiment'] = get_resource_usage_value(efficiency_df, 'Total Cost ($)')
-            current_result['Total Input Token - Experiment'] = get_resource_usage_value(efficiency_df, 'Prompt Tokens (Total)')
-            current_result['Total Output Token - Experiment'] = get_resource_usage_value(efficiency_df, 'Completion Tokens (Total)')
+            current_result['Input Token (Avg)'] = np.round(get_resource_usage_value(efficiency_df, 'Prompt Tokens (Avg)'), 4)
+            current_result['Output Token (Avg)'] = np.round(get_resource_usage_value(efficiency_df, 'Completion Tokens (Avg)'), 4)  
+            current_result['Throughput (Tokens/Sec)'] = np.round(get_resource_usage_value(efficiency_df, 'Tokens/Second'), 4)
+            current_result['Throughput (Samples/Minute)'] = np.round(get_resource_usage_value(efficiency_df, 'Samples/Minute'), 4)  
+            current_result['Total Token'] = np.round(get_resource_usage_value(efficiency_df, 'Total Tokens'), 0)
+            current_result['Total Latency (sec) - Experiment'] = np.round(get_resource_usage_value(efficiency_df, 'Total Latency (s)'), 4)
+            current_result['Total Cost ($) - Experiment'] = np.round(get_resource_usage_value(efficiency_df, 'Total Cost ($)'), 4)
+            current_result['Total Input Token - Experiment'] = np.round(get_resource_usage_value(efficiency_df, 'Prompt Tokens (Total)'), 0)
+            current_result['Total Output Token - Experiment'] = np.round(get_resource_usage_value(efficiency_df, 'Completion Tokens (Total)'), 0)
 
             # Prompt Generation Time
-            current_result['Total Data Prep Time (sec)'] = prompts_dict['loading'] + prompts_dict['test_sampling'] + prompts_dict['feature_engineering']
-            current_result['Mean ICL Sampling (sec)'] = prompts_dict['icl_selection']
+            current_result['Total Data Prep Time (sec)'] = np.round(prompts_dict['loading'] + prompts_dict['test_sampling'] + prompts_dict['feature_engineering'], 4)
+            current_result['Mean ICL Sampling (sec)'] = np.round(prompts_dict['icl_selection'], 4)
 
             all_results.append(current_result)
 

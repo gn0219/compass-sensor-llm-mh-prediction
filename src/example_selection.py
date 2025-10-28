@@ -137,7 +137,8 @@ def select_icl_examples(
             return None
         
         examples = sample_from_timerag_pool_dtw(
-            feat_df, cols, n_shot, target_sample, other_user_candidates
+            feat_df, cols, n_shot, target_sample, other_user_candidates,
+            diversity_factor=config.RETRIEVAL_DIVERSITY_FACTOR
         )
     
     elif strategy == 'personal_recent':
@@ -188,7 +189,8 @@ def select_icl_examples(
                 if c['user_id'] != target_user_id
             ]
             cross_examples = sample_from_timerag_pool_dtw(
-                feat_df, cols, n_cross, target_sample, other_user_candidates
+                feat_df, cols, n_cross, target_sample, other_user_candidates,
+                diversity_factor=config.RETRIEVAL_DIVERSITY_FACTOR
             )
         else:
             cross_examples = _sample_cross_random(
@@ -210,48 +212,113 @@ def _sample_cross_random(
     feat_df: pd.DataFrame, lab_pool: pd.DataFrame, cols: Dict,
     n_samples: int, random_state: Optional[int] = None
 ) -> Optional[List[Dict]]:
-    """Random sampling from other users."""
-    # Sample more to account for filtering due to missing data
-    # Try up to 3x the requested amount to ensure we get enough valid samples
-    max_attempts = min(len(lab_pool), n_samples * 3)
+    """
+    Random sampling from other users with stratified label distribution.
     
+    Ensures balanced representation of anxiety/depression labels (0_0, 0_1, 1_0, 1_1).
+    """
     if random_state is not None:
-        sampled = lab_pool.sample(n=max_attempts, random_state=random_state)
+        rng = np.random.RandomState(random_state)
     else:
-        sampled = lab_pool.sample(n=max_attempts)
+        rng = np.random.RandomState()
     
-    examples = []
-    for idx in sampled.index:
-        row = sampled.loc[idx]
-        user_id = row[cols['user_id']]
-        ema_date = row[cols['date']]
+    # Create stratification key from anxiety and depression labels
+    label_cols = cols['labels']
+    lab_pool_copy = lab_pool.copy()
+    
+    # Combine anxiety and depression labels: e.g., "0_0", "0_1", "1_0", "1_1"
+    if len(label_cols) >= 2:
+        # Assume first two labels are anxiety and depression
+        strat_key = lab_pool_copy[label_cols[0]].astype(str) + "_" + lab_pool_copy[label_cols[1]].astype(str)
+        lab_pool_copy['_strat_key'] = strat_key
         
-        # Aggregate features
-        agg_feats = aggregate_window_features(
-            feat_df, user_id, ema_date, cols,
-            window_days=config.AGGREGATION_WINDOW_DAYS,
-            mode=config.DEFAULT_AGGREGATION_MODE,
-            use_immediate_window=config.USE_IMMEDIATE_WINDOW,
-            immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
-            adaptive_window=config.USE_ADAPTIVE_WINDOW
-        )
+        # Calculate samples per stratification group
+        class_counts = lab_pool_copy['_strat_key'].value_counts()
+        classes = class_counts.index.tolist()
         
-        if agg_feats is not None and check_missing_ratio(agg_feats):
-            labels = row[cols['labels']].to_dict()
-            examples.append({
-                'aggregated_features': agg_feats,
-                'labels': labels,
-                'user_id': user_id,
-                'ema_date': ema_date
-            })
+        # Distribute samples proportionally, but ensure each class gets at least 1 if possible
+        samples_per_class = {}
+        if n_samples >= len(classes):
+            # Give at least 1 to each class, then distribute remaining proportionally
+            base_per_class = n_samples // len(classes)
+            remainder = n_samples % len(classes)
             
-            # Stop once we have enough valid examples
-            if len(examples) >= n_samples:
+            for cls in classes:
+                samples_per_class[cls] = base_per_class
+            
+            # Distribute remainder to most frequent classes
+            for i, cls in enumerate(class_counts.index[:remainder]):
+                samples_per_class[cls] += 1
+        else:
+            # If n_samples < number of classes, sample from largest classes
+            largest_classes = class_counts.nlargest(n_samples).index.tolist()
+            for cls in largest_classes:
+                samples_per_class[cls] = 1
+    else:
+        # Fallback: no stratification
+        samples_per_class = {'all': n_samples}
+        lab_pool_copy['_strat_key'] = 'all'
+    
+    # Sample from each stratification group
+    examples = []
+    max_attempts_per_class = 50
+    
+    for cls, n_class_samples in samples_per_class.items():
+        if n_class_samples <= 0:
+            continue
+        
+        cls_indices = lab_pool_copy[lab_pool_copy['_strat_key'] == cls].index.tolist()
+        
+        if len(cls_indices) == 0:
+            continue
+        
+        # Shuffle and try to collect valid samples
+        rng.shuffle(cls_indices)
+        collected_for_class = 0
+        attempts = 0
+        
+        for idx in cls_indices:
+            if collected_for_class >= n_class_samples:
                 break
+            if attempts >= max_attempts_per_class:
+                break
+            
+            row = lab_pool.loc[idx]
+            user_id = row[cols['user_id']]
+            ema_date = row[cols['date']]
+            
+            # Aggregate features
+            agg_feats = aggregate_window_features(
+                feat_df, user_id, ema_date, cols,
+                window_days=config.AGGREGATION_WINDOW_DAYS,
+                mode=config.DEFAULT_AGGREGATION_MODE,
+                use_immediate_window=config.USE_IMMEDIATE_WINDOW,
+                immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
+                adaptive_window=config.USE_ADAPTIVE_WINDOW
+            )
+            
+            if agg_feats is not None and check_missing_ratio(agg_feats):
+                labels = row[cols['labels']].to_dict()
+                examples.append({
+                    'aggregated_features': agg_feats,
+                    'labels': labels,
+                    'user_id': user_id,
+                    'ema_date': ema_date,
+                    '_label_strat': cls  # For debugging
+                })
+                collected_for_class += 1
+            
+            attempts += 1
+    
+    # Shuffle final examples to mix label groups
+    if examples:
+        indices = list(range(len(examples)))
+        rng.shuffle(indices)
+        examples = [examples[i] for i in indices]
     
     # Only warn if we got less than 75% of requested samples
     if len(examples) < n_samples * 0.75:
-        print(f"Warning: Only collected {len(examples)}/{n_samples} valid examples")
+        print(f"Warning: Only collected {len(examples)}/{n_samples} valid examples (stratified)")
     
     return examples if examples else None
 

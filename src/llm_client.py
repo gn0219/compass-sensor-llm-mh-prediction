@@ -9,6 +9,14 @@ import time
 from typing import Dict, Optional, Tuple
 from .utils import load_api_keys, estimate_tokens
 
+# GPU monitoring (optional - only for Ollama models)
+try:
+    import pynvml
+    pynvml.nvmlInit()
+    GPU_AVAILABLE = True
+except:
+    GPU_AVAILABLE = False
+
 
 # Pricing per 1M tokens (update as needed)
 PRICING = {
@@ -33,6 +41,29 @@ def calculate_cost(model: str, prompt_tokens: int, completion_tokens: int) -> fl
     input_cost = (prompt_tokens / 1_000_000) * pricing['input']
     output_cost = (completion_tokens / 1_000_000) * pricing['output']
     return input_cost + output_cost
+
+
+def get_gpu_metrics() -> Dict:
+    """
+    Get current GPU metrics (memory usage and utilization).
+    Returns empty dict if GPU monitoring is not available.
+    """
+    if not GPU_AVAILABLE:
+        return {}
+    
+    try:
+        handle = pynvml.nvmlDeviceGetHandleByIndex(0)  # Assuming GPU 0
+        mem_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
+        utilization = pynvml.nvmlDeviceGetUtilizationRates(handle)
+        
+        return {
+            'memory_used_mb': mem_info.used / (1024 ** 2),
+            'memory_total_mb': mem_info.total / (1024 ** 2),
+            'memory_util_percent': (mem_info.used / mem_info.total) * 100,
+            'gpu_util_percent': utilization.gpu
+        }
+    except:
+        return {}
 
 
 class LLMClient:
@@ -72,7 +103,11 @@ class LLMClient:
             'total_latency': 0.0, 'total_cost': 0.0, 'num_requests': 0,
             # Per-request metrics for standard deviation calculation
             'latencies': [], 'costs': [], 'prompt_tokens_list': [], 
-            'completion_tokens_list': [], 'total_tokens_list': []
+            'completion_tokens_list': [], 'total_tokens_list': [],
+            # GPU metrics (for Ollama models)
+            'gpu_memory_used': [],  # MB per request
+            'gpu_utilization': [],  # % per request
+            'peak_gpu_memory': 0.0  # MB
         }
         self._gpt5_warning_shown = False  # Track if we've shown GPT-5 warnings
         self._initialize_client()
@@ -114,7 +149,7 @@ class LLMClient:
             print(f"✅ Ollama: {self.model}")
     
     def call_api(self, prompt: str, temperature: float = 0.7,
-                 max_tokens: int = 3200, seed: Optional[int] = None) -> Tuple[Optional[str], Dict]:
+                 max_tokens: int = 6000, seed: Optional[int] = None) -> Tuple[Optional[str], Dict]:
         """Call LLM API and return response with usage info."""
         try:
             if self.provider == 'openai':
@@ -256,6 +291,9 @@ class LLMClient:
     #     }
     
     def _call_ollama(self, prompt: str, temperature: float, max_tokens: int) -> Tuple[str, Dict]:
+        # Get initial GPU metrics
+        gpu_before = get_gpu_metrics()
+        
         start = time.time()
         resp = self.client.generate(
             model=self.ollama_model, prompt=prompt,
@@ -263,19 +301,41 @@ class LLMClient:
         )
         latency = time.time() - start
         
+        # Get final GPU metrics
+        gpu_after = get_gpu_metrics()
+        
         text = resp['response']
         pt = resp.get('prompt_eval_count', estimate_tokens(prompt))
         ct = resp.get('eval_count', estimate_tokens(text))
         cost = 0.0  # Free for on-device models
         
-        self._update_stats(pt, ct, pt + ct, latency, cost)
+        # Calculate GPU metrics delta
+        gpu_memory_used = 0.0
+        gpu_utilization = 0.0
+        if gpu_before and gpu_after:
+            gpu_memory_used = gpu_after['memory_used_mb']
+            gpu_utilization = gpu_after['gpu_util_percent']
+            # Track peak memory
+            if gpu_memory_used > self.usage_stats['peak_gpu_memory']:
+                self.usage_stats['peak_gpu_memory'] = gpu_memory_used
         
-        return text, {
+        self._update_stats(pt, ct, pt + ct, latency, cost, gpu_memory_used, gpu_utilization)
+        
+        result = {
             'prompt_tokens': pt, 'completion_tokens': ct, 'total_tokens': pt + ct,
             'latency': latency, 'cost': cost, 'provider': 'ollama', 'deployment': 'on-device'
         }
+        
+        # Add GPU metrics if available
+        if gpu_before and gpu_after:
+            result['gpu_memory_used_mb'] = gpu_memory_used
+            result['gpu_utilization_percent'] = gpu_utilization
+            result['gpu_memory_total_mb'] = gpu_after['memory_total_mb']
+        
+        return text, result
     
-    def _update_stats(self, pt: int, ct: int, total: int, latency: float, cost: float):
+    def _update_stats(self, pt: int, ct: int, total: int, latency: float, cost: float, 
+                     gpu_memory: float = 0.0, gpu_util: float = 0.0):
         """Update cumulative usage statistics and individual request metrics."""
         self.usage_stats['prompt_tokens'] += pt
         self.usage_stats['completion_tokens'] += ct
@@ -290,6 +350,12 @@ class LLMClient:
         self.usage_stats['prompt_tokens_list'].append(pt)
         self.usage_stats['completion_tokens_list'].append(ct)
         self.usage_stats['total_tokens_list'].append(total)
+        
+        # Track GPU metrics (if available)
+        if gpu_memory > 0:
+            self.usage_stats['gpu_memory_used'].append(gpu_memory)
+        if gpu_util > 0:
+            self.usage_stats['gpu_utilization'].append(gpu_util)
     
     def get_usage_summary(self) -> Dict:
         """Get summary of API usage and costs."""
@@ -308,5 +374,9 @@ class LLMClient:
             'total_latency': 0.0, 'total_cost': 0.0, 'num_requests': 0,
             # Per-request metrics for standard deviation calculation
             'latencies': [], 'costs': [], 'prompt_tokens_list': [], 
-            'completion_tokens_list': [], 'total_tokens_list': []
+            'completion_tokens_list': [], 'total_tokens_list': [],
+            # GPU metrics (for Ollama models)
+            'gpu_memory_used': [],  # MB per request
+            'gpu_utilization': [],  # % per request
+            'peak_gpu_memory': 0.0  # MB
         }

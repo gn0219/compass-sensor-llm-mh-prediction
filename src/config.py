@@ -30,6 +30,7 @@ SAMPLES_PER_USER = 3  # Number of last EMA samples per user for testset
 
 # TimeRAG Retrieval Configuration
 TIMERAG_POOL_SIZE = 300  # Number of representative samples for DTW candidate pool (via clustering)
+RETRIEVAL_DIVERSITY_FACTOR = 2.0  # Multiplier for initial retrieval to ensure label diversity (e.g., 2.0 = retrieve 2x candidates, then select with balanced labels)
 
 # Sensor data format and features
 # Options: 
@@ -120,7 +121,7 @@ SUPPORTED_MODELS = [
 DEFAULT_TEMPERATURE = 1.0
 
 # Default max tokens for completion
-DEFAULT_MAX_TOKENS = 3200
+DEFAULT_MAX_TOKENS = 6000
 
 # Default reasoning method
 DEFAULT_REASONING_METHOD = 'cot'  # Options: 'direct', 'cot', 'tot', 'self_consistency'

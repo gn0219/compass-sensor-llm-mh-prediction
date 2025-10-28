@@ -119,7 +119,8 @@ def calculate_efficiency_metrics(usage_stats: Dict) -> Dict:
             'cost': {'total_usd': 0, 'per_sample_usd': 0, 'per_sample_std': 0},
             'throughput': {'tokens_per_second': 0, 'samples_per_minute': 0},
             'tokens': {'total': 0, 'prompt': 0, 'completion': 0, 'avg_per_request': 0, 'std_per_request': 0,
-                      'prompt_avg': 0, 'prompt_std': 0, 'completion_avg': 0, 'completion_std': 0}
+                      'prompt_avg': 0, 'prompt_std': 0, 'completion_avg': 0, 'completion_std': 0},
+            'gpu': {'available': False}
         }
     
     total_latency = usage_stats.get('total_latency', 0)
@@ -156,6 +157,22 @@ def calculate_efficiency_metrics(usage_stats: Dict) -> Dict:
     avg_completion = float(np.mean(completion_tokens_list)) if completion_tokens_list else 0.0
     std_completion = float(np.std(completion_tokens_list)) if len(completion_tokens_list) > 1 else 0.0
     
+    # GPU metrics (if available)
+    gpu_memory_list = usage_stats.get('gpu_memory_used', [])
+    gpu_util_list = usage_stats.get('gpu_utilization', [])
+    peak_gpu_memory = usage_stats.get('peak_gpu_memory', 0.0)
+    
+    gpu_metrics = {'available': False}
+    if gpu_memory_list and gpu_util_list:
+        gpu_metrics = {
+            'available': True,
+            'avg_memory_mb': float(np.mean(gpu_memory_list)),
+            'std_memory_mb': float(np.std(gpu_memory_list)) if len(gpu_memory_list) > 1 else 0.0,
+            'peak_memory_mb': float(peak_gpu_memory),
+            'avg_utilization_percent': float(np.mean(gpu_util_list)),
+            'std_utilization_percent': float(np.std(gpu_util_list)) if len(gpu_util_list) > 1 else 0.0
+        }
+    
     return {
         'latency': {
             'avg_seconds': float(avg_latency), 
@@ -181,7 +198,8 @@ def calculate_efficiency_metrics(usage_stats: Dict) -> Dict:
             'prompt_std': float(std_prompt),
             'completion_avg': float(avg_completion),
             'completion_std': float(std_completion)
-        }
+        },
+        'gpu': gpu_metrics
     }
 
 
@@ -284,6 +302,14 @@ def print_comprehensive_report(report: Dict):
     print(f"  Prompt:        {efficiency['tokens']['prompt']:,} (avg: {efficiency['tokens']['prompt_avg']:.0f} ± {efficiency['tokens']['prompt_std']:.0f})")
     print(f"  Completion:    {efficiency['tokens']['completion']:,} (avg: {efficiency['tokens']['completion_avg']:.0f} ± {efficiency['tokens']['completion_std']:.0f})")
     print(f"  Avg/Request:   {efficiency['tokens']['avg_per_request']:.0f} ± {efficiency['tokens']['std_per_request']:.0f}")
+    
+    # GPU metrics (if available)
+    if efficiency['gpu']['available']:
+        print("\n🎮 GPU METRICS (On-Device Model)")
+        print("-" * 80)
+        print(f"  Avg Memory Used:    {efficiency['gpu']['avg_memory_mb']:.1f} ± {efficiency['gpu']['std_memory_mb']:.1f} MB")
+        print(f"  Peak Memory Used:   {efficiency['gpu']['peak_memory_mb']:.1f} MB")
+        print(f"  Avg Utilization:    {efficiency['gpu']['avg_utilization_percent']:.1f} ± {efficiency['gpu']['std_utilization_percent']:.1f} %")
     
     print("\n" + "="*80 + "\n")
 
@@ -424,28 +450,43 @@ def export_comprehensive_report(report: Dict, base_filepath: str, predictions: L
     
     # Efficiency CSV with standard deviations
     efficiency = report['cost_efficiency']
+    eff_metrics = [
+        'Avg Latency (s)', 'Std Latency (s)', 'Total Latency (s)', 
+        'Total Cost ($)', 'Cost per Sample ($)', 'Std Cost per Sample ($)',
+        'Tokens/Second', 'Samples/Minute', 
+        'Total Tokens', 'Avg Tokens per Request', 'Std Tokens per Request',
+        'Prompt Tokens (Total)', 'Prompt Tokens (Avg)', 'Prompt Tokens (Std)',
+        'Completion Tokens (Total)', 'Completion Tokens (Avg)', 'Completion Tokens (Std)'
+    ]
+    eff_values = [
+        efficiency['latency']['avg_seconds'], efficiency['latency']['std_seconds'], 
+        efficiency['latency']['total_seconds'],
+        efficiency['cost']['total_usd'], efficiency['cost']['per_sample_usd'], 
+        efficiency['cost']['per_sample_std'],
+        efficiency['throughput']['tokens_per_second'], efficiency['throughput']['samples_per_minute'],
+        efficiency['tokens']['total'], efficiency['tokens']['avg_per_request'], 
+        efficiency['tokens']['std_per_request'],
+        efficiency['tokens']['prompt'], efficiency['tokens']['prompt_avg'], 
+        efficiency['tokens']['prompt_std'],
+        efficiency['tokens']['completion'], efficiency['tokens']['completion_avg'], 
+        efficiency['tokens']['completion_std']
+    ]
+    
+    # Add GPU metrics if available
+    if efficiency['gpu']['available']:
+        eff_metrics.extend([
+            'GPU Avg Memory (MB)', 'GPU Std Memory (MB)', 'GPU Peak Memory (MB)',
+            'GPU Avg Utilization (%)', 'GPU Std Utilization (%)'
+        ])
+        eff_values.extend([
+            efficiency['gpu']['avg_memory_mb'], efficiency['gpu']['std_memory_mb'],
+            efficiency['gpu']['peak_memory_mb'],
+            efficiency['gpu']['avg_utilization_percent'], efficiency['gpu']['std_utilization_percent']
+        ])
+    
     eff_data = {
-        'Metric': [
-            'Avg Latency (s)', 'Std Latency (s)', 'Total Latency (s)', 
-            'Total Cost ($)', 'Cost per Sample ($)', 'Std Cost per Sample ($)',
-            'Tokens/Second', 'Samples/Minute', 
-            'Total Tokens', 'Avg Tokens per Request', 'Std Tokens per Request',
-            'Prompt Tokens (Total)', 'Prompt Tokens (Avg)', 'Prompt Tokens (Std)',
-            'Completion Tokens (Total)', 'Completion Tokens (Avg)', 'Completion Tokens (Std)'
-        ],
-        'Value': [
-            efficiency['latency']['avg_seconds'], efficiency['latency']['std_seconds'], 
-            efficiency['latency']['total_seconds'],
-            efficiency['cost']['total_usd'], efficiency['cost']['per_sample_usd'], 
-            efficiency['cost']['per_sample_std'],
-            efficiency['throughput']['tokens_per_second'], efficiency['throughput']['samples_per_minute'],
-            efficiency['tokens']['total'], efficiency['tokens']['avg_per_request'], 
-            efficiency['tokens']['std_per_request'],
-            efficiency['tokens']['prompt'], efficiency['tokens']['prompt_avg'], 
-            efficiency['tokens']['prompt_std'],
-            efficiency['tokens']['completion'], efficiency['tokens']['completion_avg'], 
-            efficiency['tokens']['completion_std']
-        ]
+        'Metric': eff_metrics,
+        'Value': eff_values
     }
     eff_df = pd.DataFrame(eff_data)
     eff_path = f"{base_filepath}_efficiency.csv"

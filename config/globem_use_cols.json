@@ -1,6 +1,7 @@
 {
     "compass": {
         "user_id": "pid",
+        "user_info": "pid",
         "date": "date",
         "feature_set": {
             "statistical": {

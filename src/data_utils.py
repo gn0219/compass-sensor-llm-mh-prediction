@@ -189,6 +189,22 @@ def sample_multiinstitution_testset(
         feat_df_inst = pd.read_csv(feat_path, low_memory=False)
         lab_df_inst = pd.read_csv(lab_path)
         
+        # Ensure correct column names (handle pid/uid variations)
+        user_col = cols['user_id']
+        # if user_col not in feat_df_inst.columns:
+        #     # Try alternative column names
+        #     if 'pid' in feat_df_inst.columns:
+        #         feat_df_inst.rename(columns={'pid': user_col}, inplace=True)
+        #     elif 'uid' in feat_df_inst.columns and user_col != 'uid':
+        #         feat_df_inst.rename(columns={'uid': user_col}, inplace=True)
+        
+        # if user_col not in lab_df_inst.columns:
+        #     # Try alternative column names
+        #     if 'pid' in lab_df_inst.columns:
+        #         lab_df_inst.rename(columns={'pid': user_col}, inplace=True)
+        #     elif 'uid' in lab_df_inst.columns and user_col != 'uid':
+        #         lab_df_inst.rename(columns={'uid': user_col}, inplace=True)
+        
         # Convert dates
         feat_df_inst[cols['date']] = pd.to_datetime(feat_df_inst[cols['date']])
         lab_df_inst[cols['date']] = pd.to_datetime(lab_df_inst[cols['date']])
@@ -197,12 +213,12 @@ def sample_multiinstitution_testset(
         lab_df_inst = binarize_labels(lab_df_inst, cols['labels'], cols['threshold'])
         
         # Count EMAs per user
-        user_ema_counts = lab_df_inst.groupby(cols['user_id']).size()
+        user_ema_counts = lab_df_inst.groupby(user_col).size()
         
         # Filter users with sufficient EMAs
         users_with_emas = user_ema_counts[user_ema_counts >= min_ema_per_user].index.tolist()
         
-        print(f"  Total users: {lab_df_inst[cols['user_id']].nunique()}")
+        print(f"  Total users: {lab_df_inst[user_col].nunique()}")
         print(f"  Users with >= {min_ema_per_user} EMAs: {len(users_with_emas)}")
         
         # Further filter: check if users have sufficient sensor data for their last N samples
@@ -210,7 +226,7 @@ def sample_multiinstitution_testset(
         eligible_users = []
         
         for user_id in users_with_emas:
-            user_labs = lab_df_inst[lab_df_inst[cols['user_id']] == user_id].sort_values(cols['date'])
+            user_labs = lab_df_inst[lab_df_inst[user_col] == user_id].sort_values(cols['date'])
             last_n_samples = user_labs.tail(samples_per_user)
             
             # Check if user has sensor features for these dates
@@ -218,7 +234,7 @@ def sample_multiinstitution_testset(
             for _, sample in last_n_samples.iterrows():
                 ema_date = sample[cols['date']]
                 user_feat = feat_df_inst[
-                    (feat_df_inst[cols['user_id']] == user_id) & 
+                    (feat_df_inst[user_col] == user_id) & 
                     (feat_df_inst[cols['date']] < ema_date)
                 ]
                 
@@ -243,7 +259,7 @@ def sample_multiinstitution_testset(
         # For each selected user, get last N EMA samples
         inst_testset_indices = []
         for user_id in selected_users:
-            user_labs = lab_df_inst[lab_df_inst[cols['user_id']] == user_id].sort_values(cols['date'])
+            user_labs = lab_df_inst[lab_df_inst[user_col] == user_id].sort_values(cols['date'])
             last_n_samples = user_labs.tail(samples_per_user)
             inst_testset_indices.extend(last_n_samples.index.tolist())
         

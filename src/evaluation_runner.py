@@ -778,6 +778,15 @@ def run_batch_with_loaded_prompts(reasoner: LLMReasoner, prompts: List[str], met
             all_step_timings = checkpoint.get('step_timings', new_step_timings())
             start_idx = checkpoint.get('last_index', -1) + 1
             
+            # Restore usage stats (cost, GPU metrics, etc.)
+            if 'usage_stats' in checkpoint:
+                reasoner.client.usage_stats = checkpoint['usage_stats']
+                if verbose:
+                    print(f"[OK] Restored usage stats: {checkpoint['usage_stats']['num_requests']} requests, "
+                          f"${checkpoint['usage_stats']['total_cost']:.4f} spent")
+                    if checkpoint['usage_stats'].get('peak_gpu_memory', 0) > 0:
+                        print(f"     Peak GPU memory: {checkpoint['usage_stats']['peak_gpu_memory']:.1f} MB")
+            
             print(f"[OK] Resumed from checkpoint: {len(all_predictions)} predictions loaded, starting from index {start_idx}")
         except Exception as e:
             print(f"[WARNING]  Failed to load checkpoint: {e}")
@@ -816,18 +825,27 @@ def run_batch_with_loaded_prompts(reasoner: LLMReasoner, prompts: List[str], met
             try:
                 import json
                 from src.prompt_utils import NumpyEncoder
+                
+                # Get current usage stats (includes cost, GPU metrics, etc.)
+                current_usage_stats = reasoner.client.usage_stats
+                
                 checkpoint_data = {
                     'last_index': idx,
                     'predictions': all_predictions,
                     'failed_count': failed_count,
                     'step_timings': all_step_timings,
+                    'usage_stats': current_usage_stats,  # Save cost & GPU metrics
                     'total_samples': len(prompts),
                     'completed_samples': idx + 1
                 }
                 with open(checkpoint_file, 'w') as f:
                     json.dump(checkpoint_data, f, indent=2, cls=NumpyEncoder)
                 if verbose:
-                    print(f"  [Checkpoint saved] {checkpoint_file}")
+                    cost_info = f"${current_usage_stats['total_cost']:.4f}"
+                    gpu_info = ""
+                    if current_usage_stats.get('peak_gpu_memory', 0) > 0:
+                        gpu_info = f", GPU: {current_usage_stats['peak_gpu_memory']:.0f}MB"
+                    print(f"  ✅ Checkpoint saved: {checkpoint_file} (Cost: {cost_info}{gpu_info})")
                 
                 # Delete previous checkpoint if it exists
                 if os.path.exists(previous_checkpoint):

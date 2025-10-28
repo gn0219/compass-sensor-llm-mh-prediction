@@ -285,12 +285,16 @@ def build_retrieval_candidate_pool_timerag(
 def sample_from_timerag_pool_dtw(
     feat_df: pd.DataFrame, cols: Dict,
     n_samples: int, target_sample: Dict, 
-    candidates: List[Dict]
+    candidates: List[Dict],
+    diversity_factor: float = 2.0
 ) -> Optional[List[Dict]]:
     """
-    DTW-based retrieval from TimeRAG candidate pool.
+    DTW-based retrieval from TimeRAG candidate pool with label diversity.
     
-    Uses multi-dimensional DTW (dtaidistance.dtw_ndim) for faster computation.
+    Strategy:
+    1. Retrieve top-(n_samples * diversity_factor) most similar candidates by DTW
+    2. Among these, select n_samples with balanced label distribution
+    3. This ensures both similarity and label diversity
     
     Args:
         feat_df: Feature DataFrame
@@ -298,9 +302,10 @@ def sample_from_timerag_pool_dtw(
         n_samples: Number of samples to retrieve
         target_sample: Target sample dict
         candidates: TimeRAG candidate pool (cluster representatives)
+        diversity_factor: Multiplier for initial retrieval (default 2.0)
         
     Returns:
-        List of selected examples
+        List of selected examples with balanced labels
     """
     if not candidates or len(candidates) < n_samples:
         print(f"Warning: Only {len(candidates)} candidates available")
@@ -353,11 +358,80 @@ def sample_from_timerag_pool_dtw(
         
         distances.append(distance)
     
-    # Select top-k nearest samples
+    # Step 1: Select top-(n_samples * diversity_factor) most similar candidates
     distances = np.array(distances)
-    top_k_indices = np.argsort(distances)[:n_samples]
+    n_retrieve = min(len(candidates), int(n_samples * diversity_factor))
+    top_k_indices = np.argsort(distances)[:n_retrieve]
     
-    selected_examples = [candidates[i]['sample'] for i in top_k_indices]
+    # Extract label information from retrieved candidates
+    retrieved_samples = []
+    for idx in top_k_indices:
+        sample = candidates[idx]['sample']
+        labels = sample['labels']
+        
+        # Extract anxiety and depression labels (assume these are first two)
+        label_cols = cols['labels']
+        if len(label_cols) >= 2:
+            anx_label = str(int(labels.get(label_cols[0], 0)))
+            dep_label = str(int(labels.get(label_cols[1], 0)))
+            label_key = f"{anx_label}_{dep_label}"
+        else:
+            label_key = "unknown"
+        
+        retrieved_samples.append({
+            'sample': sample,
+            'distance': distances[idx],
+            'label_key': label_key
+        })
+    
+    # Step 2: Select n_samples with balanced label distribution
+    # Group by label
+    from collections import defaultdict
+    label_groups = defaultdict(list)
+    for item in retrieved_samples:
+        label_groups[item['label_key']].append(item)
+    
+    # Determine how many samples to take from each group
+    n_groups = len(label_groups)
+    if n_groups == 0:
+        return None
+    
+    # Strategy: Give each group roughly equal representation
+    samples_per_group = {}
+    if n_samples >= n_groups:
+        base_per_group = n_samples // n_groups
+        remainder = n_samples % n_groups
+        
+        # Sort groups by size (descending) for stable allocation
+        sorted_groups = sorted(label_groups.keys(), key=lambda k: len(label_groups[k]), reverse=True)
+        
+        for label_key in sorted_groups:
+            samples_per_group[label_key] = base_per_group
+        
+        # Distribute remainder to groups with most samples available
+        for i in range(remainder):
+            samples_per_group[sorted_groups[i]] += 1
+    else:
+        # If n_samples < n_groups, select from largest groups only
+        sorted_groups = sorted(label_groups.keys(), key=lambda k: len(label_groups[k]), reverse=True)
+        for i in range(n_samples):
+            label_key = sorted_groups[i % n_groups]
+            samples_per_group[label_key] = samples_per_group.get(label_key, 0) + 1
+    
+    # Select samples from each group (prioritize by DTW distance)
+    selected_examples = []
+    for label_key, n_needed in samples_per_group.items():
+        group_items = label_groups[label_key]
+        
+        # Sort by distance (most similar first)
+        group_items_sorted = sorted(group_items, key=lambda x: x['distance'])
+        
+        # Take top n_needed from this group
+        for item in group_items_sorted[:n_needed]:
+            selected_examples.append(item['sample'])
+    
+    # Shuffle to mix label groups
+    np.random.shuffle(selected_examples)
     
     return selected_examples
 
