@@ -252,6 +252,7 @@ if all_results:
     
     # Reorder columns to match the example and save
     results_df = results_df[column_order]
+    results_df = results_df.sort_values(by=['Dataset', 'Features', 'ICL Strategy', 'Reasoning', 'Model'])
     output_csv_path = 'all_experiment_results.csv'
     results_df.to_csv(output_csv_path, index=False, encoding='utf-8-sig') # Use utf-8-sig for Excel compatibility with Korean characters
     print(f"\nAll experiment results saved to '{output_csv_path}'")

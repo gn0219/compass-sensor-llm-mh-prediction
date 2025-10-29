@@ -129,11 +129,14 @@ def build_prompt_with_timing(
 def predict(all_predictions: List[Dict], all_step_timings: Dict[str, List[float]],
             user_id, ema_date, true_anxiety, true_depression, failed_count: int,
             reasoner: LLMReasoner, reasoning_method: str, prompt: str, *,
-            llm_seed: Optional[int] = None, sc_samples: Optional[int] = None,
+            true_stress=None, llm_seed: Optional[int] = None, sc_samples: Optional[int] = None,
             verbose: bool = True) -> Tuple[List[Dict], Dict[str, List[float]], int, Optional[Dict]]:
     """
     Prediction executor.
     Always returns (all_predictions, all_step_timings, failed_count, pred).
+    
+    Args:
+        true_stress: True stress label (optional, for CES dataset)
     """
     with timeit(all_step_timings, 'llm_call'):
         if reasoning_method == 'self_consistency':
@@ -180,22 +183,37 @@ def predict(all_predictions: List[Dict], all_step_timings: Dict[str, List[float]
         'pred_depression': prediction['Prediction']['Depression_binary'],
         'prediction': prediction,
     }
+    
+    # Add stress if available (CES dataset)
+    if true_stress is not None:
+        pred['true_stress'] = true_stress
+        pred['pred_stress'] = prediction['Prediction'].get('Stress_binary', 0)
+    
     all_predictions.append(pred)
 
     if verbose:
         print(f"  User ID: {user_id}")
         print(f"  Date: {ema_date}")
-        print(
-            f"  ✓ Anx: {pred['pred_anxiety']} (true: {true_anxiety}) | "
-            f"Dep: {pred['pred_depression']} (true: {true_depression})"
-        )
+        
+        # Build prediction output dynamically
+        targets = [
+            ('Anx', pred['pred_anxiety'], true_anxiety),
+            ('Dep', pred['pred_depression'], true_depression),
+        ]
+        if true_stress is not None:
+            targets.append(('Stress', pred['pred_stress'], true_stress))
+        
+        pred_parts = [f"{name}: {pred_val} (true: {true_val})" 
+                      for name, pred_val, true_val in targets]
+        print(f"  ✓ {' | '.join(pred_parts)}")
 
     return all_predictions, all_step_timings, failed_count, pred
 
 def records_to_report_items(records: List[Dict]) -> List[Dict]:
     """Convert record schema to generate_comprehensive_report's expected items."""
-    return [
-        {
+    items = []
+    for r in records:
+        item = {
             'user_id': r['user_id'],
             'ema_date': str(r['ema_date']),
             'labels': {
@@ -207,8 +225,15 @@ def records_to_report_items(records: List[Dict]) -> List[Dict]:
                 'Depression_binary': r['pred_depression'],
             },
         }
-        for r in records
-    ]
+        
+        # Add stress if available (CES dataset)
+        if 'true_stress' in r:
+            item['labels']['stress'] = r['true_stress']
+            item['prediction']['Stress_binary'] = r.get('pred_stress', 0)
+        
+        items.append(item)
+    
+    return items
 
 def run_single_prediction(prompt_manager: PromptManager, reasoner: LLMReasoner,
                           feat_df, lab_df, cols: Dict, n_shot: int = 5, strategy: str = 'cross_random',
@@ -247,6 +272,7 @@ def run_single_prediction(prompt_manager: PromptManager, reasoner: LLMReasoner,
         input_sample['user_id'], input_sample['ema_date'],
         input_sample['labels']['phq4_anxiety_EMA'], input_sample['labels']['phq4_depression_EMA'],
         failed_count, reasoner, reasoning_method, prompt,
+        true_stress=input_sample['labels'].get('stress', None),
         llm_seed=llm_seed, sc_samples=5, verbose=verbose,
     )
 
@@ -532,6 +558,7 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
             input_sample['user_id'], input_sample['ema_date'],
             input_sample['labels']['phq4_anxiety_EMA'], input_sample['labels']['phq4_depression_EMA'],
             failed_count, reasoner, reasoning_method, prompt,
+            true_stress=input_sample['labels'].get('stress', None),
             llm_seed=llm_seed, sc_samples=5, verbose=verbose,
         )
 
@@ -893,6 +920,7 @@ def run_batch_with_loaded_prompts(reasoner: LLMReasoner, prompts: List[str], met
             meta['user_id'], meta['ema_date'],
             meta['true_anxiety'], meta['true_depression'],
             failed_count, reasoner, reasoning_method, prompt,
+            true_stress=meta.get('true_stress', None),
             llm_seed=llm_seed, sc_samples=5, verbose=verbose,
         )
         

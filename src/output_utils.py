@@ -61,13 +61,23 @@ def print_prediction_results(prediction: Dict, true_labels: Dict, verbose: bool 
         return
     
     print(f"\n📊 PREDICTION RESULTS")
+    
+    # Define targets with their keys
+    targets = [
+        ('Anxiety', 'Anxiety_binary', 'phq4_anxiety_EMA'),
+        ('Depression', 'Depression_binary', 'phq4_depression_EMA'),
+        ('Stress', 'Stress_binary', 'stress'),
+    ]
+    
     print(f"\n🎯 Predictions:")
-    print(f"  Anxiety:    {prediction['Prediction']['Anxiety_binary']}")
-    print(f"  Depression: {prediction['Prediction']['Depression_binary']}")
+    for name, pred_key, _ in targets:
+        if pred_key in prediction['Prediction']:
+            print(f"  {name:11s} {prediction['Prediction'][pred_key]}")
     
     print(f"\n✅ Ground Truth:")
-    print(f"  Anxiety:    {true_labels['phq4_anxiety_EMA']}")
-    print(f"  Depression: {true_labels['phq4_depression_EMA']}")
+    for name, _, label_key in targets:
+        if label_key in true_labels:
+            print(f"  {name:11s} {true_labels[label_key]}")
     
     if 'Reasoning' in prediction:
         print(f"\n💭 Reasoning:")
@@ -132,10 +142,23 @@ def print_batch_progress(idx: int, total: int, sample_info: Dict, prediction: Di
         print(f"\n[{idx+1}/{total}] Processing sample...")
         print(f"  User ID: {sample_info['user_id']}")
         print(f"  Date: {sample_info['ema_date']}")
-        print(f"  ✓ Pred: Anx={prediction['Prediction']['Anxiety_binary']}, "
-              f"Dep={prediction['Prediction']['Depression_binary']} | "
-              f"True: Anx={true_labels['phq4_anxiety_EMA']}, "
-              f"Dep={true_labels['phq4_depression_EMA']}")
+        
+        # Define targets dynamically
+        targets = [
+            ('Anx', 'Anxiety_binary', 'phq4_anxiety_EMA'),
+            ('Dep', 'Depression_binary', 'phq4_depression_EMA'),
+            ('Stress', 'Stress_binary', 'stress'),
+        ]
+        
+        # Build prediction and true label strings
+        pred_parts = []
+        true_parts = []
+        for short_name, pred_key, label_key in targets:
+            if pred_key in prediction['Prediction'] and label_key in true_labels:
+                pred_parts.append(f"{short_name}={prediction['Prediction'][pred_key]}")
+                true_parts.append(f"{short_name}={true_labels[label_key]}")
+        
+        print(f"  ✓ Pred: {', '.join(pred_parts)} | True: {', '.join(true_parts)}")
     else:
         # Minimal progress indicator
         if (idx + 1) % 10 == 0 or idx == total - 1:

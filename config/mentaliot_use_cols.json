@@ -5,7 +5,56 @@
         "date": "none",
         "description": "",
         "feature_set": {
-            "statistical": {
+            "LOC_DST#AVG#WINDOW": "Location - average distance at window",
+            "LOC_LABEL#RLV_SUP=home#WINDOW": "Location - time at home at window",
+            "LOC_CLS#ETP#WINDOW": "Location - entropy at window",
+            "LOC_LABEL#RLV_SUP=eating#WINDOW": "Location - time at eating at window",
+            "LOC_LABEL#RLV_SUP=social#WINDOW": "Location - time at social at window",
+            "LOC_LABEL#RLV_SUP=work#WINDOW": "Location - time at work at window",
+            
+            "SCR_DUR#VAL"
+            "SCR_DUR#AVG#ImmediatePast_60"
+            "SCR_DUR#ASC#ImmediatePast_60"
+            
+            "CAE_CNT#VAL"
+            "CAE_DUR#VAL"
+
+            "ACE_WLK#VAL"
+
+            가전 - 별도로 더해서 써야함 (aqara)
+            "bluSensor_Humidity_mean",
+            "bluSensor_Temperature_mean"
+            "bluSensor_TVOC_mean"
+
+            #LOC_CLS#ETP#WINDOW
+                총 이동거리
+                집 시간
+                엔트로피
+                (선택 - 음식, 소셜, 일, 공부, 활동 장소 보낸 시간)
+                스크린 활동 시간
+                (스크린 평균 시간?)
+                통화 incoming
+                통화 outgoing
+                블루투스 장치 수
+                스텝 횟수
+                스텝 주요 장소 sedentarybout
+                스텝 주요 장소 activebout
+                전체 가전 사용량 (sum)
+                TV 전력 사용량
+                직전 15분 환경 데이터: 공기질, humidity, temperature
+                /////
+                가전 사용 변화량
+                - (withings)
+                ////
+                전날 수면 시간
+                전날 수면 시작 시간
+                전날 수면 종료 시간
+                전날 수면 효율성
+                전날 렘수면
+                전날 WINDOW별 스텝 횟수, location entropy, screensum
+
+
+                ""
                 "LOC_CLS#DSC": "Location - total distance",
                 "LOC_LABEL#DSC=home": "Location - time at home",
                 "loc_self_dorm_dur": "Location - time spent at self-dormitory",
@@ -27,29 +76,23 @@
             "structural": "None",
             "semantic": {
                 "sleep_duration": "Sleep - weekday sleep duration",
-                "step_ep_0": "Steps - number of steps",
-                "step_ep_1": "Steps - number of steps 12am-9am",
-                "step_ep_2": "Steps - number of steps 9am-6pm",
-                "step_ep_3": "Steps - number of steps 6pm-12am",
-                "unlock_duration_ep_0": "Screen - number of unlock",
-                "unlock_duration_ep_1": "Screen - number of unlock 12am-9am",
-                "unlock_duration_ep_2": "Screen - number of unlock 9am-6pm",
-                "unlock_duration_ep_3": "Screen - number of unlock 6pm-12am",
-                "loc_visit_num_ep_0": "Location - number of visits",
-                "loc_visit_num_ep_1": "Location - number of visits 12am-9am",
-                "loc_visit_num_ep_2": "Location - number of visits 9am-6pm",
-                "loc_visit_num_ep_3": "Location - number of visits 6pm-12am"
+                "#YesterdayDawn": "Steps - number of steps",
+                "#YesterdayMorning": "Steps - number of steps 12am-9am",
+                "#YesterdayAfternoon": "Steps - number of steps 9am-6pm",
+                "#YesterdayLateAfternoon": "Steps - number of steps 6pm-12am",
+                "#YesterdayEvening": "Screen - number of unlock",
+                "#YesterdayNight": "Screen - number of unlock 12am-9am"
             },
             "temporal_descriptor": "None"
         },
         "labels": [
-            "phq4_anxiety_EMA",
-            "phq4_depression_EMA",
+            "phq2_result",
+            "gad2_result",
             "stress"
         ],
         "threshold": {
-            "phq4_anxiety_EMA": 2,
-            "phq4_depression_EMA": 2,
+            "phq2_result": 2,
+            "gad2_result": 2,
             "stress": 2
         }
     }

@@ -132,6 +132,7 @@ SUPPORTED_MODELS = [
     'qwen3-4b',            # Ollama (on-device)
     'gemma2-9b',           # Ollama (on-device)
     'gpt-oss-20b',         # OpenRouter (OpenAI)
+    'mistral-7b-instruct', # OpenRouter (Mistral)
 ]
 
 # Default temperature for generation
