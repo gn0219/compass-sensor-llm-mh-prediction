@@ -32,6 +32,10 @@ task:
   objective_ces: |
     Predict mental health risk levels (anxiety, depression, and stress) from smartphone sensor-derived behavioral features collected from college students.
   
+  # MentalIoT-specific task objective
+  objective_mentaliot: |
+    Predict mental health risk levels (anxiety, depression, and stress) from smartphone sensors, smart home IoT devices, using frequent ecological momentary assessments (EMAs) collected throughout the day.
+  
   targets_header: "**Prediction Targets:**"
   output_targets:
     - name: "Anxiety"
@@ -52,6 +56,18 @@ task:
     - name: "Stress"
       classes: ["Low Risk", "High Risk"]
       threshold: "Stress score > 2"
+  
+  # MentalIoT-specific targets (uses PHQ-2, GAD-2, stress)
+  output_targets_mentaliot:
+    - name: "Anxiety"
+      classes: ["Low Risk", "High Risk"]
+      threshold: "PHQ-4 anxiety score > 2 over 1-2 hours before survey"
+    - name: "Depression"
+      classes: ["Low Risk", "High Risk"]
+      threshold: "PHQ-4 depression score > 2 over 1-2 hours before survey"
+    - name: "Stress"
+      classes: ["Low Risk", "High Risk"]
+      threshold: "Self-reported stress > 2 on 5-point scale (1=Not stressed at all, 3=Somewhat stressed, 5=Very stressed) over 1-2 hours before survey"
 
 # Context definition
 context:
@@ -64,6 +80,18 @@ context:
     but avoid assuming specific causes without supporting evidence.
 
     Note that depression and anxiety are typically assessed over the past two weeks, reflecting longer-term affective trends, whereas stress levels often represent current or recent states.
+    Use the following symptom–feature mappings as soft guidelines, not absolute rules, since sensor data may be noisy or incomplete.
+  
+  # MentalIoT-specific background (includes IoT sensors and frequent EMAs)
+  background_mentaliot: |
+    The data combines smartphone sensors, smart home IoT devices (home appliances and environmental sensors), and withings sleep pad measurements.
+    
+    **Considerations:**
+    - IoT (door, motion, TV, appliances) and environmental sensors (humidity, temperature, air quality) capture home activity and comfort context.
+    - Sleep pad data (deep/light/REM, efficiency) provides objective sleep quality.
+    - Yesterday’s data are split into 6 time windows; the past hour reflects current context.
+    - Frequent EMAs detect short-term mental state fluctuations.
+    
     Use the following symptom–feature mappings as soft guidelines, not absolute rules, since sensor data may be noisy or incomplete.
   
   clinical_header: "**Clinical Associations:**"

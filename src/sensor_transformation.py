@@ -232,8 +232,8 @@ def _aggregate_compass_features(feat_df: pd.DataFrame, user_feats: pd.DataFrame,
     semantic_feats = feature_set.get('semantic', {})
     temporal_feats = feature_set.get('temporal_descriptor', {})
     
-    # Handle 'None' string from JSON config
-    if temporal_feats == 'None':
+    # Handle 'None' string or any non-dict value from JSON config
+    if temporal_feats == 'None' or not isinstance(temporal_feats, dict):
         temporal_feats = None
     
     # ========== 1. STATISTICAL & STRUCTURAL FEATURES ==========
@@ -957,6 +957,251 @@ def features_to_text(agg_feats, cols: Dict, include_stats: bool = True) -> str:
     return text
 
 
+def features_to_text_mentaliot(agg_feats: Dict, cols: Dict, feat_df: pd.DataFrame = None) -> str:
+    """
+    Convert MentalIoT aggregated sensor features to natural language text.
+    
+    Args:
+        agg_feats: Dictionary containing aggregated features
+        cols: Column configuration
+        feat_df: Feature DataFrame (not used, kept for API consistency)
+    
+    Returns:
+        Formatted text representation
+    """
+    def format_val(val, missing_values=[-1, -999]):
+        """Format value, treating -1 and -999 as missing"""
+        if not isinstance(val, (int, float)) or np.isnan(val) or val in missing_values:
+            return None
+        return val
+    
+    def format_time_series(feature_name, values_dict, time_periods, unit=''):
+        """Format time series data as: feature: period1=val1, period2=val2, ..."""
+        formatted_vals = []
+        for period in time_periods:
+            val = values_dict.get(period)
+            if val is not None:
+                formatted_vals.append(f"{period}={val:.2f}{unit}")
+        
+        if formatted_vals:
+            return f"- {feature_name}: {', '.join(formatted_vals)}\n"
+        return ""
+    
+    text = ""
+    
+    # Time period information (show first as requested)
+    temporal_desc = cols['feature_set'].get('temporal_descriptor', '')
+    if temporal_desc:
+        text += f"**Note:** {temporal_desc}\n\n"
+    
+    # Get feature configuration
+    stat_features = cols['feature_set']['statistical']
+    struct_features = cols['feature_set']['structural']
+    semantic_features = cols['feature_set']['semantic']
+    
+    # Time periods for yesterday (0-4h, 4-8h, 8-12h, 12-16h, 16-20h, 20-24h)
+    time_periods = ['0-4h', '4-8h', '8-12h', '12-16h', '16-20h', '20-24h']
+    period_map = {
+        '0-4h': 'YesterdayDawn',
+        '4-8h': 'YesterdayMorning',
+        '8-12h': 'YesterdayAfternoon',
+        '12-16h': 'YesterdayLateAfternoon',
+        '16-20h': 'YesterdayEvening',
+        '20-24h': 'YesterdayNight'
+    }
+    
+    # === CURRENT SNAPSHOT (Statistical features - immediate past 1 hour before survey) ===
+    text += "**Current snapshot (1 hour before survey):**\n"
+    
+    # Location & smartphone
+    if 'LOC_CLS#DSC' in agg_feats:
+        val = format_val(agg_feats['LOC_CLS#DSC'])
+        if val is not None:
+            # Convert from mm to m
+            val_m = val / 1000.0
+            text += f"- Location distance: {val_m:.1f}m\n"
+    
+    if 'SCR_DUR#VAL' in agg_feats:
+        val = format_val(agg_feats['SCR_DUR#VAL'])
+        if val is not None:
+            # Convert from ms to seconds
+            val_sec = val / 1000.0
+            text += f"- Screen session: {val_sec:.1f}s\n"
+    
+    if 'CAE_CNT#VAL' in agg_feats:
+        val = format_val(agg_feats['CAE_CNT#VAL'])
+        if val is not None:
+            text += f"- Call count: {int(val)}\n"
+    
+    if 'ACE_WLK#VAL' in agg_feats:
+        val = format_val(agg_feats['ACE_WLK#VAL'])
+        if val is not None:
+            text += f"- Walking: {val:.0f}s\n"
+    
+    # IoT & Environmental
+    text += "\n**Home IoT sensors (past hour):**\n"
+    if 'aqara_total' in agg_feats:
+        val = format_val(agg_feats['aqara_total'])
+        if val is not None:
+            text += f"- Total appliance use: {int(val)} activations\n"
+    
+    if 'aqara_tv_before_60min' in agg_feats:
+        val = format_val(agg_feats['aqara_tv_before_60min'])
+        if val is not None:
+            text += f"- TV: {int(val)} activations\n"
+    
+    if 'aqara_door_before_60min' in agg_feats:
+        val = format_val(agg_feats['aqara_door_before_60min'])
+        if val is not None:
+            text += f"- Door: {int(val)} activations\n"
+    
+    if 'aqara_motion_before_60min' in agg_feats:
+        val = format_val(agg_feats['aqara_motion_before_60min'])
+        if val is not None:
+            text += f"- Motion: {int(val)} detections\n"
+    
+    text += "\n**Environmental sensors (past 15 min):**\n"
+    if 'bluSensor_Humidity_mean' in agg_feats:
+        val = format_val(agg_feats['bluSensor_Humidity_mean'])
+        if val is not None:
+            text += f"- Humidity: {val:.1f}%\n"
+    
+    if 'bluSensor_Temperature_mean' in agg_feats:
+        val = format_val(agg_feats['bluSensor_Temperature_mean'])
+        if val is not None:
+            text += f"- Temperature: {val:.1f}°C\n"
+    
+    if 'bluSensor_TVOC_mean' in agg_feats:
+        val = format_val(agg_feats['bluSensor_TVOC_mean'])
+        if val is not None:
+            text += f"- Air quality (TVOC): {val:.0f}ppb\n"
+    
+    # Sleep data (last night) - all durations in seconds, efficiency as proportion
+    sleep_feats = []
+    if 'withings_total_sleep_time' in agg_feats:
+        val = format_val(agg_feats['withings_total_sleep_time'])
+        if val is not None:
+            # Value is in seconds, convert to hours for readability
+            hours = val / 3600.0
+            sleep_feats.append(f"total={hours:.1f}h")
+    
+    if 'withings_deepsleepduration' in agg_feats:
+        val = format_val(agg_feats['withings_deepsleepduration'])
+        if val is not None:
+            # Value is in seconds, convert to minutes
+            mins = val / 60.0
+            sleep_feats.append(f"deep={mins:.0f}min")
+    
+    if 'withings_lightsleepduration' in agg_feats:
+        val = format_val(agg_feats['withings_lightsleepduration'])
+        if val is not None:
+            # Value is in seconds, convert to minutes
+            mins = val / 60.0
+            sleep_feats.append(f"light={mins:.0f}min")
+    
+    if 'withings_remsleepduration' in agg_feats:
+        val = format_val(agg_feats['withings_remsleepduration'])
+        if val is not None:
+            # Value is in seconds, convert to minutes
+            mins = val / 60.0
+            sleep_feats.append(f"REM={mins:.0f}min")
+    
+    if 'withings_sleep_efficiency' in agg_feats:
+        val = format_val(agg_feats['withings_sleep_efficiency'])
+        if val is not None:
+            # Value is proportion (0-1), convert to percentage
+            pct = val * 100.0
+            sleep_feats.append(f"efficiency={pct:.0f}%")
+    
+    if 'withings_sleep_score' in agg_feats:
+        val = format_val(agg_feats['withings_sleep_score'])
+        if val is not None:
+            sleep_feats.append(f"score={val:.0f}")
+    
+    if sleep_feats:
+        text += "\n**Sleep data (last night):**\n"
+        text += f"- {', '.join(sleep_feats)}\n"
+    
+    # === YESTERDAY'S BEHAVIORAL PATTERNS ===
+    text += "\n**Yesterday's smartphone-driven behavioral features:**\n"
+    
+    # Location entropy (statistical - diversity of locations visited)
+    loc_entropy = {}
+    for period in time_periods:
+        col_name = f"LOC_CLS#ETP##{period_map[period]}"
+        if col_name in agg_feats:
+            val = format_val(agg_feats[col_name])
+            if val is not None:
+                loc_entropy[period] = val
+    
+    text += format_time_series("Location entropy", loc_entropy, time_periods)
+    
+    # Screen duration (semantic) - convert from ms to seconds
+    scr_duration = {}
+    for period in time_periods:
+        col_name = f"SCR_DUR#AVG#{period_map[period]}"
+        if col_name in agg_feats:
+            val = format_val(agg_feats[col_name])
+            if val is not None:
+                # Convert from ms to seconds
+                scr_duration[period] = val / 1000.0
+    
+    text += format_time_series("Screen duration", scr_duration, time_periods, 's')
+    
+    # Walking activity (semantic)
+    walking = {}
+    for period in time_periods:
+        col_name = f"ACE_WLK#AVG#{period_map[period]}"
+        if col_name in agg_feats:
+            val = format_val(agg_feats[col_name])
+            if val is not None:
+                walking[period] = val
+    
+    text += format_time_series("Walking activity", walking, time_periods, 's')
+    
+    # Time at home (semantic)
+    time_home = {}
+    for period in time_periods:
+        col_name = f"LOC_LABEL#RLV_SUP=home#{period_map[period]}"
+        if col_name in agg_feats:
+            val = format_val(agg_feats[col_name])
+            if val is not None:
+                time_home[period] = val
+    
+    text += format_time_series("Time at home", time_home, time_periods)
+    
+    # Past hour context (structural)
+    text += "\n**Past hour context:**\n"
+    if 'LOC_LABEL#RLV_SUP=home#ImmediatePast_60' in agg_feats:
+        val = format_val(agg_feats['LOC_LABEL#RLV_SUP=home#ImmediatePast_60'])
+        if val is not None:
+            text += f"- Time at home: {val:.2f}\n"
+    
+    if 'SCR_DUR#AVG#ImmediatePast_60' in agg_feats:
+        val = format_val(agg_feats['SCR_DUR#AVG#ImmediatePast_60'])
+        if val is not None:
+            # Convert from ms to seconds
+            val_sec = val / 1000.0
+            text += f"- Screen average: {val_sec:.1f}s\n"
+    
+    if 'SCR_DUR#KUR#ImmediatePast_60' in agg_feats:
+        val = format_val(agg_feats['SCR_DUR#KUR#ImmediatePast_60'])
+        if val is not None:
+            text += f"- Screen kurtosis: {val:.2f}\n"
+    
+    if 'SCR_DUR#ASC#ImmediatePast_60' in agg_feats:
+        val = format_val(agg_feats['SCR_DUR#ASC#ImmediatePast_60'])
+        if val is not None:
+            text += f"- Screen trend: {val:.2f}\n"
+    
+    if 'ACE_WLK#KUR#ImmediatePast_60' in agg_feats:
+        val = format_val(agg_feats['ACE_WLK#KUR#ImmediatePast_60'])
+        if val is not None:
+            text += f"- Walking kurtosis: {val:.2f}\n"
+    
+    return text.strip()
+
+
 def sample_to_prompt(sample: Dict, cols: Dict, format_type: str = 'structured',
                     include_labels: bool = False, feat_df: pd.DataFrame = None,
                     include_user_info: bool = True, dataset: str = 'globem') -> str:
@@ -999,6 +1244,10 @@ def sample_to_prompt(sample: Dict, cols: Dict, format_type: str = 'structured',
         # CES format: aggregated_features is a row dictionary from aggregated_ces.csv
         agg_feats = sample['aggregated_features']
         prompt += features_to_text_ces(agg_feats, cols, feat_df)
+    elif format_type == 'mentaliot' or dataset == 'mentaliot':
+        # MentalIoT format: aggregated_features is a row dictionary from aggregated_mentaliot.csv
+        agg_feats = sample['aggregated_features']
+        prompt += features_to_text_mentaliot(agg_feats, cols, feat_df)
     else:
         # Default: compass/structured format (GLOBEM)
         agg_feats = sample['aggregated_features']

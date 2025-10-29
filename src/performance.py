@@ -385,11 +385,15 @@ def save_predictions_to_csv(predictions: List[Dict], filepath: str, reasoning_me
             'y_dep_real': pred['true_depression']
         }
         
+        # Add stress if available (CES/MentalIoT)
+        if 'true_stress' in pred:
+            record['y_stress_real'] = pred['true_stress']
+        
         # For self_feedback, save all iteration results
         if reasoning_method == 'self_feedback' and 'prediction' in pred:
             prediction_data = pred['prediction']
             
-            # Extract iteration-specific predictions and confidences
+            # Extract iteration-specific predictions, confidences, and difficulties
             # These were added by predict_with_self_feedback()
             iteration_num = 1
             while f'pred_iteration_{iteration_num}' in prediction_data:
@@ -397,11 +401,21 @@ def save_predictions_to_csv(predictions: List[Dict], filepath: str, reasoning_me
                 conf_iter = prediction_data.get(f'conf_iteration_{iteration_num}', {})
                 diff_iter = prediction_data.get(f'difficulty_iteration_{iteration_num}', 'N/A')
                 
-                record[f'y_anx_pred_{iteration_num}'] = pred_iter.get('Anxiety_binary', 0)
-                record[f'y_dep_pred_{iteration_num}'] = pred_iter.get('Depression_binary', 0)
-                record[f'y_anx_conf_{iteration_num}'] = conf_iter.get('Anxiety', 'N/A')
-                record[f'y_dep_conf_{iteration_num}'] = conf_iter.get('Depression', 'N/A')
-                record[f'difficulty_{iteration_num}'] = diff_iter
+                # Anxiety
+                record[f'round{iteration_num}_anxiety_pred'] = pred_iter.get('Anxiety_binary', 0)
+                record[f'round{iteration_num}_anxiety_conf'] = conf_iter.get('Anxiety', 'N/A')
+                record[f'round{iteration_num}_anxiety_difficulty'] = diff_iter if isinstance(diff_iter, str) else 'N/A'
+                
+                # Depression
+                record[f'round{iteration_num}_depression_pred'] = pred_iter.get('Depression_binary', 0)
+                record[f'round{iteration_num}_depression_conf'] = conf_iter.get('Depression', 'N/A')
+                record[f'round{iteration_num}_depression_difficulty'] = diff_iter if isinstance(diff_iter, str) else 'N/A'
+                
+                # Stress (if available)
+                if 'Stress_binary' in pred_iter:
+                    record[f'round{iteration_num}_stress_pred'] = pred_iter.get('Stress_binary', 0)
+                    record[f'round{iteration_num}_stress_conf'] = conf_iter.get('Stress', 'N/A')
+                    record[f'round{iteration_num}_stress_difficulty'] = diff_iter if isinstance(diff_iter, str) else 'N/A'
                 
                 iteration_num += 1
             
@@ -412,6 +426,10 @@ def save_predictions_to_csv(predictions: List[Dict], filepath: str, reasoning_me
         # Always save final prediction
         record['y_anx_pred'] = pred['pred_anxiety']
         record['y_dep_pred'] = pred['pred_depression']
+        
+        # Add final stress prediction if available
+        if 'pred_stress' in pred:
+            record['y_stress_pred'] = pred['pred_stress']
         
         records.append(record)
     

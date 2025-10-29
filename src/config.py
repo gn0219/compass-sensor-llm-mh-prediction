@@ -20,7 +20,7 @@ DEFAULT_INSTITUTION = 'INS-W_2'
 SAMPLING_USER = 28
 
 # Dataset selection: 'globem' or 'ces'
-DATASET_TYPE = 'ces'  # Change to 'ces' to use CES dataset
+DATASET_TYPE = 'globem'  # Change to 'ces' or 'mentaliot' to use different datasets
 
 # Multi-institution testset configuration (GLOBEM)
 USE_MULTI_INSTITUTION_TESTSET = True  # Set to True to use multi-institution testset
@@ -56,8 +56,9 @@ DEFAULT_TARGET = 'compass'
 
 # Configuration files
 PROMPT_CONFIGS_PATH = '../config/prompt_configs.yaml'
-USE_COLS_PATH = '../config/globem_use_cols.json'  # Default for GLOBEM
-CES_USE_COLS_PATH = '../config/ces_use_cols.json'  # For CES
+USE_COLS_PATH = './config/globem_use_cols.json'  # Default for GLOBEM
+CES_USE_COLS_PATH = './config/ces_use_cols.json'  # For CES
+MENTALIOT_USE_COLS_PATH = './config/mentaliot_use_cols.json'  # For MentalIoT
 
 # ============================================================================
 # DATA PROCESSING

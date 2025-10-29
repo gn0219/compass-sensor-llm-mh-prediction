@@ -231,6 +231,11 @@ task_completion:
     Now, please analyze the following user's behavioral data and provide your 
     prediction for their anxiety, depression, and stress risk levels.
   
+  # MentalIoT-specific instruction (same as CES, includes stress)
+  instruction_mentaliot: |
+    Now, please analyze the following user's behavioral data and provide your 
+    prediction for their anxiety, depression, and stress risk levels.
+  
   data_header: "### User Data to Predict"
   
   reminder: |

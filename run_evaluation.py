@@ -141,6 +141,22 @@ def main():
             total_time = time.time() - t0_total
             initial_timings['loading'] = total_time * 0.3
             initial_timings['test_sampling'] = total_time * 0.7
+        elif config.DATASET_TYPE == 'mentaliot':
+            print("\n[Loading MentalIoT dataset...]")
+            t0_total = time.time()
+            from src.data_utils import sample_mentaliot_testset
+            feat_df, lab_df, test_df, train_df, cols = sample_mentaliot_testset(
+                n_samples_per_user=10,  # 10 samples per user
+                random_state=args.seed
+            )
+            # Store test_df and train_df for ICL examples
+            config.MENTALIOT_TEST_DF = test_df
+            config.MENTALIOT_TRAIN_DF = train_df
+            # Use test_df as lab_df for prediction
+            lab_df = test_df
+            total_time = time.time() - t0_total
+            initial_timings['loading'] = total_time * 0.3
+            initial_timings['test_sampling'] = total_time * 0.7
         elif config.DATASET_TYPE == 'globem':
             print("\n[Loading GLOBEM dataset...]")
             

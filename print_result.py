@@ -173,13 +173,27 @@ for file in files:
             except Exception as e:
                 print(f"An unexpected error occurred while loading prompt metadata from '{prompt_file_path}': {e}. Skipping prompt generation time display for this file.")
 
-            # Calculate metrics for Depression
-            dep_accuracy, dep_f1, dep_precision, dep_recall = calculate_metrics(df['y_dep_real'], df['y_dep_pred'])
-            print_metrics("Depression", df['y_dep_real'], df['y_dep_pred'])
-
-            # Calculate metrics for Anxiety
-            anx_accuracy, anx_f1, anx_precision, anx_recall = calculate_metrics(df['y_anx_real'], df['y_anx_pred'])
-            print_metrics("Anxiety", df['y_anx_real'], df['y_anx_pred'])
+            # Dynamically detect available labels and calculate metrics
+            label_configs = []
+            if 'y_dep_real' in df.columns and 'y_dep_pred' in df.columns:
+                label_configs.append(('Depression', 'dep'))
+            if 'y_anx_real' in df.columns and 'y_anx_pred' in df.columns:
+                label_configs.append(('Anxiety', 'anx'))
+            if 'y_stress_real' in df.columns and 'y_stress_pred' in df.columns:
+                label_configs.append(('Stress', 'stress'))
+            
+            label_metrics = {}
+            for label_name, label_key in label_configs:
+                y_real = df[f'y_{label_key}_real']
+                y_pred = df[f'y_{label_key}_pred']
+                accuracy, f1, precision, recall = calculate_metrics(y_real, y_pred)
+                print_metrics(label_name, y_real, y_pred)
+                label_metrics[label_name] = {
+                    'accuracy': accuracy,
+                    'f1': f1,
+                    'precision': precision,
+                    'recall': recall
+                }
 
             # Print resource usage
             print_resource_usage(efficiency_df)
@@ -192,15 +206,13 @@ for file in files:
             current_result['ICL Strategy'] = icl_strategy
             current_result['Reasoning'] = reasoning_method
 
-            current_result['Accuracy (Depression)'] = np.round(dep_accuracy, 4)
-            current_result['Macro F1 (Depression)'] = np.round(dep_f1, 4)
-            current_result['Precision (Depression)'] = np.round(dep_precision, 4)
-            current_result['Recall (Depression)'] = np.round(dep_recall, 4)
-
-            current_result['Accuracy (Anxiety)'] = np.round(anx_accuracy, 4)
-            current_result['Macro F1 (Anxiety)'] = np.round(anx_f1, 4)
-            current_result['Precision (Anxiety)'] = np.round(anx_precision, 4)
-            current_result['Recall (Anxiety)'] = np.round(anx_recall, 4)
+            # Add metrics for each detected label
+            for label_name in ['Depression', 'Anxiety', 'Stress']:
+                if label_name in label_metrics:
+                    current_result[f'Accuracy ({label_name})'] = np.round(label_metrics[label_name]['accuracy'], 4)
+                    current_result[f'Macro F1 ({label_name})'] = np.round(label_metrics[label_name]['f1'], 4)
+                    current_result[f'Precision ({label_name})'] = np.round(label_metrics[label_name]['precision'], 4)
+                    current_result[f'Recall ({label_name})'] = np.round(label_metrics[label_name]['recall'], 4)
 
             # Resource Usage
             avg_latency = get_resource_usage_value(efficiency_df, 'Avg Latency (s)')
@@ -240,17 +252,30 @@ for file in files:
 if all_results:
     results_df = pd.DataFrame(all_results)
     
-    # Define the desired column order as per the example
-    column_order = [
-        'Dataset', 'Model', 'Features', 'ICL Strategy', 'Reasoning',
-        'Accuracy (Depression)', 'Macro F1 (Depression)', 'Precision (Depression)', 'Recall (Depression)',
-        'Accuracy (Anxiety)', 'Macro F1 (Anxiety)', 'Precision (Anxiety)', 'Recall (Anxiety)',
+    # Dynamically construct column order based on available columns
+    base_columns = ['Dataset', 'Model', 'Features', 'ICL Strategy', 'Reasoning']
+    
+    # Add metrics for each label (in order: Depression, Anxiety, Stress)
+    label_metric_columns = []
+    for label_name in ['Depression', 'Anxiety', 'Stress']:
+        if f'Accuracy ({label_name})' in results_df.columns:
+            label_metric_columns.extend([
+                f'Accuracy ({label_name})',
+                f'Macro F1 ({label_name})',
+                f'Precision ({label_name})',
+                f'Recall ({label_name})'
+            ])
+    
+    resource_columns = [
         'Latency (sec)', 'Cost ($)', 'Input Token (Avg)', 'Total Data Prep Time (sec)', 'Mean ICL Sampling (sec)',
         'Throughput (Tokens/Sec)', 'Throughput (Samples/Minute)', 'Output Token (Avg)', 'Total Token',
         'Total Latency (sec) - Experiment', 'Total Cost ($) - Experiment', 'Total Input Token - Experiment', 'Total Output Token - Experiment'
     ]
     
-    # Reorder columns to match the example and save
+    column_order = base_columns + label_metric_columns + resource_columns
+    
+    # Reorder columns to match the example and save (only include existing columns)
+    column_order = [col for col in column_order if col in results_df.columns]
     results_df = results_df[column_order]
     results_df = results_df.sort_values(by=['Dataset', 'Features', 'ICL Strategy', 'Reasoning', 'Model'])
     output_csv_path = 'all_experiment_results.csv'

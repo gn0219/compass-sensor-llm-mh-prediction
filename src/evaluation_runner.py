@@ -341,13 +341,16 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
     
     collected_prompts, collected_metadata = ([], []) if collect_prompts else (None, None)
     
-    # For multi-institution testset or CES, load historical data for ICL
+    # For multi-institution testset or CES/MentalIoT, load historical data for ICL
     lab_df_for_icl = None
     if dataset == 'ces' and hasattr(config, 'CES_TRAIN_DF'):
         # For CES, use train_df for ICL examples
         lab_df_for_icl = config.CES_TRAIN_DF
+    elif dataset == 'mentaliot' and hasattr(config, 'MENTALIOT_TRAIN_DF'):
+        # For MentalIoT, use train_df for ICL examples
+        lab_df_for_icl = config.MENTALIOT_TRAIN_DF
         if verbose:
-            print(f"  [Using CES train set for ICL: {len(lab_df_for_icl)} samples]")
+            print(f"  [Using MentalIoT train set for ICL: {len(lab_df_for_icl)} samples]")
     elif use_all_samples and config.USE_MULTI_INSTITUTION_TESTSET:
         # Load full historical data for ICL (all weeks, not just testset)
         from .sensor_transformation import load_globem_data
@@ -402,9 +405,9 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
             user_id = row[cols['user_id']]
             ema_date = row[cols['date']]
             
-            # Get aggregated features (different for CES vs GLOBEM)
-            if dataset == 'ces':
-                # For CES, aggregated_features is already in feat_df
+            # Get aggregated features (different for CES/MentalIoT vs GLOBEM)
+            if dataset in ['ces', 'mentaliot']:
+                # For CES/MentalIoT, aggregated_features is already in feat_df
                 feat_row = feat_df[
                     (feat_df[cols['user_id']] == user_id) & 
                     (feat_df[cols['date']] == ema_date)
@@ -508,7 +511,12 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
     for i, input_sample in enumerate(tqdm(input_samples, desc="Generating prompts", disable=not verbose)):
 
         # ICL - use lab_df_for_icl if available (full historical data)
-        icl_lab_df = lab_df_for_icl if (use_all_samples and lab_df_for_icl is not None) else lab_df
+        # For CES/MentalIoT, always use trainset (lab_df_for_icl), not testset (lab_df)
+        if dataset in ['ces', 'mentaliot'] and lab_df_for_icl is not None:
+            icl_lab_df = lab_df_for_icl
+        else:
+            icl_lab_df = lab_df_for_icl if (use_all_samples and lab_df_for_icl is not None) else lab_df
+        
         icl_examples, icl_strategy = select_icl(
             feat_df, icl_lab_df, cols, input_sample, n_shot, strategy, use_dtw,
             (random_state + i * 1000) if random_state else None,
@@ -543,12 +551,37 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
                 'ema_date': str(input_sample['ema_date']),
                 'true_anxiety': input_sample['labels']['phq4_anxiety_EMA'],
                 'true_depression': input_sample['labels']['phq4_depression_EMA'],
-                'aggregated_features': agg_feats_filtered,
             }
             
-            # Add stress if available
+            # Add stress if available (before features to maintain label grouping)
             if true_stress is not None:
                 metadata_entry['true_stress'] = true_stress
+            
+            # Add part of day information for MentalIoT
+            if dataset == 'mentaliot':
+                from datetime import datetime
+                try:
+                    dt = datetime.fromisoformat(str(input_sample['ema_date']).replace(' ', 'T'))
+                    hour = dt.hour
+                    # Categorize into 6 time periods matching feature windows
+                    if 0 <= hour < 4:
+                        part_of_day = "0-4h (night)"
+                    elif 4 <= hour < 8:
+                        part_of_day = "4-8h (early morning)"
+                    elif 8 <= hour < 12:
+                        part_of_day = "8-12h (late morning)"
+                    elif 12 <= hour < 16:
+                        part_of_day = "12-16h (afternoon)"
+                    elif 16 <= hour < 20:
+                        part_of_day = "16-20h (evening)"
+                    else:
+                        part_of_day = "20-24h (night)"
+                    metadata_entry['part_of_day'] = part_of_day
+                except:
+                    pass
+            
+            # Add features last
+            metadata_entry['aggregated_features'] = agg_feats_filtered
             
             collected_metadata.append(metadata_entry)
 
@@ -629,13 +662,16 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
     
     collected_prompts, collected_metadata = [], []
     
-    # For multi-institution testset or CES, load historical data for ICL
+    # For multi-institution testset or CES/MentalIoT, load historical data for ICL
     lab_df_for_icl = None
     if dataset == 'ces' and hasattr(config, 'CES_TRAIN_DF'):
         # For CES, use train_df for ICL examples
         lab_df_for_icl = config.CES_TRAIN_DF
+    elif dataset == 'mentaliot' and hasattr(config, 'MENTALIOT_TRAIN_DF'):
+        # For MentalIoT, use train_df for ICL examples
+        lab_df_for_icl = config.MENTALIOT_TRAIN_DF
         if verbose:
-            print(f"  [Using CES train set for ICL: {len(lab_df_for_icl)} samples]")
+            print(f"  [Using MentalIoT train set for ICL: {len(lab_df_for_icl)} samples]")
     elif use_all_samples and config.USE_MULTI_INSTITUTION_TESTSET:
         # Load full historical data for ICL (all weeks, not just testset)
         from .sensor_transformation import load_globem_data
@@ -690,9 +726,9 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
             user_id = row[cols['user_id']]
             ema_date = row[cols['date']]
             
-            # Get aggregated features (different for CES vs GLOBEM)
-            if dataset == 'ces':
-                # For CES, aggregated_features is already in feat_df
+            # Get aggregated features (different for CES/MentalIoT vs GLOBEM)
+            if dataset in ['ces', 'mentaliot']:
+                # For CES/MentalIoT, aggregated_features is already in feat_df
                 feat_row = feat_df[
                     (feat_df[cols['user_id']] == user_id) & 
                     (feat_df[cols['date']] == ema_date)
@@ -795,7 +831,12 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
     for i, input_sample in enumerate(tqdm(input_samples, desc="Generating prompts", disable=not verbose)):
 
         # ICL - use lab_df_for_icl if available (full historical data)
-        icl_lab_df = lab_df_for_icl if (use_all_samples and lab_df_for_icl is not None) else lab_df
+        # For CES/MentalIoT, always use trainset (lab_df_for_icl), not testset (lab_df)
+        if dataset in ['ces', 'mentaliot'] and lab_df_for_icl is not None:
+            icl_lab_df = lab_df_for_icl
+        else:
+            icl_lab_df = lab_df_for_icl if (use_all_samples and lab_df_for_icl is not None) else lab_df
+        
         icl_examples, icl_strategy = select_icl(
             feat_df, icl_lab_df, cols, input_sample, n_shot, strategy, use_dtw,
             (random_state + i * 1000) if random_state else None,
@@ -829,12 +870,37 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
             'ema_date': str(input_sample['ema_date']),
             'true_anxiety': input_sample['labels']['phq4_anxiety_EMA'],
             'true_depression': input_sample['labels']['phq4_depression_EMA'],
-            'aggregated_features': agg_feats_filtered,
         }
         
-        # Add stress if available
+        # Add stress if available (before features to maintain label grouping)
         if true_stress is not None:
             metadata_entry['true_stress'] = true_stress
+        
+        # Add part of day information for MentalIoT
+        if dataset == 'mentaliot':
+            from datetime import datetime
+            try:
+                dt = datetime.fromisoformat(str(input_sample['ema_date']).replace(' ', 'T'))
+                hour = dt.hour
+                # Categorize into 6 time periods matching feature windows
+                if 0 <= hour < 4:
+                    part_of_day = "0-4h (night)"
+                elif 4 <= hour < 8:
+                    part_of_day = "4-8h (early morning)"
+                elif 8 <= hour < 12:
+                    part_of_day = "8-12h (late morning)"
+                elif 12 <= hour < 16:
+                    part_of_day = "12-16h (afternoon)"
+                elif 16 <= hour < 20:
+                    part_of_day = "16-20h (evening)"
+                else:
+                    part_of_day = "20-24h (night)"
+                metadata_entry['part_of_day'] = part_of_day
+            except:
+                pass
+        
+        # Add features last
+        metadata_entry['aggregated_features'] = agg_feats_filtered
         
         collected_metadata.append(metadata_entry)
 

@@ -44,6 +44,71 @@ def _get_statistical_features() -> Optional[List[str]]:
     return None
 
 
+def build_retrieval_candidate_pool_mentaliot(
+    feat_df: pd.DataFrame, lab_df: pd.DataFrame, cols: Dict,
+    max_pool_size: Optional[int] = None, random_state: Optional[int] = None
+) -> Optional[List[Dict]]:
+    """
+    Build candidate pool for MentalIoT using all trainset samples.
+    
+    MentalIoT uses cosine similarity on aggregated features instead of DTW on time series.
+    
+    Args:
+        feat_df: Feature DataFrame (pre-aggregated)
+        lab_df: Label DataFrame
+        cols: Column configuration
+        max_pool_size: Maximum candidates (if None, use all)
+        random_state: Random seed
+        
+    Returns:
+        List of candidate dicts with aggregated features and metadata
+    """
+    candidates = []
+    
+    print("\n[Building MentalIoT Candidate Pool...]")
+    print(f"  Method: Cosine similarity on aggregated features")
+    print(f"  Trainset size: {len(lab_df)} samples")
+    
+    # Get all trainset samples
+    for idx in lab_df.index:
+        row = lab_df.loc[idx]
+        user_id = row[cols['user_id']]
+        ema_date = row[cols['date']]
+        
+        # Get aggregated features from feat_df
+        feat_row = feat_df[
+            (feat_df[cols['user_id']] == user_id) &
+            (feat_df[cols['date']] == ema_date)
+        ]
+        
+        if len(feat_row) == 0:
+            continue
+        
+        agg_feats = feat_row.iloc[0].to_dict()
+        labels = row[cols['labels']].to_dict()
+        
+        candidates.append({
+            'aggregated_features': agg_feats,
+            'labels': labels,
+            'user_id': user_id,
+            'ema_date': ema_date
+        })
+    
+    # If max_pool_size is set and we have more candidates, randomly sample
+    if max_pool_size and len(candidates) > max_pool_size:
+        if random_state:
+            rng = np.random.RandomState(random_state)
+        else:
+            rng = np.random.RandomState()
+        
+        indices = rng.choice(len(candidates), size=max_pool_size, replace=False)
+        candidates = [candidates[i] for i in indices]
+        print(f"  Sampled {max_pool_size} candidates from {len(candidates)} total")
+    
+    print(f"  [OK] Built candidate pool: {len(candidates)} samples\n")
+    return candidates
+
+
 def build_retrieval_candidate_pool(
     feat_df: pd.DataFrame, lab_df: pd.DataFrame, cols: Dict,
     max_pool_size: Optional[int] = None, random_state: Optional[int] = None,
@@ -70,7 +135,7 @@ def build_retrieval_candidate_pool(
     if max_pool_size is None:
         max_pool_size = config.TIMERAG_POOL_SIZE
     
-    # Use dataset-specific TimeRAG implementation
+    # Use dataset-specific retrieval implementation
     if dataset == 'ces':
         return build_retrieval_candidate_pool_timerag_ces(
             feat_df, lab_df, cols,
@@ -80,6 +145,14 @@ def build_retrieval_candidate_pool(
             min_k=config.CES_TIMERAG_MIN_K,
             max_k_per_chunk=config.CES_TIMERAG_MAX_K_PER_CHUNK,
             max_raw_samples_threshold=config.CES_TIMERAG_MAX_RAW_SAMPLES
+        )
+    elif dataset == 'mentaliot':
+        # MentalIoT: Use all trainset as pool (already aggregated features)
+        # Cosine similarity will be used for retrieval
+        return build_retrieval_candidate_pool_mentaliot(
+            feat_df, lab_df, cols,
+            max_pool_size=max_pool_size,
+            random_state=random_state
         )
     else:
         # GLOBEM
@@ -152,22 +225,35 @@ def select_icl_examples(
             return None
         
         # Filter out target user from candidates AND samples after target date
+        # Note: Need to convert dates to comparable format
+        target_date_str = str(target_ema_date) if isinstance(target_ema_date, pd.Timestamp) else target_ema_date
+        
         other_user_candidates = [
             c for c in retrieval_candidates 
-            if c['user_id'] != target_user_id and c['ema_date'] < target_ema_date
+            if c['user_id'] != target_user_id and str(c['ema_date']) < target_date_str
         ]
         
         if len(other_user_candidates) < n_shot:
             print(f"Warning: Not enough candidates from other users (before target date)")
+            print(f"  Target: user={target_user_id}, date={target_ema_date}")
+            print(f"  Total candidates in pool: {len(retrieval_candidates)}")
+            print(f"  Candidates after filtering: {len(other_user_candidates)}")
             return None
         
-        # Use dataset-specific DTW sampling
+        # Use dataset-specific retrieval method
         if dataset == 'ces':
+            # CES: DTW on time series
             examples = sample_from_timerag_pool_dtw_ces(
                 feat_df, cols, n_shot, target_sample, other_user_candidates,
                 diversity_factor=config.RETRIEVAL_DIVERSITY_FACTOR
             )
+        elif dataset == 'mentaliot':
+            # MentalIoT: Cosine similarity on aggregated features
+            examples = _sample_from_prebuilt_pool_cosine(
+                cols, n_shot, target_sample, other_user_candidates
+            )
         else:
+            # GLOBEM: DTW on time series
             examples = sample_from_timerag_pool_dtw(
                 feat_df, cols, n_shot, target_sample, other_user_candidates,
                 diversity_factor=config.RETRIEVAL_DIVERSITY_FACTOR
@@ -266,14 +352,16 @@ def _sample_cross_random(
     else:
         rng = np.random.RandomState()
     
-    # Create stratification key from anxiety and depression labels
+    # Create stratification key from all available labels
     label_cols = cols['labels']
     lab_pool_copy = lab_pool.copy()
     
-    # Combine anxiety and depression labels: e.g., "0_0", "0_1", "1_0", "1_1"
+    # Combine all labels: e.g., "0_0" (GLOBEM) or "0_0_0" (CES/MentalIoT)
     if len(label_cols) >= 2:
-        # Assume first two labels are anxiety and depression
-        strat_key = lab_pool_copy[label_cols[0]].astype(str) + "_" + lab_pool_copy[label_cols[1]].astype(str)
+        # Combine all available labels (anxiety, depression, and stress if available)
+        strat_key = lab_pool_copy[label_cols[0]].astype(str)
+        for i in range(1, len(label_cols)):
+            strat_key = strat_key + "_" + lab_pool_copy[label_cols[i]].astype(str)
         lab_pool_copy['_strat_key'] = strat_key
         
         # Calculate samples per stratification group
@@ -372,9 +460,152 @@ def _sample_cross_random(
         rng.shuffle(indices)
         examples = [examples[i] for i in indices]
     
-    # Only warn if we got less than 75% of requested samples
-    if len(examples) < n_samples * 0.75:
+    # Fallback: If we don't have enough samples, try non-stratified random sampling
+    if len(examples) < n_samples:
         print(f"Warning: Only collected {len(examples)}/{n_samples} valid examples (stratified)")
+        print(f"  Attempting non-stratified sampling to fill remaining {n_samples - len(examples)} slots...")
+        
+        # Get indices not already sampled
+        sampled_indices = {ex['user_id']: ex['ema_date'] for ex in examples}
+        remaining_pool = lab_pool_copy[
+            ~lab_pool_copy.apply(
+                lambda row: (row[cols['user_id']], row[cols['date']]) in 
+                [(uid, date) for uid, date in sampled_indices.items()], axis=1
+            )
+        ]
+        
+        if len(remaining_pool) > 0:
+            remaining_needed = n_samples - len(examples)
+            remaining_indices = remaining_pool.index.tolist()
+            rng.shuffle(remaining_indices)
+            
+            for idx in remaining_indices[:remaining_needed * 3]:  # Try 3x
+                if len(examples) >= n_samples:
+                    break
+                
+                row = lab_pool.loc[idx]
+                user_id = row[cols['user_id']]
+                ema_date = row[cols['date']]
+                
+                # Aggregate features
+                if dataset in ['ces', 'mentaliot']:
+                    feat_row = feat_df[
+                        (feat_df[cols['user_id']] == user_id) & 
+                        (feat_df[cols['date']] == ema_date)
+                    ]
+                    if len(feat_row) == 0:
+                        continue
+                    agg_feats = feat_row.iloc[0].to_dict()
+                else:
+                    agg_feats = aggregate_window_features(
+                        feat_df, user_id, ema_date, cols,
+                        window_days=config.AGGREGATION_WINDOW_DAYS,
+                        mode=config.DEFAULT_AGGREGATION_MODE,
+                        use_immediate_window=config.USE_IMMEDIATE_WINDOW,
+                        immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
+                        adaptive_window=config.USE_ADAPTIVE_WINDOW
+                    )
+                
+                if agg_feats is not None and (dataset in ['ces', 'mentaliot'] or check_missing_ratio(agg_feats)):
+                    labels = row[cols['labels']].to_dict()
+                    examples.append({
+                        'aggregated_features': agg_feats,
+                        'labels': labels,
+                        'user_id': user_id,
+                        'ema_date': ema_date,
+                        '_label_strat': 'fallback'
+                    })
+            
+            print(f"  Non-stratified sampling added {len(examples) - len(sampled_indices)} more examples")
+    
+    return examples if examples else None
+
+
+def _sample_from_prebuilt_pool_cosine(
+    cols: Dict, n_samples: int, target_sample: Dict,
+    candidates: List[Dict], random_state: Optional[int] = None
+) -> Optional[List[Dict]]:
+    """
+    Cosine similarity-based retrieval from candidate pool (for MentalIoT).
+    
+    Uses aggregated features directly instead of time series.
+    
+    Args:
+        cols: Column configuration
+        n_samples: Number of samples to retrieve
+        target_sample: Target sample dict with 'aggregated_features'
+        candidates: List of candidate dicts
+        random_state: Random seed
+        
+    Returns:
+        List of retrieved examples
+    """
+    from sklearn.metrics.pairwise import cosine_similarity
+    import numpy as np
+    
+    if not candidates or len(candidates) == 0:
+        print("Warning: Empty candidate pool for cosine similarity retrieval")
+        return None
+    
+    # Extract target features
+    target_feats = target_sample['aggregated_features']
+    target_user = target_sample['user_id']
+    target_date = target_sample['ema_date']
+    
+    # Get feature columns (statistical features)
+    stat_features = list(cols['feature_set']['statistical'].keys())
+    
+    # Build target feature vector
+    target_vector = []
+    for feat in stat_features:
+        val = target_feats.get(feat, 0)
+        if val is None or (isinstance(val, float) and np.isnan(val)):
+            val = 0
+        target_vector.append(float(val))
+    
+    target_vector = np.array(target_vector).reshape(1, -1)
+    
+    # Build candidate feature vectors
+    valid_candidates = []
+    candidate_vectors = []
+    
+    for cand in candidates:
+        # Skip same user and samples after target date (data leakage prevention)
+        if cand['user_id'] == target_user:
+            continue
+        if pd.to_datetime(cand['ema_date']) >= pd.to_datetime(target_date):
+            continue
+        
+        cand_vector = []
+        for feat in stat_features:
+            val = cand['aggregated_features'].get(feat, 0)
+            if val is None or (isinstance(val, float) and np.isnan(val)):
+                val = 0
+            cand_vector.append(float(val))
+        
+        valid_candidates.append(cand)
+        candidate_vectors.append(cand_vector)
+    
+    if len(valid_candidates) == 0:
+        print(f"Warning: Not enough candidates from other users (before target date)")
+        print(f"  Target: user={target_user}, date={target_date}")
+        print(f"  Total candidates in pool: {len(candidates)}")
+        return None
+    
+    if len(valid_candidates) < n_samples:
+        # Soft warning - still proceed with what we have
+        pass  # Don't print warning every time, only if 0 candidates
+    
+    candidate_vectors = np.array(candidate_vectors)
+    
+    # Compute cosine similarity
+    similarities = cosine_similarity(target_vector, candidate_vectors)[0]
+    
+    # Get top-k similar samples
+    top_k = min(n_samples, len(valid_candidates))
+    top_indices = np.argsort(similarities)[::-1][:top_k]
+    
+    examples = [valid_candidates[i] for i in top_indices]
     
     return examples if examples else None
 

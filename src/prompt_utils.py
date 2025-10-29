@@ -164,7 +164,7 @@ def save_prompts_to_disk(prompts: List[str], labels: List, experiment_name: str,
     with open(metadata_file, 'w') as f:
         json.dump(metadata, f, indent=2, cls=NumpyEncoder)
     
-    print(f"✅ Saved {len(prompts)} prompts to {save_dir}")
+    print(f"[OK] Saved {len(prompts)} prompts to {save_dir}")
     return str(save_dir)
 
 

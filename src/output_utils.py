@@ -175,7 +175,7 @@ def print_batch_timing_summary(all_step_timings: Dict, verbose: bool = True):
     total_avg_time = sum(avg_timings.values())
     
     print("\n" + "="*80)
-    print("⏱️  AVERAGE TIMING BREAKDOWN PER SAMPLE")
+    print("[TIMING] AVERAGE BREAKDOWN PER SAMPLE")
     print("="*80)
     print(f"  1. Data Loading:       {avg_timings.get('loading', 0):.3f}s  "
           f"({avg_timings.get('loading', 0)/total_avg_time*100:.1f}%)")

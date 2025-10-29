@@ -66,6 +66,135 @@ def load_ces_data(use_cols_path: str = './config/ces_use_cols.json') -> Tuple[pd
     return feat_df, lab_df, cols
 
 
+def load_mentaliot_data(use_cols_path: str = './config/mentaliot_use_cols.json') -> Tuple[pd.DataFrame, pd.DataFrame, Dict]:
+    """
+    Load MentalIoT dataset with feature and label data - Returns AGGREGATED data.
+    
+    MentalIoT data should already be aggregated via prepare_mentaliot_data.py.
+    This function simply loads the pre-aggregated CSV files.
+    
+    Returns:
+        (feat_df, lab_df, cols): Features, labels, and column configuration
+    """
+    aggregated_path = '../dataset/MentalIoT/aggregated_mentaliot.csv'
+    
+    # Check if aggregated data exists
+    if not os.path.exists(aggregated_path):
+        raise FileNotFoundError(
+            f"Aggregated MentalIoT data not found at {aggregated_path}\n"
+            f"Please run: python prepare_mentaliot_data.py"
+        )
+    
+    print(f"Loading aggregated MentalIoT data from {aggregated_path}")
+    agg_df = pd.read_csv(aggregated_path, low_memory=False)
+    
+    # Convert timestamp column (already converted when saved, just parse)
+    agg_df['timestamp'] = pd.to_datetime(agg_df['timestamp'])
+    
+    # Load column configuration
+    with open(use_cols_path, 'r') as f:
+        use_cols = json.load(f)
+    cols = use_cols['compass']
+    
+    # Split into features and labels
+    label_cols = [cols['user_id'], cols['date']] + cols['labels']
+    lab_df = agg_df[label_cols].copy()
+    
+    # Feature columns: everything except pure label columns (but keep user_id, timestamp)
+    feat_cols = [c for c in agg_df.columns if c not in cols['labels']]
+    feat_df = agg_df[feat_cols].copy()
+    
+    print(f"  Loaded {len(feat_df)} samples from {feat_df[cols['user_id']].nunique()} users")
+    print(f"  Features: {len(feat_df.columns)-2} (excluding uid, timestamp)")
+    
+    return feat_df, lab_df, cols
+
+
+def sample_mentaliot_testset(
+    n_samples_per_user: int = 10,
+    random_state: Optional[int] = None,
+    use_cols_path: str = None
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, Dict]:
+    """
+    Sample MentalIoT testset.
+    
+    Returns pre-sampled testset and trainset created by prepare_mentaliot_data.py.
+    
+    Args:
+        n_samples_per_user: Number of samples per user (default: 10)
+        random_state: Random seed (not used, provided for API consistency)
+        use_cols_path: Path to column configuration
+    
+    Returns:
+        (feat_df, lab_df, test_df, cols)
+    """
+    # Use config path if not specified
+    if use_cols_path is None:
+        use_cols_path = config.MENTALIOT_USE_COLS_PATH
+    
+    test_path = '../dataset/MentalIoT/mentaliot_testset.csv'
+    train_path = '../dataset/MentalIoT/mentaliot_trainset.csv'
+    
+    if not os.path.exists(test_path) or not os.path.exists(train_path):
+        raise FileNotFoundError(
+            f"MentalIoT testset/trainset not found.\n"
+            f"Please run: python prepare_mentaliot_data.py"
+        )
+    
+    print(f"Loading MentalIoT testset from {test_path}")
+    test_df = pd.read_csv(test_path, low_memory=False)
+    test_df['timestamp'] = pd.to_datetime(test_df['timestamp'])
+    
+    print(f"Loading MentalIoT trainset from {train_path}")
+    train_df = pd.read_csv(train_path, low_memory=False)
+    train_df['timestamp'] = pd.to_datetime(train_df['timestamp'])
+    
+    # Load column configuration
+    with open(use_cols_path, 'r') as f:
+        use_cols = json.load(f)
+    cols = use_cols['compass']
+    
+    # Combine into full feat_df and lab_df
+    full_df = pd.concat([train_df, test_df], ignore_index=True)
+    
+    # Split into features and labels
+    label_cols = [cols['user_id'], cols['date']] + cols['labels']
+    lab_df = full_df[label_cols].copy()
+    
+    # Rename label columns to match GLOBEM/CES format for pipeline compatibility
+    # MentalIoT uses: phq2_result_binary, gad2_result_binary, stress_result_binary
+    # Pipeline expects: phq4_anxiety_EMA, phq4_depression_EMA, stress
+    lab_df = lab_df.rename(columns={
+        'gad2_result_binary': 'phq4_anxiety_EMA',
+        'phq2_result_binary': 'phq4_depression_EMA',
+        'stress_result_binary': 'stress'
+    })
+    
+    # Also rename in test_df and train_df for use in evaluation_runner
+    test_df = test_df.rename(columns={
+        'gad2_result_binary': 'phq4_anxiety_EMA',
+        'phq2_result_binary': 'phq4_depression_EMA',
+        'stress_result_binary': 'stress'
+    })
+    
+    train_df = train_df.rename(columns={
+        'gad2_result_binary': 'phq4_anxiety_EMA',
+        'phq2_result_binary': 'phq4_depression_EMA',
+        'stress_result_binary': 'stress'
+    })
+    
+    # Also update cols['labels'] to match renamed columns
+    cols['labels'] = ['phq4_anxiety_EMA', 'phq4_depression_EMA', 'stress']
+    
+    feat_cols = [c for c in full_df.columns if c not in ['phq2_result_binary', 'gad2_result_binary', 'stress_result_binary']]
+    feat_df = full_df[feat_cols].copy()
+    
+    print(f"  Test set: {len(test_df)} samples from {test_df[cols['user_id']].nunique()} users")
+    print(f"  Train set: {len(train_df)} samples")
+    
+    return feat_df, lab_df, test_df, train_df, cols
+
+
 def _aggregate_ces_data(use_cols_path: str = './config/ces_use_cols.json') -> Tuple[pd.DataFrame, pd.DataFrame, Dict]:
     """Build aggregated CES data from raw sensing, steps, and EMA data."""
     import os
@@ -953,9 +1082,9 @@ def sample_batch_stratified(feat_df: pd.DataFrame, lab_df: pd.DataFrame, cols: D
             user_id = sample_lab.iloc[0][cols['user_id']]
             ema_date = sample_lab.iloc[0][cols['date']]
             
-            # Get aggregated features (different for CES vs GLOBEM)
-            if dataset == 'ces':
-                # For CES, aggregated_features is already in feat_df
+            # Get aggregated features (different for CES/MentalIoT vs GLOBEM)
+            if dataset in ['ces', 'mentaliot']:
+                # For CES/MentalIoT, aggregated_features is already in feat_df
                 feat_row = feat_df[
                     (feat_df[cols['user_id']] == user_id) & 
                     (feat_df[cols['date']] == ema_date)

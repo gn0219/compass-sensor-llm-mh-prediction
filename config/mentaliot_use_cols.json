@@ -1,99 +1,73 @@
 {
     "compass": {
         "user_id": "uid",
-        "user_info": "uid",
-        "date": "none",
-        "description": "",
+        "date": "timestamp",
+        "description": "MentalIoT dataset with frequent ESM (multiple per day), includes smartphone sensors, IoT home sensors, and withings sleep pad. Features reflect yesterday's patterns (6 time periods: 0-4h, 4-8h, 8-12h, 12-16h, 16-20h, 20-24h) and immediate past (1 hour before ESM).",
         "feature_set": {
-            "LOC_DST#AVG#WINDOW": "Location - average distance at window",
-            "LOC_LABEL#RLV_SUP=home#WINDOW": "Location - time at home at window",
-            "LOC_CLS#ETP#WINDOW": "Location - entropy at window",
-            "LOC_LABEL#RLV_SUP=eating#WINDOW": "Location - time at eating at window",
-            "LOC_LABEL#RLV_SUP=social#WINDOW": "Location - time at social at window",
-            "LOC_LABEL#RLV_SUP=work#WINDOW": "Location - time at work at window",
-            
-            "SCR_DUR#VAL"
-            "SCR_DUR#AVG#ImmediatePast_60"
-            "SCR_DUR#ASC#ImmediatePast_60"
-            
-            "CAE_CNT#VAL"
-            "CAE_DUR#VAL"
-
-            "ACE_WLK#VAL"
-
-            가전 - 별도로 더해서 써야함 (aqara)
-            "bluSensor_Humidity_mean",
-            "bluSensor_Temperature_mean"
-            "bluSensor_TVOC_mean"
-
-            #LOC_CLS#ETP#WINDOW
-                총 이동거리
-                집 시간
-                엔트로피
-                (선택 - 음식, 소셜, 일, 공부, 활동 장소 보낸 시간)
-                스크린 활동 시간
-                (스크린 평균 시간?)
-                통화 incoming
-                통화 outgoing
-                블루투스 장치 수
-                스텝 횟수
-                스텝 주요 장소 sedentarybout
-                스텝 주요 장소 activebout
-                전체 가전 사용량 (sum)
-                TV 전력 사용량
-                직전 15분 환경 데이터: 공기질, humidity, temperature
-                /////
-                가전 사용 변화량
-                - (withings)
-                ////
-                전날 수면 시간
-                전날 수면 시작 시간
-                전날 수면 종료 시간
-                전날 수면 효율성
-                전날 렘수면
-                전날 WINDOW별 스텝 횟수, location entropy, screensum
-
-
-                ""
-                "LOC_CLS#DSC": "Location - total distance",
-                "LOC_LABEL#DSC=home": "Location - time at home",
-                "loc_self_dorm_dur": "Location - time spent at self-dormitory",
-                "loc_social_dur": "Location - duration with social places",
-                "loc_food_dur": "Location - time spent at food places",
-                "loc_work_dur": "Location - time spent at work places",
-                "loc_study_dur": "Location - time spent at study places",
-                "loc_workout_dur": "Location - time spent at workout places (sport center, football field, gym etc.)",
-                "visit_num_ep_0": "Location - visit count",
-                "unlock_duration_ep_0": "Screen - sum duration unlock",
-                "unlock_num_ep_0": "Screen - unlock count",
-                "call_in_duration_ep_0": "Call - sum duration incoming",
-                "call_out_duration_ep_0": "Call - sum duration outgoing",
-                "step_ep_0": "Steps - sum steps",
-                "sleep_duration": "Sleep - duration",
-                "sleep_start": "Sleep - start time",
-                "sleep_end": "Sleep - end time"
+            "statistical": {
+                "LOC_CLS#DSC": "Location - total distance traveled (meters)",
+                "LOC_CLS#ETP##YesterdayDawn": "Location entropy - 0-4h",
+                "LOC_CLS#ETP##YesterdayMorning": "Location entropy - 4-8h",
+                "LOC_CLS#ETP##YesterdayAfternoon": "Location entropy - 8-12h",
+                "LOC_CLS#ETP##YesterdayLateAfternoon": "Location entropy - 12-16h",
+                "LOC_CLS#ETP##YesterdayEvening": "Location entropy - 16-20h",
+                "LOC_CLS#ETP##YesterdayNight": "Location entropy - 20-24h",
+                "SCR_DUR#VAL": "Screen - current session duration (seconds)",
+                "CAE_CNT#VAL": "Call - total call count",
+                "CAE_DUR#VAL": "Call - total call duration (seconds)",
+                "ACE_WLK#VAL": "Activity - walking duration (seconds)",
+                "aqara_total": "IoT - total home appliance activations",
+                "aqara_tv_before_60min": "IoT - TV usage in past hour",
+                "bluSensor_Humidity_mean": "Environment - humidity (%, past 15min)",
+                "bluSensor_Temperature_mean": "Environment - temperature (°C, past 15min)",
+                "bluSensor_TVOC_mean": "Environment - air quality TVOC (ppb, past 15min)",
+                "withings_total_sleep_time": "Sleep - total sleep duration (minutes, last night)",
+                "withings_deepsleepduration": "Sleep - deep sleep duration (seconds, last night)",
+                "withings_lightsleepduration": "Sleep - light sleep duration (seconds, last night)",
+                "withings_remsleepduration": "Sleep - REM sleep duration (seconds, last night)",
+                "withings_sleep_efficiency": "Sleep - sleep efficiency (%, last night)",
+                "withings_sleep_score": "Sleep - overall sleep quality score (last night)"
             },
-            "structural": "None",
+            "structural": {
+                "SCR_DUR#KUR#ImmediatePast_60": "Screen duration kurtosis - past hour",
+                "SCR_DUR#ASC#ImmediatePast_60": "Screen duration trend - past hour",
+                "ACE_WLK#KUR#ImmediatePast_60": "Walking kurtosis - past hour"
+            },
             "semantic": {
-                "sleep_duration": "Sleep - weekday sleep duration",
-                "#YesterdayDawn": "Steps - number of steps",
-                "#YesterdayMorning": "Steps - number of steps 12am-9am",
-                "#YesterdayAfternoon": "Steps - number of steps 9am-6pm",
-                "#YesterdayLateAfternoon": "Steps - number of steps 6pm-12am",
-                "#YesterdayEvening": "Screen - number of unlock",
-                "#YesterdayNight": "Screen - number of unlock 12am-9am"
+                "LOC_LABEL#RLV_SUP=home#ImmediatePast_60": "Time at home - past hour (proportion)",
+                "SCR_DUR#AVG#ImmediatePast_60": "Screen average duration - past hour (seconds)",
+                "SCR_DUR#AVG#YesterdayDawn": "Screen average duration - 0-4h (seconds)",
+                "SCR_DUR#AVG#YesterdayMorning": "Screen average duration - 4-8h (seconds)",
+                "SCR_DUR#AVG#YesterdayAfternoon": "Screen average duration - 8-12h (seconds)",
+                "SCR_DUR#AVG#YesterdayLateAfternoon": "Screen average duration - 12-16h (seconds)",
+                "SCR_DUR#AVG#YesterdayEvening": "Screen average duration - 16-20h (seconds)",
+                "SCR_DUR#AVG#YesterdayNight": "Screen average duration - 20-24h (seconds)",
+                "ACE_WLK#AVG#YesterdayDawn": "Walking activity - 0-4h (seconds)",
+                "ACE_WLK#AVG#YesterdayMorning": "Walking activity - 4-8h (seconds)",
+                "ACE_WLK#AVG#YesterdayAfternoon": "Walking activity - 8-12h (seconds)",
+                "ACE_WLK#AVG#YesterdayLateAfternoon": "Walking activity - 12-16h (seconds)",
+                "ACE_WLK#AVG#YesterdayEvening": "Walking activity - 16-20h (seconds)",
+                "ACE_WLK#AVG#YesterdayNight": "Walking activity - 20-24h (seconds)",
+                "LOC_LABEL#RLV_SUP=home#YesterdayDawn": "Time at home - 0-4h (proportion)",
+                "LOC_LABEL#RLV_SUP=home#YesterdayMorning": "Time at home - 4-8h (proportion)",
+                "LOC_LABEL#RLV_SUP=home#YesterdayAfternoon": "Time at home - 8-12h (proportion)",
+                "LOC_LABEL#RLV_SUP=home#YesterdayLateAfternoon": "Time at home - 12-16h (proportion)",
+                "LOC_LABEL#RLV_SUP=home#YesterdayEvening": "Time at home - 16-20h (proportion)",
+                "LOC_LABEL#RLV_SUP=home#YesterdayNight": "Time at home - 20-24h (proportion)",
+                "aqara_door_before_60min": "IoT - door activity in past hour",
+                "aqara_motion_before_60min": "IoT - motion sensor in past hour"
             },
-            "temporal_descriptor": "None"
+            "temporal_descriptor": "Time periods: 0-4h (night), 4-8h (early morning), 8-12h (late morning), 12-16h (afternoon), 16-20h (evening), 20-24h (night)"
         },
         "labels": [
-            "phq2_result",
-            "gad2_result",
-            "stress"
+            "phq2_result_binary",
+            "gad2_result_binary",
+            "stress_result_binary"
         ],
         "threshold": {
-            "phq2_result": 2,
-            "gad2_result": 2,
-            "stress": 2
+            "phq2_result_binary": "already_binary",
+            "gad2_result_binary": "already_binary",
+            "stress_result_binary": "already_binary"
         }
     }
 }

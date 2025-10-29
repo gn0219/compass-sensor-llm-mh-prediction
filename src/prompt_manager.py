@@ -47,6 +47,9 @@ class PromptManager:
         if dataset == 'ces':
             objective = t['task'].get('objective_ces', t['task']['objective'])
             output_targets = t['task'].get('output_targets_ces', t['task']['output_targets'])
+        elif dataset == 'mentaliot':
+            objective = t['task'].get('objective_mentaliot', t['task']['objective'])
+            output_targets = t['task'].get('output_targets_mentaliot', t['task']['output_targets'])
         else:
             objective = t['task']['objective']
             output_targets = t['task']['output_targets']
@@ -71,15 +74,17 @@ class PromptManager:
         # Use dataset-specific background
         if dataset == 'ces':
             background = ctx.get('background_ces', ctx['background'])
+        elif dataset == 'mentaliot':
+            background = ctx.get('background_mentaliot', ctx['background'])
         else:
             background = ctx['background']
         
         parts.extend([background.strip(), ""])
         
         # Clinical associations
-        # For CES, include stress indicators
+        # For CES and MentalIoT, include stress indicators
         conditions_to_include = ['depression', 'anxiety']
-        if dataset == 'ces':
+        if dataset in ['ces', 'mentaliot']:
             conditions_to_include.append('stress')
         
         for condition in conditions_to_include:
@@ -210,7 +215,7 @@ class PromptManager:
         if method == 'self_feedback':
             # Self-feedback has initial_instruction instead of instruction
             # Use CES-specific format if dataset is 'ces' and it exists
-            if dataset == 'ces':
+            if dataset in ['ces', 'mentaliot']:
                 initial_output_format = m.get('initial_output_format_ces', m.get('initial_output_format', ''))
             else:
                 initial_output_format = m.get('initial_output_format', '')
@@ -223,7 +228,7 @@ class PromptManager:
             }
         else:
             # Use CES-specific format if dataset is 'ces' and it exists
-            if dataset == 'ces':
+            if dataset in ['ces', 'mentaliot']:
                 output_format = m.get('output_format_ces', m.get('output_format', ''))
             else:
                 output_format = m.get('output_format', '')
@@ -256,6 +261,8 @@ class PromptManager:
         # Use CES-specific instruction if dataset is 'ces' and it exists
         if dataset == 'ces':
             instruction = task.get('instruction_ces', task.get('instruction', ''))
+        elif dataset == 'mentaliot':
+            instruction = task.get('instruction_mentaliot', task.get('instruction', ''))
         else:
             instruction = task.get('instruction', '')
         
@@ -315,6 +322,8 @@ class PromptManager:
         # Use CES-specific instruction if dataset is 'ces' and it exists
         if dataset == 'ces':
             instruction = task_completion.get('instruction_ces', task_completion.get('instruction', ''))
+        elif dataset == 'mentaliot':
+            instruction = task_completion.get('instruction_mentaliot', task_completion.get('instruction', ''))
         else:
             instruction = task_completion.get('instruction', '')
         
