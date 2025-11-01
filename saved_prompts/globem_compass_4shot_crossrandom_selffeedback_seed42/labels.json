@@ -37298,7 +37298,7 @@
         "Bluetooth - unique devices others": {
           "past_2weeks_slope": 0.0,
           "past_2weeks_direction": "stable",
-          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_slope": 0.0,
           "recent_2weeks_direction": "stable"
         },
         "Steps - sum steps": {
@@ -50772,7 +50772,7 @@
         "Bluetooth - unique devices others": {
           "past_2weeks_slope": 0.39,
           "past_2weeks_direction": "increasing",
-          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_slope": 0.0,
           "recent_2weeks_direction": "stable"
         },
         "Steps - sum steps": {
@@ -65722,7 +65722,7 @@
           "recent_2weeks_direction": "stable"
         },
         "Steps - count episodes active bout": {
-          "past_2weeks_slope": -0.0,
+          "past_2weeks_slope": 0.0,
           "past_2weeks_direction": "stable",
           "recent_2weeks_slope": -0.0,
           "recent_2weeks_direction": "stable"
@@ -71206,7 +71206,7 @@
         "Steps - count episodes sedentary bout": {
           "past_2weeks_slope": 0.02,
           "past_2weeks_direction": "stable",
-          "recent_2weeks_slope": 0.62,
+          "recent_2weeks_slope": 0.63,
           "recent_2weeks_direction": "increasing"
         },
         "Steps - sum duration sedentary bout": {
@@ -78239,7 +78239,7 @@
           "recent_2weeks_direction": "stable"
         },
         "Bluetooth - unique devices others": {
-          "past_2weeks_slope": -0.0,
+          "past_2weeks_slope": 0.0,
           "past_2weeks_direction": "stable",
           "recent_2weeks_slope": 0.02,
           "recent_2weeks_direction": "stable"
@@ -82949,7 +82949,7 @@
           "recent_2weeks_direction": "increasing"
         },
         "Call - sum duration incoming": {
-          "past_2weeks_slope": 0.52,
+          "past_2weeks_slope": 0.53,
           "past_2weeks_direction": "increasing",
           "recent_2weeks_slope": -1.81,
           "recent_2weeks_direction": "decreasing"
@@ -92898,7 +92898,7 @@
         "Bluetooth - unique devices others": {
           "past_2weeks_slope": 0.08,
           "past_2weeks_direction": "increasing",
-          "recent_2weeks_slope": 0.0,
+          "recent_2weeks_slope": -0.0,
           "recent_2weeks_direction": "stable"
         },
         "Steps - sum steps": {

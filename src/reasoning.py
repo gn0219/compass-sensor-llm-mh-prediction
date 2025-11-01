@@ -9,6 +9,8 @@ Handles:
 """
 
 import json
+import yaml
+import os
 from typing import Dict, List, Optional, Tuple
 from .llm_client import LLMClient
 
@@ -20,6 +22,12 @@ class LLMReasoner:
         """Initialize LLM reasoner with client."""
         self.client = LLMClient(model=model)
         self.model = model
+        
+        # Load reasoning config
+        config_path = os.path.join(os.path.dirname(__file__), 'prompts', 'reasoning.yaml')
+        with open(config_path, 'r') as f:
+            reasoning_config = yaml.safe_load(f)
+        self.reasoning_config = reasoning_config.get('reasoning_methods', {})
     
     def call_llm(self, prompt: str, temperature: float = 0.7, max_tokens: int = 6000,
                 seed: Optional[int] = None) -> Tuple[Optional[str], Dict]:
@@ -82,6 +90,10 @@ class LLMReasoner:
             result['Prediction']['Anxiety_binary'] = 1 if 'high' in result['Prediction']['Anxiety'].lower() else 0
             result['Prediction']['Depression_binary'] = 1 if 'high' in result['Prediction']['Depression'].lower() else 0
             
+            # Add Stress binary if Stress is present (CES dataset)
+            if 'Stress' in result['Prediction']:
+                result['Prediction']['Stress_binary'] = 1 if 'high' in result['Prediction']['Stress'].lower() else 0
+            
             return result
         
         except json.JSONDecodeError as e:
@@ -141,6 +153,10 @@ class LLMReasoner:
                 
                 result['Prediction']['Anxiety_binary'] = 1 if 'high' in result['Prediction']['Anxiety'].lower() else 0
                 result['Prediction']['Depression_binary'] = 1 if 'high' in result['Prediction']['Depression'].lower() else 0
+                
+                # Add Stress binary if Stress is present (CES dataset)
+                if 'Stress' in result['Prediction']:
+                    result['Prediction']['Stress_binary'] = 1 if 'high' in result['Prediction']['Stress'].lower() else 0
                 
                 return result
                 
@@ -206,46 +222,76 @@ class LLMReasoner:
             # Add metadata and iteration info
             parsed['usage'] = usage_info
             parsed['iteration'] = iteration + 1
+            parsed['raw_output'] = response_text  # Store raw LLM output for each round
             
             # Store predictions from this iteration with iteration suffix
-            pred = parsed.get('Refined_Prediction') or parsed.get('Prediction')
+            # Always use 'Prediction' since parse_response normalizes Refined_Prediction -> Prediction
+            pred = parsed.get('Prediction')
             if pred:
-                parsed[f'pred_iteration_{iteration + 1}'] = {
+                pred_iter = {
                     'Anxiety': pred.get('Anxiety'),
                     'Depression': pred.get('Depression'),
                     'Anxiety_binary': 1 if 'high' in str(pred.get('Anxiety', '')).lower() else 0,
                     'Depression_binary': 1 if 'high' in str(pred.get('Depression', '')).lower() else 0
                 }
+                # Add Stress if available (CES dataset)
+                if 'Stress' in pred:
+                    pred_iter['Stress'] = pred.get('Stress')
+                    pred_iter['Stress_binary'] = 1 if 'high' in str(pred.get('Stress', '')).lower() else 0
+                parsed[f'pred_iteration_{iteration + 1}'] = pred_iter
             
             conf = parsed.get('Confidence', {})
             if conf:
-                parsed[f'conf_iteration_{iteration + 1}'] = {
+                conf_iter = {
                     'Anxiety': conf.get('Anxiety', 'Low'),
                     'Depression': conf.get('Depression', 'Low')
                 }
+                # Add Stress confidence if available (CES dataset)
+                if 'Stress' in conf:
+                    conf_iter['Stress'] = conf.get('Stress', 'Low')
+                parsed[f'conf_iteration_{iteration + 1}'] = conf_iter
             
             iterations.append(parsed)
             
             # Extract difficulty assessment
-            difficulty = parsed.get('Difficulty', 'Hard')
+            difficulty = parsed.get('Difficulty', 'Difficult')
             if isinstance(difficulty, dict):
-                difficulty = difficulty.get('value', 'Hard')
+                difficulty = difficulty.get('value', 'Difficult')
             
             confidence_anx = conf.get('Anxiety', 'Low')
             confidence_dep = conf.get('Depression', 'Low')
+            confidence_stress = conf.get('Stress', None)
             
             # Get predictions for logging
             pred_anx = pred.get('Anxiety', 'Unknown') if pred else 'Unknown'
             pred_dep = pred.get('Depression', 'Unknown') if pred else 'Unknown'
+            pred_stress = pred.get('Stress', None) if pred else None
             
             print(f"  [Iteration {iteration + 1}/{max_iterations}] Complete")
             print(f"    Difficulty: {difficulty}")
-            print(f"    Predictions: Anxiety={pred_anx}, Depression={pred_dep}")
-            print(f"    Confidence: Anxiety={confidence_anx}, Depression={confidence_dep}")
             
-            # If Easy difficulty, stop iteration
+            # Build prediction output dynamically
+            pred_parts = [f"Anxiety={pred_anx}", f"Depression={pred_dep}"]
+            conf_parts = [f"Anxiety={confidence_anx}", f"Depression={confidence_dep}"]
+            if pred_stress is not None:
+                pred_parts.append(f"Stress={pred_stress}")
+                conf_parts.append(f"Stress={confidence_stress}")
+            
+            print(f"    Predictions: {', '.join(pred_parts)}")
+            print(f"    Confidence: {', '.join(conf_parts)}")
+            
+            # Smart stopping criteria based on difficulty and iteration
+            # - Iteration 1: Easy → stop, Moderate/Difficult → continue
+            # - Iteration 2+: Easy/Difficult → stop, Moderate → continue (until max)
+            # This encourages resolving ambiguity while avoiding lazy "Difficult" ratings
+            
             if difficulty == 'Easy':
-                print(f"  [Self-Feedback] Stopping - prediction marked as Easy")
+                print(f"  [Self-Feedback] Stopping - prediction marked as Easy (high confidence)")
+                break
+            
+            # After iteration 2+, also stop on Difficult (case is truly difficult or resolved)
+            if iteration >= 1 and difficulty == 'Difficult':
+                print(f"  [Self-Feedback] Stopping - prediction marked as Difficult after refinement (irreducible uncertainty)")
                 break
             
             # If this is the last iteration, stop
@@ -253,8 +299,23 @@ class LLMReasoner:
                 print(f"  [Self-Feedback] Reached maximum iterations ({max_iterations})")
                 break
             
-            # Prepare refinement prompt for next iteration
-            print(f"  [Self-Feedback] Difficulty={difficulty} - preparing refinement for iteration {iteration + 2}...")
+            # Continue refinement for Moderate (and Difficult on first iteration only)
+            if difficulty == 'Moderate':
+                # Check if previous iteration was also Moderate (M → M)
+                if iteration >= 1:
+                    prev_difficulty = iterations[iteration - 1].get('Difficulty', 'Unknown')
+                    if isinstance(prev_difficulty, dict):
+                        prev_difficulty = prev_difficulty.get('value', 'Unknown')
+                    
+                    if prev_difficulty == 'Moderate':
+                        print(f"  [Self-Feedback] ⚠️  NOTE - Difficulty remained Moderate (M → M)")
+                        print(f"  [Self-Feedback] Model should prefer Easy/Difficult unless concrete justification provided")
+                        # Don't break - allow continuation but flag it
+                
+                print(f"  [Self-Feedback] Difficulty=Moderate - preparing refinement for iteration {iteration + 2}...")
+            else:  # Difficult on first iteration
+                print(f"  [Self-Feedback] Difficulty=Difficult - attempting to resolve ambiguity in iteration {iteration + 2}...")
+            
             refinement_prompt = self._build_refinement_prompt(prompt, response_text, difficulty)
             current_prompt = refinement_prompt
         
@@ -266,7 +327,9 @@ class LLMReasoner:
         final_iteration = iterations[-1]
         
         # Build final prediction dict with all iteration info
-        final_pred = final_iteration.get('Refined_Prediction') or final_iteration.get('Prediction')
+        # Always use 'Prediction' since parse_response normalizes Refined_Prediction -> Prediction
+        # and adds _binary keys to Prediction
+        final_pred = final_iteration.get('Prediction')
         
         final_prediction = {
             'Prediction': final_pred,
@@ -278,7 +341,7 @@ class LLMReasoner:
             }
         }
         
-        # Add iteration-specific predictions and confidences to top level for easy access
+        # Add iteration-specific predictions, confidences, and usage to top level for easy access
         for i, iter_result in enumerate(iterations):
             iter_num = i + 1
             # Extract predictions
@@ -293,45 +356,48 @@ class LLMReasoner:
             
             # Add difficulty
             final_prediction[f'difficulty_iteration_{iter_num}'] = iter_result.get('Difficulty', 'Unknown')
+            
+            # Add usage info for each iteration
+            if 'usage' in iter_result:
+                final_prediction[f'usage_iteration_{iter_num}'] = iter_result['usage']
+            
+            # Add raw LLM output for each iteration
+            if 'raw_output' in iter_result:
+                final_prediction[f'raw_output_iteration_{iter_num}'] = iter_result['raw_output']
         
         print(f"  [Self-Feedback] Completed with {len(iterations)} iteration(s)")
-        print(f"  [Self-Feedback] Final: Anxiety={final_pred.get('Anxiety')}, Depression={final_pred.get('Depression')}")
+        
+        # Build final prediction output dynamically
+        final_parts = [f"Anxiety={final_pred.get('Anxiety', 'Unknown')}", 
+                       f"Depression={final_pred.get('Depression', 'Unknown')}"]
+        if 'Stress' in final_pred:
+            final_parts.append(f"Stress={final_pred.get('Stress')}")
+        print(f"  [Self-Feedback] Final: {', '.join(final_parts)}")
         
         return final_prediction, iterations
     
     def _build_refinement_prompt(self, original_prompt: str, previous_response: str, difficulty: str) -> str:
-        """Build a refinement prompt for the next iteration."""
-        refinement_instruction = f"""
-You previously made a prediction that was marked as {difficulty}. Here is your previous analysis:
-
----
-{previous_response}
----
-
-Now, conduct a deeper analysis focusing on the challenges and areas identified above. Consider:
-1. Re-examine the conflicting signals or ambiguous patterns
-2. Look for subtle indicators that might have been missed
-3. Consider the temporal dynamics and trends more carefully
-4. Integrate insights from similar examples if provided
-
-Please provide your refined response in the following JSON format:
-{{
-  "Refined_Prediction": {{
-    "Anxiety": "Low Risk" or "High Risk",
-    "Depression": "Low Risk" or "High Risk"
-  }},
-  "Confidence": {{
-    "Anxiety": "High" or "Medium" or "Low",
-    "Depression": "High" or "Medium" or "Low"
-  }},
-  "Refined_Analysis": "Explain how your deeper analysis led to this prediction",
-  "Difficulty": "Easy" or "Medium" or "Hard",
-  "Changes_from_Initial": "Describe what changed (if anything) and why"
-}}
-"""
+        """Build a refinement prompt for the next iteration using config from reasoning.yaml."""
         
-        # Combine original data with refinement instruction
-        return original_prompt + "\n\n" + refinement_instruction
+        # Get refinement instruction from config
+        sf_config = self.reasoning_config.get('self_feedback', {})
+        refinement_instruction_template = sf_config.get('refinement_instruction', '')
+        
+        # Format the template with difficulty and previous response
+        refinement_instruction = refinement_instruction_template.format(
+            difficulty=difficulty,
+            previous_response=previous_response
+        )
+        
+        # Determine output format based on whether Stress is in the original prompt
+        # (CES and MentalIoT datasets include Stress, GLOBEM does not)
+        if 'Stress' in previous_response or '"Stress"' in original_prompt:
+            output_format = sf_config.get('refinement_output_format_ces', '')
+        else:
+            output_format = sf_config.get('refinement_output_format', '')
+        
+        # Combine original data with refinement instruction and output format
+        return original_prompt + "\n\n" + refinement_instruction + "\n\n" + output_format
     
     
     def get_usage_summary(self) -> Dict:

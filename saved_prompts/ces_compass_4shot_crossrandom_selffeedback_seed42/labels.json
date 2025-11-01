@@ -4,6 +4,7 @@
     "ema_date": "2020-10-02 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user87",
       "date": "2020-10-02T00:00:00",
@@ -124,14 +125,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user87",
     "ema_date": "2020-05-25 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user87",
       "date": "2020-05-25T00:00:00",
@@ -252,14 +253,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user87",
     "ema_date": "2019-06-28 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user87",
       "date": "2019-06-28T00:00:00",
@@ -380,14 +381,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user87",
     "ema_date": "2018-11-24 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user87",
       "date": "2018-11-24T00:00:00",
@@ -508,14 +509,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user87",
     "ema_date": "2020-09-14 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user87",
       "date": "2020-09-14T00:00:00",
@@ -636,14 +637,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user125",
     "ema_date": "2020-10-09 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user125",
       "date": "2020-10-09T00:00:00",
@@ -764,14 +765,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user125",
     "ema_date": "2020-07-30 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user125",
       "date": "2020-07-30T00:00:00",
@@ -892,14 +893,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user125",
     "ema_date": "2020-02-08 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user125",
       "date": "2020-02-08T00:00:00",
@@ -1020,14 +1021,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user125",
     "ema_date": "2020-05-21 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user125",
       "date": "2020-05-21T00:00:00",
@@ -1148,14 +1149,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user125",
     "ema_date": "2018-05-11 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user125",
       "date": "2018-05-11T00:00:00",
@@ -1276,14 +1277,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user212",
     "ema_date": "2021-04-26 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user212",
       "date": "2021-04-26T00:00:00",
@@ -1404,14 +1405,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user212",
     "ema_date": "2021-06-05 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user212",
       "date": "2021-06-05T00:00:00",
@@ -1532,14 +1533,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user212",
     "ema_date": "2021-03-26 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user212",
       "date": "2021-03-26T00:00:00",
@@ -1660,14 +1661,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user212",
     "ema_date": "2019-11-23 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user212",
       "date": "2019-11-23T00:00:00",
@@ -1788,14 +1789,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user212",
     "ema_date": "2019-06-27 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user212",
       "date": "2019-06-27T00:00:00",
@@ -1916,14 +1917,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user40",
     "ema_date": "2020-02-25 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user40",
       "date": "2020-02-25T00:00:00",
@@ -2044,14 +2045,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user40",
     "ema_date": "2019-05-12 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user40",
       "date": "2019-05-12T00:00:00",
@@ -2172,14 +2173,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user40",
     "ema_date": "2019-09-20 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user40",
       "date": "2019-09-20T00:00:00",
@@ -2300,14 +2301,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user40",
     "ema_date": "2019-11-14 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user40",
       "date": "2019-11-14T00:00:00",
@@ -2428,14 +2429,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user40",
     "ema_date": "2021-03-06 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user40",
       "date": "2021-03-06T00:00:00",
@@ -2556,14 +2557,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user181",
     "ema_date": "2021-03-19 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user181",
       "date": "2021-03-19T00:00:00",
@@ -2684,14 +2685,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user181",
     "ema_date": "2021-03-14 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user181",
       "date": "2021-03-14T00:00:00",
@@ -2812,14 +2813,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user181",
     "ema_date": "2019-01-10 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user181",
       "date": "2019-01-10T00:00:00",
@@ -2940,14 +2941,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user181",
     "ema_date": "2021-11-01 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user181",
       "date": "2021-11-01T00:00:00",
@@ -3068,14 +3069,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user181",
     "ema_date": "2021-10-16 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user181",
       "date": "2021-10-16T00:00:00",
@@ -3196,14 +3197,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user118",
     "ema_date": "2019-01-03 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user118",
       "date": "2019-01-03T00:00:00",
@@ -3324,14 +3325,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user118",
     "ema_date": "2018-07-28 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user118",
       "date": "2018-07-28T00:00:00",
@@ -3452,14 +3453,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user118",
     "ema_date": "2020-06-27 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user118",
       "date": "2020-06-27T00:00:00",
@@ -3580,14 +3581,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user118",
     "ema_date": "2019-07-27 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user118",
       "date": "2019-07-27T00:00:00",
@@ -3708,14 +3709,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user118",
     "ema_date": "2021-04-16 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user118",
       "date": "2021-04-16T00:00:00",
@@ -3836,14 +3837,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user43",
     "ema_date": "2020-06-24 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user43",
       "date": "2020-06-24T00:00:00",
@@ -3964,14 +3965,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user43",
     "ema_date": "2018-12-10 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user43",
       "date": "2018-12-10T00:00:00",
@@ -4092,14 +4093,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user43",
     "ema_date": "2018-04-25 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user43",
       "date": "2018-04-25T00:00:00",
@@ -4220,14 +4221,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user43",
     "ema_date": "2018-06-15 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user43",
       "date": "2018-06-15T00:00:00",
@@ -4348,14 +4349,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user43",
     "ema_date": "2019-07-14 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user43",
       "date": "2019-07-14T00:00:00",
@@ -4476,14 +4477,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user194",
     "ema_date": "2020-10-17 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user194",
       "date": "2020-10-17T00:00:00",
@@ -4604,14 +4605,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user194",
     "ema_date": "2021-07-02 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user194",
       "date": "2021-07-02T00:00:00",
@@ -4732,14 +4733,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user194",
     "ema_date": "2022-01-20 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user194",
       "date": "2022-01-20T00:00:00",
@@ -4860,14 +4861,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user194",
     "ema_date": "2022-04-18 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user194",
       "date": "2022-04-18T00:00:00",
@@ -4988,14 +4989,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user194",
     "ema_date": "2021-10-26 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user194",
       "date": "2021-10-26T00:00:00",
@@ -5116,14 +5117,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user195",
     "ema_date": "2019-03-21 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user195",
       "date": "2019-03-21T00:00:00",
@@ -5244,14 +5245,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user195",
     "ema_date": "2018-04-14 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user195",
       "date": "2018-04-14T00:00:00",
@@ -5372,14 +5373,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user195",
     "ema_date": "2019-09-08 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user195",
       "date": "2019-09-08T00:00:00",
@@ -5500,14 +5501,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user195",
     "ema_date": "2019-06-17 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user195",
       "date": "2019-06-17T00:00:00",
@@ -5628,14 +5629,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user195",
     "ema_date": "2020-05-09 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user195",
       "date": "2020-05-09T00:00:00",
@@ -5756,14 +5757,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user124",
     "ema_date": "2020-04-23 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user124",
       "date": "2020-04-23T00:00:00",
@@ -5884,14 +5885,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user124",
     "ema_date": "2020-08-30 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user124",
       "date": "2020-08-30T00:00:00",
@@ -6012,14 +6013,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user124",
     "ema_date": "2020-09-19 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user124",
       "date": "2020-09-19T00:00:00",
@@ -6140,14 +6141,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user124",
     "ema_date": "2019-10-15 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user124",
       "date": "2019-10-15T00:00:00",
@@ -6268,14 +6269,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user124",
     "ema_date": "2019-11-25 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user124",
       "date": "2019-11-25T00:00:00",
@@ -6396,14 +6397,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user177",
     "ema_date": "2019-02-14 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user177",
       "date": "2019-02-14T00:00:00",
@@ -6524,14 +6525,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user177",
     "ema_date": "2019-06-09 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user177",
       "date": "2019-06-09T00:00:00",
@@ -6652,14 +6653,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user177",
     "ema_date": "2019-03-05 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user177",
       "date": "2019-03-05T00:00:00",
@@ -6780,14 +6781,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user177",
     "ema_date": "2021-09-22 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user177",
       "date": "2021-09-22T00:00:00",
@@ -6908,14 +6909,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user177",
     "ema_date": "2019-02-18 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user177",
       "date": "2019-02-18T00:00:00",
@@ -7036,14 +7037,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user207",
     "ema_date": "2020-04-05 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user207",
       "date": "2020-04-05T00:00:00",
@@ -7164,14 +7165,14 @@
       "call_out_duration_ep_0_28max": 2058.0,
       "call_out_duration_ep_0_p2wslope": 0.1827341308670812,
       "call_out_duration_ep_0_r2wslope": -0.1157004584819155
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user207",
     "ema_date": "2020-05-10 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user207",
       "date": "2020-05-10T00:00:00",
@@ -7292,14 +7293,14 @@
       "call_out_duration_ep_0_28max": 1295.0,
       "call_out_duration_ep_0_p2wslope": -0.1293451074472973,
       "call_out_duration_ep_0_r2wslope": 0.0806067172264355
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user207",
     "ema_date": "2020-07-29 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user207",
       "date": "2020-07-29T00:00:00",
@@ -7420,14 +7421,14 @@
       "call_out_duration_ep_0_28max": 1555.0,
       "call_out_duration_ep_0_p2wslope": -0.057909532328137,
       "call_out_duration_ep_0_r2wslope": 0.1454710037979416
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user207",
     "ema_date": "2020-04-12 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user207",
       "date": "2020-04-12T00:00:00",
@@ -7548,14 +7549,14 @@
       "call_out_duration_ep_0_28max": 2058.0,
       "call_out_duration_ep_0_p2wslope": -0.1794005716119764,
       "call_out_duration_ep_0_r2wslope": -0.0971316818774447
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user207",
     "ema_date": "2018-05-14 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user207",
       "date": "2018-05-14T00:00:00",
@@ -7676,14 +7677,14 @@
       "call_out_duration_ep_0_28max": 767.0,
       "call_out_duration_ep_0_p2wslope": -0.1574807069952701,
       "call_out_duration_ep_0_r2wslope": 0.1045136681500317
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user36",
     "ema_date": "2021-03-04 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user36",
       "date": "2021-03-04T00:00:00",
@@ -7804,14 +7805,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user36",
     "ema_date": "2018-07-22 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user36",
       "date": "2018-07-22T00:00:00",
@@ -7932,14 +7933,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user36",
     "ema_date": "2019-11-14 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user36",
       "date": "2019-11-14T00:00:00",
@@ -8060,14 +8061,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user36",
     "ema_date": "2018-04-12 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user36",
       "date": "2018-04-12T00:00:00",
@@ -8188,14 +8189,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user36",
     "ema_date": "2018-11-22 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user36",
       "date": "2018-11-22T00:00:00",
@@ -8316,14 +8317,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user63",
     "ema_date": "2019-04-23 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user63",
       "date": "2019-04-23T00:00:00",
@@ -8444,14 +8445,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user63",
     "ema_date": "2019-02-21 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user63",
       "date": "2019-02-21T00:00:00",
@@ -8572,14 +8573,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user63",
     "ema_date": "2019-02-03 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user63",
       "date": "2019-02-03T00:00:00",
@@ -8700,14 +8701,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user63",
     "ema_date": "2019-05-15 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user63",
       "date": "2019-05-15T00:00:00",
@@ -8828,14 +8829,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user63",
     "ema_date": "2019-01-12 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user63",
       "date": "2019-01-12T00:00:00",
@@ -8956,14 +8957,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user86",
     "ema_date": "2022-05-27 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user86",
       "date": "2022-05-27T00:00:00",
@@ -9084,14 +9085,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user86",
     "ema_date": "2021-08-02 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user86",
       "date": "2021-08-02T00:00:00",
@@ -9212,14 +9213,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user86",
     "ema_date": "2020-07-02 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user86",
       "date": "2020-07-02T00:00:00",
@@ -9340,14 +9341,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user86",
     "ema_date": "2020-04-18 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user86",
       "date": "2020-04-18T00:00:00",
@@ -9468,14 +9469,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user86",
     "ema_date": "2021-04-07 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user86",
       "date": "2021-04-07T00:00:00",
@@ -9596,14 +9597,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user193",
     "ema_date": "2018-02-24 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user193",
       "date": "2018-02-24T00:00:00",
@@ -9724,14 +9725,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user193",
     "ema_date": "2020-12-07 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user193",
       "date": "2020-12-07T00:00:00",
@@ -9852,14 +9853,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user193",
     "ema_date": "2018-09-22 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user193",
       "date": "2018-09-22T00:00:00",
@@ -9980,14 +9981,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user193",
     "ema_date": "2021-04-04 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user193",
       "date": "2021-04-04T00:00:00",
@@ -10108,14 +10109,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user193",
     "ema_date": "2021-01-30 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user193",
       "date": "2021-01-30T00:00:00",
@@ -10236,14 +10237,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user138",
     "ema_date": "2020-11-03 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user138",
       "date": "2020-11-03T00:00:00",
@@ -10364,14 +10365,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user138",
     "ema_date": "2020-02-07 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user138",
       "date": "2020-02-07T00:00:00",
@@ -10492,14 +10493,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user138",
     "ema_date": "2020-04-27 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user138",
       "date": "2020-04-27T00:00:00",
@@ -10620,14 +10621,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user138",
     "ema_date": "2019-01-07 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user138",
       "date": "2019-01-07T00:00:00",
@@ -10748,14 +10749,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user138",
     "ema_date": "2020-11-12 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user138",
       "date": "2020-11-12T00:00:00",
@@ -10876,14 +10877,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user2",
     "ema_date": "2021-03-20 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user2",
       "date": "2021-03-20T00:00:00",
@@ -11004,14 +11005,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user2",
     "ema_date": "2019-08-31 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user2",
       "date": "2019-08-31T00:00:00",
@@ -11132,14 +11133,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user2",
     "ema_date": "2020-10-01 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user2",
       "date": "2020-10-01T00:00:00",
@@ -11260,14 +11261,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user2",
     "ema_date": "2019-02-16 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user2",
       "date": "2019-02-16T00:00:00",
@@ -11388,14 +11389,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user2",
     "ema_date": "2020-05-02 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user2",
       "date": "2020-05-02T00:00:00",
@@ -11516,14 +11517,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user76",
     "ema_date": "2020-02-06 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user76",
       "date": "2020-02-06T00:00:00",
@@ -11644,14 +11645,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user76",
     "ema_date": "2020-01-31 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user76",
       "date": "2020-01-31T00:00:00",
@@ -11772,14 +11773,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user76",
     "ema_date": "2021-03-02 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user76",
       "date": "2021-03-02T00:00:00",
@@ -11900,14 +11901,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user76",
     "ema_date": "2018-12-26 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user76",
       "date": "2018-12-26T00:00:00",
@@ -12028,14 +12029,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user76",
     "ema_date": "2019-05-24 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user76",
       "date": "2019-05-24T00:00:00",
@@ -12156,14 +12157,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user202",
     "ema_date": "2019-04-18 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user202",
       "date": "2019-04-18T00:00:00",
@@ -12284,14 +12285,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user202",
     "ema_date": "2020-07-14 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user202",
       "date": "2020-07-14T00:00:00",
@@ -12412,14 +12413,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user202",
     "ema_date": "2019-08-31 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user202",
       "date": "2019-08-31T00:00:00",
@@ -12540,14 +12541,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user202",
     "ema_date": "2019-02-01 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user202",
       "date": "2019-02-01T00:00:00",
@@ -12668,14 +12669,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user202",
     "ema_date": "2019-08-24 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user202",
       "date": "2019-08-24T00:00:00",
@@ -12796,14 +12797,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user115",
     "ema_date": "2021-09-13 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user115",
       "date": "2021-09-13T00:00:00",
@@ -12924,14 +12925,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user115",
     "ema_date": "2019-03-09 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user115",
       "date": "2019-03-09T00:00:00",
@@ -13052,14 +13053,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user115",
     "ema_date": "2019-01-20 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user115",
       "date": "2019-01-20T00:00:00",
@@ -13180,14 +13181,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user115",
     "ema_date": "2020-08-15 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user115",
       "date": "2020-08-15T00:00:00",
@@ -13308,14 +13309,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user115",
     "ema_date": "2019-02-09 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user115",
       "date": "2019-02-09T00:00:00",
@@ -13436,14 +13437,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user66",
     "ema_date": "2018-12-29 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user66",
       "date": "2018-12-29T00:00:00",
@@ -13564,14 +13565,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user66",
     "ema_date": "2019-07-14 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user66",
       "date": "2019-07-14T00:00:00",
@@ -13692,14 +13693,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user66",
     "ema_date": "2019-07-05 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user66",
       "date": "2019-07-05T00:00:00",
@@ -13820,14 +13821,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user66",
     "ema_date": "2019-05-21 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user66",
       "date": "2019-05-21T00:00:00",
@@ -13948,14 +13949,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user66",
     "ema_date": "2019-03-13 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user66",
       "date": "2019-03-13T00:00:00",
@@ -14076,14 +14077,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user58",
     "ema_date": "2019-11-29 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user58",
       "date": "2019-11-29T00:00:00",
@@ -14204,14 +14205,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user58",
     "ema_date": "2019-01-01 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user58",
       "date": "2019-01-01T00:00:00",
@@ -14332,14 +14333,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user58",
     "ema_date": "2018-02-25 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user58",
       "date": "2018-02-25T00:00:00",
@@ -14460,14 +14461,14 @@
       "call_out_duration_ep_0_28max": 323.0,
       "call_out_duration_ep_0_p2wslope": 0.1402134097786272,
       "call_out_duration_ep_0_r2wslope": -0.1319057815845826
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user58",
     "ema_date": "2019-08-10 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user58",
       "date": "2019-08-10T00:00:00",
@@ -14588,14 +14589,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user58",
     "ema_date": "2019-11-25 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user58",
       "date": "2019-11-25T00:00:00",
@@ -14716,14 +14717,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user60",
     "ema_date": "2018-08-30 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user60",
       "date": "2018-08-30T00:00:00",
@@ -14844,14 +14845,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user60",
     "ema_date": "2017-12-24 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user60",
       "date": "2017-12-24T00:00:00",
@@ -14972,14 +14973,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user60",
     "ema_date": "2018-09-06 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user60",
       "date": "2018-09-06T00:00:00",
@@ -15100,14 +15101,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user60",
     "ema_date": "2018-11-23 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user60",
       "date": "2018-11-23T00:00:00",
@@ -15228,14 +15229,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user60",
     "ema_date": "2018-03-31 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user60",
       "date": "2018-03-31T00:00:00",
@@ -15356,14 +15357,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user180",
     "ema_date": "2020-11-12 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user180",
       "date": "2020-11-12T00:00:00",
@@ -15484,14 +15485,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user180",
     "ema_date": "2020-05-29 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user180",
       "date": "2020-05-29T00:00:00",
@@ -15612,14 +15613,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user180",
     "ema_date": "2019-09-25 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user180",
       "date": "2019-09-25T00:00:00",
@@ -15740,14 +15741,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user180",
     "ema_date": "2020-12-03 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user180",
       "date": "2020-12-03T00:00:00",
@@ -15868,14 +15869,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user180",
     "ema_date": "2019-02-24 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user180",
       "date": "2019-02-24T00:00:00",
@@ -15996,14 +15997,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user166",
     "ema_date": "2022-04-08 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user166",
       "date": "2022-04-08T00:00:00",
@@ -16124,14 +16125,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user166",
     "ema_date": "2020-06-22 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user166",
       "date": "2020-06-22T00:00:00",
@@ -16252,14 +16253,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user166",
     "ema_date": "2020-06-10 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user166",
       "date": "2020-06-10T00:00:00",
@@ -16380,14 +16381,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user166",
     "ema_date": "2020-11-03 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user166",
       "date": "2020-11-03T00:00:00",
@@ -16508,14 +16509,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user166",
     "ema_date": "2019-01-01 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user166",
       "date": "2019-01-01T00:00:00",
@@ -16636,14 +16637,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user11",
     "ema_date": "2019-06-24 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user11",
       "date": "2019-06-24T00:00:00",
@@ -16764,14 +16765,14 @@
       "call_out_duration_ep_0_28max": 1835.0,
       "call_out_duration_ep_0_p2wslope": -0.0409982734264637,
       "call_out_duration_ep_0_r2wslope": 0.0669274997448371
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user11",
     "ema_date": "2019-12-09 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user11",
       "date": "2019-12-09T00:00:00",
@@ -16892,14 +16893,14 @@
       "call_out_duration_ep_0_28max": 3272.0,
       "call_out_duration_ep_0_p2wslope": -0.1067628583456463,
       "call_out_duration_ep_0_r2wslope": 0.173558348797311
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user11",
     "ema_date": "2021-03-16 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user11",
       "date": "2021-03-16T00:00:00",
@@ -17020,14 +17021,14 @@
       "call_out_duration_ep_0_28max": 3535.0,
       "call_out_duration_ep_0_p2wslope": -0.0926276496467138,
       "call_out_duration_ep_0_r2wslope": -0.0201101438976728
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user11",
     "ema_date": "2019-11-07 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user11",
       "date": "2019-11-07T00:00:00",
@@ -17148,14 +17149,14 @@
       "call_out_duration_ep_0_28max": 2903.0,
       "call_out_duration_ep_0_p2wslope": -0.0335508920874774,
       "call_out_duration_ep_0_r2wslope": 0.1322817209445374
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user11",
     "ema_date": "2020-10-25 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user11",
       "date": "2020-10-25T00:00:00",
@@ -17276,14 +17277,14 @@
       "call_out_duration_ep_0_28max": 4806.0,
       "call_out_duration_ep_0_p2wslope": 0.1230035319480758,
       "call_out_duration_ep_0_r2wslope": -0.0889369926555856
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user104",
     "ema_date": "2020-03-15 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user104",
       "date": "2020-03-15T00:00:00",
@@ -17404,14 +17405,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user104",
     "ema_date": "2018-04-18 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user104",
       "date": "2018-04-18T00:00:00",
@@ -17532,14 +17533,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user104",
     "ema_date": "2020-12-19 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user104",
       "date": "2020-12-19T00:00:00",
@@ -17660,14 +17661,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user104",
     "ema_date": "2018-11-03 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user104",
       "date": "2018-11-03T00:00:00",
@@ -17788,14 +17789,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user104",
     "ema_date": "2018-05-11 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user104",
       "date": "2018-05-11T00:00:00",
@@ -17916,14 +17917,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user137",
     "ema_date": "2020-05-20 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user137",
       "date": "2020-05-20T00:00:00",
@@ -18044,14 +18045,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user137",
     "ema_date": "2021-05-16 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user137",
       "date": "2021-05-16T00:00:00",
@@ -18172,14 +18173,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user137",
     "ema_date": "2020-06-04 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user137",
       "date": "2020-06-04T00:00:00",
@@ -18300,14 +18301,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user137",
     "ema_date": "2020-09-24 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user137",
       "date": "2020-09-24T00:00:00",
@@ -18428,14 +18429,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user137",
     "ema_date": "2018-10-11 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user137",
       "date": "2018-10-11T00:00:00",
@@ -18556,14 +18557,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user75",
     "ema_date": "2017-12-13 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user75",
       "date": "2017-12-13T00:00:00",
@@ -18684,14 +18685,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user75",
     "ema_date": "2017-11-30 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user75",
       "date": "2017-11-30T00:00:00",
@@ -18812,14 +18813,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user75",
     "ema_date": "2018-02-28 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user75",
       "date": "2018-02-28T00:00:00",
@@ -18940,14 +18941,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user75",
     "ema_date": "2018-01-11 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user75",
       "date": "2018-01-11T00:00:00",
@@ -19068,14 +19069,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user75",
     "ema_date": "2018-02-20 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user75",
       "date": "2018-02-20T00:00:00",
@@ -19196,14 +19197,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user142",
     "ema_date": "2021-09-24 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user142",
       "date": "2021-09-24T00:00:00",
@@ -19324,14 +19325,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user142",
     "ema_date": "2020-05-22 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user142",
       "date": "2020-05-22T00:00:00",
@@ -19452,14 +19453,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user142",
     "ema_date": "2018-10-23 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user142",
       "date": "2018-10-23T00:00:00",
@@ -19580,14 +19581,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user142",
     "ema_date": "2019-10-07 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user142",
       "date": "2019-10-07T00:00:00",
@@ -19708,14 +19709,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user142",
     "ema_date": "2019-04-18 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user142",
       "date": "2019-04-18T00:00:00",
@@ -19836,14 +19837,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user42",
     "ema_date": "2017-12-26 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user42",
       "date": "2017-12-26T00:00:00",
@@ -19964,14 +19965,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user42",
     "ema_date": "2019-03-12 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user42",
       "date": "2019-03-12T00:00:00",
@@ -20092,14 +20093,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user42",
     "ema_date": "2018-12-20 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user42",
       "date": "2018-12-20T00:00:00",
@@ -20220,14 +20221,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user42",
     "ema_date": "2020-06-03 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user42",
       "date": "2020-06-03T00:00:00",
@@ -20348,14 +20349,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user42",
     "ema_date": "2021-06-06 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user42",
       "date": "2021-06-06T00:00:00",
@@ -20476,14 +20477,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user155",
     "ema_date": "2021-08-30 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user155",
       "date": "2021-08-30T00:00:00",
@@ -20604,14 +20605,14 @@
       "call_out_duration_ep_0_28max": 449.0,
       "call_out_duration_ep_0_p2wslope": -0.2570532915360503,
       "call_out_duration_ep_0_r2wslope": 0.1383253914227365
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user155",
     "ema_date": "2020-07-26 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user155",
       "date": "2020-07-26T00:00:00",
@@ -20732,14 +20733,14 @@
       "call_out_duration_ep_0_28max": 465.0,
       "call_out_duration_ep_0_p2wslope": -0.2153846153846155,
       "call_out_duration_ep_0_r2wslope": 0.2373285629099583
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user155",
     "ema_date": "2022-02-06 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user155",
       "date": "2022-02-06T00:00:00",
@@ -20860,14 +20861,14 @@
       "call_out_duration_ep_0_28max": 4594.0,
       "call_out_duration_ep_0_p2wslope": -0.1476029480696926,
       "call_out_duration_ep_0_r2wslope": -0.0432322485207101
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user155",
     "ema_date": "2021-07-25 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user155",
       "date": "2021-07-25T00:00:00",
@@ -20988,14 +20989,14 @@
       "call_out_duration_ep_0_28max": 153.0,
       "call_out_duration_ep_0_p2wslope": -0.2573021181716835,
       "call_out_duration_ep_0_r2wslope": -0.0307692307692308
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user155",
     "ema_date": "2021-04-04 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user155",
       "date": "2021-04-04T00:00:00",
@@ -21116,14 +21117,14 @@
       "call_out_duration_ep_0_28max": 403.0,
       "call_out_duration_ep_0_p2wslope": 0.3384615384615386,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user122",
     "ema_date": "2020-08-21 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user122",
       "date": "2020-08-21T00:00:00",
@@ -21244,14 +21245,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user122",
     "ema_date": "2018-05-17 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user122",
       "date": "2018-05-17T00:00:00",
@@ -21372,14 +21373,14 @@
       "call_out_duration_ep_0_28max": 3747.0,
       "call_out_duration_ep_0_p2wslope": -0.2109459552024113,
       "call_out_duration_ep_0_r2wslope": -0.1844802342606147
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user122",
     "ema_date": "2019-08-27 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user122",
       "date": "2019-08-27T00:00:00",
@@ -21500,14 +21501,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user122",
     "ema_date": "2018-05-19 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user122",
       "date": "2018-05-19T00:00:00",
@@ -21628,14 +21629,14 @@
       "call_out_duration_ep_0_28max": 2244.0,
       "call_out_duration_ep_0_p2wslope": 0.0375196002120771,
       "call_out_duration_ep_0_r2wslope": -1.6837606837606836
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user122",
     "ema_date": "2019-07-14 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user122",
       "date": "2019-07-14T00:00:00",
@@ -21756,14 +21757,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user114",
     "ema_date": "2018-12-06 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user114",
       "date": "2018-12-06T00:00:00",
@@ -21884,14 +21885,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user114",
     "ema_date": "2019-01-24 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user114",
       "date": "2019-01-24T00:00:00",
@@ -22012,14 +22013,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user114",
     "ema_date": "2018-12-26 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user114",
       "date": "2018-12-26T00:00:00",
@@ -22140,14 +22141,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user114",
     "ema_date": "2019-01-27 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user114",
       "date": "2019-01-27T00:00:00",
@@ -22268,14 +22269,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user114",
     "ema_date": "2019-01-17 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user114",
       "date": "2019-01-17T00:00:00",
@@ -22396,14 +22397,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user98",
     "ema_date": "2018-03-04 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user98",
       "date": "2018-03-04T00:00:00",
@@ -22524,14 +22525,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user98",
     "ema_date": "2018-03-31 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user98",
       "date": "2018-03-31T00:00:00",
@@ -22652,14 +22653,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user98",
     "ema_date": "2018-04-06 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user98",
       "date": "2018-04-06T00:00:00",
@@ -22780,14 +22781,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user98",
     "ema_date": "2018-04-24 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user98",
       "date": "2018-04-24T00:00:00",
@@ -22908,14 +22909,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user98",
     "ema_date": "2018-05-06 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user98",
       "date": "2018-05-06T00:00:00",
@@ -23036,14 +23037,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user59",
     "ema_date": "2019-03-11 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user59",
       "date": "2019-03-11T00:00:00",
@@ -23164,14 +23165,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user59",
     "ema_date": "2020-10-16 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user59",
       "date": "2020-10-16T00:00:00",
@@ -23292,14 +23293,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user59",
     "ema_date": "2018-10-07 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user59",
       "date": "2018-10-07T00:00:00",
@@ -23420,14 +23421,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user59",
     "ema_date": "2020-08-15 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user59",
       "date": "2020-08-15T00:00:00",
@@ -23548,14 +23549,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user59",
     "ema_date": "2020-12-20 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user59",
       "date": "2020-12-20T00:00:00",
@@ -23676,14 +23677,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user163",
     "ema_date": "2021-04-14 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user163",
       "date": "2021-04-14T00:00:00",
@@ -23804,14 +23805,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user163",
     "ema_date": "2019-11-20 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user163",
       "date": "2019-11-20T00:00:00",
@@ -23932,14 +23933,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user163",
     "ema_date": "2018-10-10 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user163",
       "date": "2018-10-10T00:00:00",
@@ -24060,14 +24061,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user163",
     "ema_date": "2018-01-25 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user163",
       "date": "2018-01-25T00:00:00",
@@ -24188,14 +24189,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user163",
     "ema_date": "2020-08-25 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user163",
       "date": "2020-08-25T00:00:00",
@@ -24316,14 +24317,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user65",
     "ema_date": "2020-11-14 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user65",
       "date": "2020-11-14T00:00:00",
@@ -24444,14 +24445,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user65",
     "ema_date": "2019-09-24 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user65",
       "date": "2019-09-24T00:00:00",
@@ -24572,14 +24573,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user65",
     "ema_date": "2022-03-18 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user65",
       "date": "2022-03-18T00:00:00",
@@ -24700,14 +24701,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user65",
     "ema_date": "2019-07-01 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user65",
       "date": "2019-07-01T00:00:00",
@@ -24828,14 +24829,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user65",
     "ema_date": "2019-05-31 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user65",
       "date": "2019-05-31T00:00:00",
@@ -24956,14 +24957,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user25",
     "ema_date": "2017-10-30 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user25",
       "date": "2017-10-30T00:00:00",
@@ -25084,14 +25085,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user25",
     "ema_date": "2018-03-25 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user25",
       "date": "2018-03-25T00:00:00",
@@ -25212,14 +25213,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user25",
     "ema_date": "2017-12-11 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user25",
       "date": "2017-12-11T00:00:00",
@@ -25340,14 +25341,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user25",
     "ema_date": "2018-06-25 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user25",
       "date": "2018-06-25T00:00:00",
@@ -25468,14 +25469,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user25",
     "ema_date": "2018-04-05 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user25",
       "date": "2018-04-05T00:00:00",
@@ -25596,14 +25597,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user187",
     "ema_date": "2018-03-29 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user187",
       "date": "2018-03-29T00:00:00",
@@ -25724,14 +25725,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user187",
     "ema_date": "2018-02-13 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user187",
       "date": "2018-02-13T00:00:00",
@@ -25852,14 +25853,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user187",
     "ema_date": "2018-10-08 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user187",
       "date": "2018-10-08T00:00:00",
@@ -25980,14 +25981,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user187",
     "ema_date": "2018-03-01 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user187",
       "date": "2018-03-01T00:00:00",
@@ -26108,14 +26109,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user187",
     "ema_date": "2018-02-14 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user187",
       "date": "2018-02-14T00:00:00",
@@ -26236,14 +26237,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user33",
     "ema_date": "2019-04-21 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user33",
       "date": "2019-04-21T00:00:00",
@@ -26364,14 +26365,14 @@
       "call_out_duration_ep_0_28max": 1863.0,
       "call_out_duration_ep_0_p2wslope": 0.0352991452991452,
       "call_out_duration_ep_0_r2wslope": 0.0320888316704216
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user33",
     "ema_date": "2019-02-28 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user33",
       "date": "2019-02-28T00:00:00",
@@ -26492,14 +26493,14 @@
       "call_out_duration_ep_0_28max": 1530.0,
       "call_out_duration_ep_0_p2wslope": 0.0989547038327526,
       "call_out_duration_ep_0_r2wslope": 0.0631982125758059
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user33",
     "ema_date": "2020-03-12 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user33",
       "date": "2020-03-12T00:00:00",
@@ -26620,14 +26621,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user33",
     "ema_date": "2021-04-12 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user33",
       "date": "2021-04-12T00:00:00",
@@ -26748,14 +26749,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user33",
     "ema_date": "2021-05-08 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user33",
       "date": "2021-05-08T00:00:00",
@@ -26876,14 +26877,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user156",
     "ema_date": "2021-05-16 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user156",
       "date": "2021-05-16T00:00:00",
@@ -27004,14 +27005,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user156",
     "ema_date": "2022-04-13 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user156",
       "date": "2022-04-13T00:00:00",
@@ -27132,14 +27133,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user156",
     "ema_date": "2022-04-07 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user156",
       "date": "2022-04-07T00:00:00",
@@ -27260,14 +27261,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user156",
     "ema_date": "2021-05-07 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user156",
       "date": "2021-05-07T00:00:00",
@@ -27388,14 +27389,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user156",
     "ema_date": "2020-07-10 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user156",
       "date": "2020-07-10T00:00:00",
@@ -27516,14 +27517,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user38",
     "ema_date": "2019-03-27 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user38",
       "date": "2019-03-27T00:00:00",
@@ -27644,14 +27645,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user38",
     "ema_date": "2019-01-31 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user38",
       "date": "2019-01-31T00:00:00",
@@ -27772,14 +27773,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user38",
     "ema_date": "2020-01-18 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user38",
       "date": "2020-01-18T00:00:00",
@@ -27900,14 +27901,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user38",
     "ema_date": "2019-04-24 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user38",
       "date": "2019-04-24T00:00:00",
@@ -28028,14 +28029,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user38",
     "ema_date": "2019-04-04 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user38",
       "date": "2019-04-04T00:00:00",
@@ -28156,14 +28157,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user13",
     "ema_date": "2020-05-05 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user13",
       "date": "2020-05-05T00:00:00",
@@ -28284,14 +28285,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user13",
     "ema_date": "2019-11-21 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user13",
       "date": "2019-11-21T00:00:00",
@@ -28412,14 +28413,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user13",
     "ema_date": "2022-03-22 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user13",
       "date": "2022-03-22T00:00:00",
@@ -28540,14 +28541,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user13",
     "ema_date": "2021-06-24 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user13",
       "date": "2021-06-24T00:00:00",
@@ -28668,14 +28669,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user13",
     "ema_date": "2021-06-03 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user13",
       "date": "2021-06-03T00:00:00",
@@ -28796,14 +28797,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user144",
     "ema_date": "2017-11-19 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user144",
       "date": "2017-11-19T00:00:00",
@@ -28924,14 +28925,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user144",
     "ema_date": "2020-09-12 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user144",
       "date": "2020-09-12T00:00:00",
@@ -29052,14 +29053,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user144",
     "ema_date": "2018-10-06 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user144",
       "date": "2018-10-06T00:00:00",
@@ -29180,14 +29181,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user144",
     "ema_date": "2018-11-12 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user144",
       "date": "2018-11-12T00:00:00",
@@ -29308,14 +29309,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user144",
     "ema_date": "2018-03-17 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user144",
       "date": "2018-03-17T00:00:00",
@@ -29436,14 +29437,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user48",
     "ema_date": "2021-08-17 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user48",
       "date": "2021-08-17T00:00:00",
@@ -29564,14 +29565,14 @@
       "call_out_duration_ep_0_28max": 3185.0,
       "call_out_duration_ep_0_p2wslope": -0.2875017318083159,
       "call_out_duration_ep_0_r2wslope": -0.3222631273009109
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user48",
     "ema_date": "2020-03-16 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user48",
       "date": "2020-03-16T00:00:00",
@@ -29692,14 +29693,14 @@
       "call_out_duration_ep_0_28max": 2327.0,
       "call_out_duration_ep_0_p2wslope": 0.0951566951566951,
       "call_out_duration_ep_0_r2wslope": 0.2384187770228536
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user48",
     "ema_date": "2021-06-19 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user48",
       "date": "2021-06-19T00:00:00",
@@ -29820,14 +29821,14 @@
       "call_out_duration_ep_0_28max": 3194.0,
       "call_out_duration_ep_0_p2wslope": 0.1887209564628919,
       "call_out_duration_ep_0_r2wslope": 0.0953232640964983
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user48",
     "ema_date": "2021-05-15 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user48",
       "date": "2021-05-15T00:00:00",
@@ -29948,14 +29949,14 @@
       "call_out_duration_ep_0_28max": 2220.0,
       "call_out_duration_ep_0_p2wslope": -0.2748212867355045,
       "call_out_duration_ep_0_r2wslope": -0.1963315086910593
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user48",
     "ema_date": "2019-09-21 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user48",
       "date": "2019-09-21T00:00:00",
@@ -30076,14 +30077,14 @@
       "call_out_duration_ep_0_28max": 539.0,
       "call_out_duration_ep_0_p2wslope": -0.051682198704786,
       "call_out_duration_ep_0_r2wslope": 0.046231677260345
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user143",
     "ema_date": "2018-09-07 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user143",
       "date": "2018-09-07T00:00:00",
@@ -30204,14 +30205,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user143",
     "ema_date": "2018-02-18 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user143",
       "date": "2018-02-18T00:00:00",
@@ -30332,14 +30333,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user143",
     "ema_date": "2018-03-08 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user143",
       "date": "2018-03-08T00:00:00",
@@ -30460,14 +30461,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user143",
     "ema_date": "2018-04-18 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user143",
       "date": "2018-04-18T00:00:00",
@@ -30588,14 +30589,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user143",
     "ema_date": "2018-08-06 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user143",
       "date": "2018-08-06T00:00:00",
@@ -30716,14 +30717,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user186",
     "ema_date": "2020-05-24 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user186",
       "date": "2020-05-24T00:00:00",
@@ -30844,14 +30845,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user186",
     "ema_date": "2020-05-15 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user186",
       "date": "2020-05-15T00:00:00",
@@ -30972,14 +30973,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user186",
     "ema_date": "2018-12-26 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user186",
       "date": "2018-12-26T00:00:00",
@@ -31100,14 +31101,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user186",
     "ema_date": "2019-04-19 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user186",
       "date": "2019-04-19T00:00:00",
@@ -31228,14 +31229,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user186",
     "ema_date": "2019-02-15 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user186",
       "date": "2019-02-15T00:00:00",
@@ -31356,14 +31357,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user147",
     "ema_date": "2018-11-22 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user147",
       "date": "2018-11-22T00:00:00",
@@ -31484,14 +31485,14 @@
       "call_out_duration_ep_0_28max": 951.0,
       "call_out_duration_ep_0_p2wslope": 0.0743262411347517,
       "call_out_duration_ep_0_r2wslope": 0.0964000573696036
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user147",
     "ema_date": "2019-07-22 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user147",
       "date": "2019-07-22T00:00:00",
@@ -31612,14 +31613,14 @@
       "call_out_duration_ep_0_28max": 2205.0,
       "call_out_duration_ep_0_p2wslope": 0.0238161838161837,
       "call_out_duration_ep_0_r2wslope": -0.0212345903652823
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user147",
     "ema_date": "2019-01-14 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user147",
       "date": "2019-01-14T00:00:00",
@@ -31740,14 +31741,14 @@
       "call_out_duration_ep_0_28max": 2540.0,
       "call_out_duration_ep_0_p2wslope": -0.2849819688254405,
       "call_out_duration_ep_0_r2wslope": -0.266226040978189
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user147",
     "ema_date": "2019-01-07 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user147",
       "date": "2019-01-07T00:00:00",
@@ -31868,14 +31869,14 @@
       "call_out_duration_ep_0_28max": 2540.0,
       "call_out_duration_ep_0_p2wslope": -0.0127112797516385,
       "call_out_duration_ep_0_r2wslope": 0.0807131799498211
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user147",
     "ema_date": "2019-11-24 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user147",
       "date": "2019-11-24T00:00:00",
@@ -31996,14 +31997,14 @@
       "call_out_duration_ep_0_28max": 621.0,
       "call_out_duration_ep_0_p2wslope": -0.3431059506531207,
       "call_out_duration_ep_0_r2wslope": -0.2025974025974027
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user146",
     "ema_date": "2019-01-12 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user146",
       "date": "2019-01-12T00:00:00",
@@ -32124,14 +32125,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user146",
     "ema_date": "2019-06-15 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user146",
       "date": "2019-06-15T00:00:00",
@@ -32252,14 +32253,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user146",
     "ema_date": "2021-12-15 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user146",
       "date": "2021-12-15T00:00:00",
@@ -32380,14 +32381,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user146",
     "ema_date": "2018-11-29 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user146",
       "date": "2018-11-29T00:00:00",
@@ -32508,14 +32509,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user146",
     "ema_date": "2021-08-31 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user146",
       "date": "2021-08-31T00:00:00",
@@ -32636,14 +32637,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user126",
     "ema_date": "2019-01-18 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user126",
       "date": "2019-01-18T00:00:00",
@@ -32764,14 +32765,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user126",
     "ema_date": "2019-03-23 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user126",
       "date": "2019-03-23T00:00:00",
@@ -32892,14 +32893,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user126",
     "ema_date": "2019-01-12 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user126",
       "date": "2019-01-12T00:00:00",
@@ -33020,14 +33021,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user126",
     "ema_date": "2019-11-11 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user126",
       "date": "2019-11-11T00:00:00",
@@ -33148,14 +33149,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user126",
     "ema_date": "2019-10-04 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user126",
       "date": "2019-10-04T00:00:00",
@@ -33276,14 +33277,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user15",
     "ema_date": "2019-10-19 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user15",
       "date": "2019-10-19T00:00:00",
@@ -33404,14 +33405,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user15",
     "ema_date": "2019-02-07 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user15",
       "date": "2019-02-07T00:00:00",
@@ -33532,14 +33533,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user15",
     "ema_date": "2019-05-18 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user15",
       "date": "2019-05-18T00:00:00",
@@ -33660,14 +33661,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user15",
     "ema_date": "2019-12-07 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user15",
       "date": "2019-12-07T00:00:00",
@@ -33788,14 +33789,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user15",
     "ema_date": "2019-08-26 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user15",
       "date": "2019-08-26T00:00:00",
@@ -33916,14 +33917,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user31",
     "ema_date": "2019-03-22 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user31",
       "date": "2019-03-22T00:00:00",
@@ -34044,14 +34045,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user31",
     "ema_date": "2020-11-08 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user31",
       "date": "2020-11-08T00:00:00",
@@ -34172,14 +34173,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user31",
     "ema_date": "2018-06-29 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user31",
       "date": "2018-06-29T00:00:00",
@@ -34300,14 +34301,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user31",
     "ema_date": "2020-12-02 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user31",
       "date": "2020-12-02T00:00:00",
@@ -34428,14 +34429,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user31",
     "ema_date": "2018-09-21 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user31",
       "date": "2018-09-21T00:00:00",
@@ -34556,14 +34557,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user111",
     "ema_date": "2021-07-17 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user111",
       "date": "2021-07-17T00:00:00",
@@ -34684,14 +34685,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user111",
     "ema_date": "2022-02-19 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user111",
       "date": "2022-02-19T00:00:00",
@@ -34812,14 +34813,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user111",
     "ema_date": "2021-08-03 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user111",
       "date": "2021-08-03T00:00:00",
@@ -34940,14 +34941,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user111",
     "ema_date": "2019-01-06 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user111",
       "date": "2019-01-06T00:00:00",
@@ -35068,14 +35069,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user111",
     "ema_date": "2021-06-01 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user111",
       "date": "2021-06-01T00:00:00",
@@ -35196,14 +35197,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user96",
     "ema_date": "2020-03-04 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user96",
       "date": "2020-03-04T00:00:00",
@@ -35324,14 +35325,14 @@
       "call_out_duration_ep_0_28max": 1427.0,
       "call_out_duration_ep_0_p2wslope": -0.0306817871293892,
       "call_out_duration_ep_0_r2wslope": 0.0043570724622645
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user96",
     "ema_date": "2018-10-22 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user96",
       "date": "2018-10-22T00:00:00",
@@ -35452,14 +35453,14 @@
       "call_out_duration_ep_0_28max": 1872.0,
       "call_out_duration_ep_0_p2wslope": 0.0147515642252483,
       "call_out_duration_ep_0_r2wslope": -0.1451890157772511
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user96",
     "ema_date": "2019-04-25 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user96",
       "date": "2019-04-25T00:00:00",
@@ -35580,14 +35581,14 @@
       "call_out_duration_ep_0_28max": 1162.0,
       "call_out_duration_ep_0_p2wslope": 0.0098820225991258,
       "call_out_duration_ep_0_r2wslope": 0.0064314632735684
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user96",
     "ema_date": "2019-08-18 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user96",
       "date": "2019-08-18T00:00:00",
@@ -35708,14 +35709,14 @@
       "call_out_duration_ep_0_28max": 1894.0,
       "call_out_duration_ep_0_p2wslope": 0.0102397195969205,
       "call_out_duration_ep_0_r2wslope": 0.0559362942287168
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user96",
     "ema_date": "2018-12-20 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user96",
       "date": "2018-12-20T00:00:00",
@@ -35836,14 +35837,14 @@
       "call_out_duration_ep_0_28max": 1057.0,
       "call_out_duration_ep_0_p2wslope": 0.182482553124755,
       "call_out_duration_ep_0_r2wslope": 0.1189148612298517
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user215",
     "ema_date": "2020-11-03 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user215",
       "date": "2020-11-03T00:00:00",
@@ -35964,14 +35965,14 @@
       "call_out_duration_ep_0_28max": 1038.0,
       "call_out_duration_ep_0_p2wslope": 0.086372510737993,
       "call_out_duration_ep_0_r2wslope": 0.0923076923076922
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user215",
     "ema_date": "2019-12-14 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user215",
       "date": "2019-12-14T00:00:00",
@@ -36092,14 +36093,14 @@
       "call_out_duration_ep_0_28max": 871.0,
       "call_out_duration_ep_0_p2wslope": 0.0683400809716599,
       "call_out_duration_ep_0_r2wslope": -0.1852867132867134
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user215",
     "ema_date": "2020-12-20 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user215",
       "date": "2020-12-20T00:00:00",
@@ -36220,14 +36221,14 @@
       "call_out_duration_ep_0_28max": 631.0,
       "call_out_duration_ep_0_p2wslope": 0.1779635393508226,
       "call_out_duration_ep_0_r2wslope": 0.0733031674208144
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user215",
     "ema_date": "2021-08-09 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user215",
       "date": "2021-08-09T00:00:00",
@@ -36348,14 +36349,14 @@
       "call_out_duration_ep_0_28max": 716.0,
       "call_out_duration_ep_0_p2wslope": -0.2101192924722337,
       "call_out_duration_ep_0_r2wslope": 0.22518233108573
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user215",
     "ema_date": "2021-01-02 00:00:00",
     "true_anxiety": 1,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user215",
       "date": "2021-01-02T00:00:00",
@@ -36476,14 +36477,14 @@
       "call_out_duration_ep_0_28max": 88.0,
       "call_out_duration_ep_0_p2wslope": 0.134841628959276,
       "call_out_duration_ep_0_r2wslope": 0.2472934472934473
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user117",
     "ema_date": "2021-06-13 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user117",
       "date": "2021-06-13T00:00:00",
@@ -36604,14 +36605,14 @@
       "call_out_duration_ep_0_28max": 116.0,
       "call_out_duration_ep_0_p2wslope": -0.4000000000000004,
       "call_out_duration_ep_0_r2wslope": 0.1182972367438387
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user117",
     "ema_date": "2020-06-08 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user117",
       "date": "2020-06-08T00:00:00",
@@ -36732,14 +36733,14 @@
       "call_out_duration_ep_0_28max": 0.0,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user117",
     "ema_date": "2018-02-25 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user117",
       "date": "2018-02-25T00:00:00",
@@ -36860,14 +36861,14 @@
       "call_out_duration_ep_0_28max": 68.0,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": -0.0923076923076923
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user117",
     "ema_date": "2017-12-24 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user117",
       "date": "2017-12-24T00:00:00",
@@ -36988,14 +36989,14 @@
       "call_out_duration_ep_0_28max": 2.0,
       "call_out_duration_ep_0_p2wslope": 0.276923076923077,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user117",
     "ema_date": "2018-02-05 00:00:00",
     "true_anxiety": 1,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user117",
       "date": "2018-02-05T00:00:00",
@@ -37116,14 +37117,14 @@
       "call_out_duration_ep_0_28max": 93.0,
       "call_out_duration_ep_0_p2wslope": 0.1481723949809056,
       "call_out_duration_ep_0_r2wslope": -0.4000000000000004
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user206",
     "ema_date": "2020-11-08 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user206",
       "date": "2020-11-08T00:00:00",
@@ -37244,14 +37245,14 @@
       "call_out_duration_ep_0_28max": 981.0,
       "call_out_duration_ep_0_p2wslope": 0.0021285749869794,
       "call_out_duration_ep_0_r2wslope": -0.0986077907467304
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user206",
     "ema_date": "2020-08-03 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user206",
       "date": "2020-08-03T00:00:00",
@@ -37372,14 +37373,14 @@
       "call_out_duration_ep_0_28max": 593.0,
       "call_out_duration_ep_0_p2wslope": 0.0932179619486121,
       "call_out_duration_ep_0_r2wslope": -0.0902477284162548
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user206",
     "ema_date": "2018-10-26 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user206",
       "date": "2018-10-26T00:00:00",
@@ -37500,14 +37501,14 @@
       "call_out_duration_ep_0_28max": 594.0,
       "call_out_duration_ep_0_p2wslope": -0.1284063703549496,
       "call_out_duration_ep_0_r2wslope": 0.101680591568232
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user206",
     "ema_date": "2019-09-13 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user206",
       "date": "2019-09-13T00:00:00",
@@ -37628,14 +37629,14 @@
       "call_out_duration_ep_0_28max": 2253.0,
       "call_out_duration_ep_0_p2wslope": 0.1024599178098049,
       "call_out_duration_ep_0_r2wslope": 0.1200828157349896
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user206",
     "ema_date": "2018-11-12 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user206",
       "date": "2018-11-12T00:00:00",
@@ -37756,14 +37757,14 @@
       "call_out_duration_ep_0_28max": 435.0,
       "call_out_duration_ep_0_p2wslope": 0.1499449425829793,
       "call_out_duration_ep_0_r2wslope": -0.1913553113553114
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user132",
     "ema_date": "2020-12-16 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user132",
       "date": "2020-12-16T00:00:00",
@@ -37884,14 +37885,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user132",
     "ema_date": "2020-06-22 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user132",
       "date": "2020-06-22T00:00:00",
@@ -38012,14 +38013,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user132",
     "ema_date": "2020-02-07 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 1,
     "aggregated_features": {
       "uid": "user132",
       "date": "2020-02-07T00:00:00",
@@ -38140,14 +38141,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 1
+    }
   },
   {
     "user_id": "user132",
     "ema_date": "2019-06-01 00:00:00",
     "true_anxiety": 0,
     "true_depression": 0,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user132",
       "date": "2019-06-01T00:00:00",
@@ -38268,14 +38269,14 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   },
   {
     "user_id": "user132",
     "ema_date": "2020-12-24 00:00:00",
     "true_anxiety": 0,
     "true_depression": 1,
+    "true_stress": 0,
     "aggregated_features": {
       "uid": "user132",
       "date": "2020-12-24T00:00:00",
@@ -38396,7 +38397,6 @@
       "call_out_duration_ep_0_28max": null,
       "call_out_duration_ep_0_p2wslope": null,
       "call_out_duration_ep_0_r2wslope": null
-    },
-    "true_stress": 0
+    }
   }
 ]

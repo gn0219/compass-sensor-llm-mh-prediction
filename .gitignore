@@ -9,6 +9,9 @@ legacy_saved_prompts/
 fix_gpu_drivers.sh
 quick_setup_mistral.sh
 
+saved_prompts/
+saved_prompts_old/
+results/
 
 # Python
 __pycache__/

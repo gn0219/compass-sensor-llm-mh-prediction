@@ -89,16 +89,23 @@ reasoning_methods:
   self_feedback:
     name: "Self-Feedback"
     description: "Iterative reasoning with self-assessment and refinement"
+    
     initial_instruction: |
       Based on the behavioral data and any examples provided, analyze the patterns carefully and make your prediction.
+      
+      Provide your best judgment based on the current data. Be clear and direct - you will have 
+      opportunities to refine later if needed.
       
       IMPORTANT: You must adhere to the following assessment rubric and output format.
       
       ## Difficulty Assessment Rubric
-      You MUST classify the difficulty of this prediction as Easy, Medium, or Hard based *only* on the following criteria:
-      - Easy: Strong, consistent data signals. Clear conclusion. Interpretation is straightforward.
-      - Medium: Mixed or conflicting signals. Requires nuanced interpretation (e.g., subtle patterns, inter-participant variability). Conclusion is plausible but uncertain.
-      - Hard: Very weak, sparse, or contradictory data. Highly ambiguous case with significant confounding factors. High risk of misinterpretation.
+      You MUST classify the difficulty of this prediction based on the evidence quality:
+      - Easy: Clear, converging evidence. 3+ consistent signals across modalities with minimal contradictions. 
+        High confidence is appropriate. Further analysis unlikely to change conclusion.
+      - Moderate: Mixed but interpretable evidence. 2+ signals with partial consistency, some contradictions 
+        that don't override the main pattern. Requires careful weighing. Refinement may help clarify.
+      - Difficult: Sparse, contradictory, or highly ambiguous evidence. <2 clear signals OR multiple strong 
+        contradictions. Multiple interpretations possible. Further analysis unlikely to resolve ambiguity.
 
     initial_output_format: |
       Please provide your response in the following JSON format:
@@ -112,9 +119,9 @@ reasoning_methods:
           "Depression": "High" or "Medium" or "Low"
         },
         "Key_Insights": "Summarize the main patterns and indicators you observed in 2-3 sentences",
-        "Difficulty": "Easy" or "Medium" or "Hard",
-        "Challenges": "Explain *why* you chose this difficulty level based on the Rubric (Easy/Medium/Hard). E.g., for 'Easy', explain what made it straightforward. For 'Medium/Hard', explain the conflicting signals, variability, etc.",
-        "Focus_Areas_for_Refinement": "If Medium or Hard: what aspects should be examined more carefully in a second analysis?"
+        "Difficulty": "Easy" or "Moderate" or "Difficult",
+        "Challenges": "Explain why you chose this difficulty level based on the Rubric. For 'Easy', explain what made it clear. For 'Moderate', what aspects are mixed? For 'Difficult', why is it ambiguous?",
+        "Focus_Areas_for_Refinement": "If Moderate or Difficult: what specific aspects should be examined more carefully in the next analysis? If Easy: state 'None - evidence is clear'."
       }
     
     # CES-specific initial output format (includes Stress)
@@ -132,9 +139,9 @@ reasoning_methods:
           "Stress": "High" or "Medium" or "Low"
         },
         "Key_Insights": "Summarize the main patterns and indicators you observed in 2-3 sentences",
-        "Difficulty": "Easy" or "Medium" or "Hard",
-        "Challenges": "Explain *why* you chose this difficulty level based on the Rubric (Easy/Medium/Hard). E.g., for 'Easy', explain what made it straightforward. For 'Medium/Hard', explain the conflicting signals, variability, etc.",
-        "Focus_Areas_for_Refinement": "If Medium or Hard: what aspects should be examined more carefully in a second analysis?"
+        "Difficulty": "Easy" or "Moderate" or "Difficult",
+        "Challenges": "Explain why you chose this difficulty level based on the Rubric. For 'Easy', explain what made it clear. For 'Moderate', what aspects are mixed? For 'Difficult', why is it ambiguous?",
+        "Focus_Areas_for_Refinement": "If Moderate or Difficult: what specific aspects should be examined more carefully in the next analysis? If Easy: state 'None - evidence is clear'."
       }
     
     refinement_instruction: |
@@ -144,13 +151,62 @@ reasoning_methods:
       
       ---
       
-      Now, REFINE this prediction. 
-      Perform a deeper analysis *specifically addressing the "Challenges" and "Focus_Areas_for_Refinement"* from your previous response.
+      Now, REFINE this prediction by carefully re-examining the data.
       
-      After your re-analysis, you MUST re-assess the difficulty using the following rubric:
-      - Easy: Strong, consistent data signals. Clear conclusion. Interpretation is straightforward.
-      - Medium: Mixed or conflicting signals. Requires nuanced interpretation (e.g., subtle patterns, inter-participant variability). Conclusion is plausible but uncertain.
-      - Hard: Very weak, sparse, or contradictory data. Highly ambiguous case with significant confounding factors. High risk of misinterpretation.
+      **Phase 1 — Evidence Review**
+      - Systematically re-examine the data, focusing on the "Focus_Areas_for_Refinement" from your previous analysis
+      - Look for patterns you may have initially overlooked or misinterpreted
+      - Identify both supporting and conflicting evidence objectively (list at most 2-3 points each)
+      - Do not speculate about causes that are not evidenced in the data
+      
+      **Phase 2 — Refinement Decision**
+      Based on your re-examination, decide on your refined prediction:
+      
+      **When to KEEP your prediction:**
+      - Supporting evidence remains stronger than conflicting evidence
+      - New examination confirms your initial interpretation
+      - Contradictions are minor or explainable
+      
+      **When to CHANGE your prediction:**
+      - You discover strong contradicting evidence that outweighs previous supporting signals
+      - Initial interpretation was clearly flawed upon re-examination
+      - Multiple modalities consistently contradict your initial prediction
+      
+      **Critical Principle: Prefer Stability**
+      - Only change your prediction if you find STRONG new evidence
+      - Acknowledging uncertainty (via confidence/difficulty) is better than forced changes
+      - Most refinements should adjust confidence or difficulty, not flip predictions
+      
+      **Phase 3 — Difficulty Re-assessment**
+      Re-evaluate the difficulty based on your refined understanding:
+      
+      - **Easy**: Clear converging evidence (3+ signals), minimal contradictions, high confidence appropriate
+      - **Moderate**: Mixed but interpretable signals (2+ signals), some contradictions, genuine middle ground
+      - **Difficult**: Sparse/contradictory evidence (<2 clear signals OR strong conflicts), multiple interpretations
+      
+      **Difficulty Transition Guidelines:**
+      
+      From Previous "Easy":
+      - Stay Easy if re-examination confirmed clear, converging evidence
+      - Move to Moderate if you discovered some conflicting signals or nuances
+      - Move to Difficult is rare (only if you completely misread initially)
+      
+      From Previous "Moderate":
+      - Move to Easy if re-examination clarified the case (conflicting signals were minor or explained)
+      - Move to Difficult if ambiguity deepened (revealed more contradictions than initially apparent)
+      - Stay Moderate if evidence genuinely remains mixed but interpretable - this is a VALID state
+      
+      From Previous "Difficult":
+      - Stay Difficult if ambiguity persists (expected - accept the uncertainty)
+      - Move to Moderate if you found some structure in the data
+      - Move to Easy if data is actually quite clear (initial assessment was too pessimistic)
+      
+      **Important**: Many cases are genuinely Moderate. Don't force Easy or Difficult if evidence truly remains mixed.
+      
+      (Difficulty Rubric for reference)
+      - **Easy:** Re-examination confirmed clear, converging evidence. Further analysis unlikely to change conclusion.
+      - **Moderate:** Evidence remains mixed but interpretable - a valid final state for borderline cases.
+      - **Difficult:** Data remains fundamentally ambiguous - accept the uncertainty. Further analysis won't help.
 
     refinement_output_format: |
       Please provide your refined response in the following JSON format:
@@ -163,9 +219,12 @@ reasoning_methods:
           "Anxiety": "High" or "Medium" or "Low",
           "Depression": "High" or "Medium" or "Low"
         },
-        "Refined_Analysis": "Explain how your re-analysis *addressed the previous 'Challenges' and 'Focus_Areas'* and led to the new prediction.",
-        "Difficulty": "Easy" or "Medium" or "Hard",
-        "Changes_from_Initial": "Describe what changed (prediction, confidence, and/or difficulty rating) and why. If no change, explain why."
+        "Counter_Evidence": "Briefly list the strongest evidence AGAINST your refined prediction (2-3 points max). If none, state 'None identified'.",
+        "Refined_Analysis": "Explain what you learned from re-examination and why your refined prediction is appropriate despite any counter-evidence.",
+        "Difficulty": "Easy" or "Moderate" or "Difficult",
+        "Changes_from_Initial": "Explicitly state: (1) What changed in prediction/confidence/difficulty? (2) WHY it changed OR why it remained the same.",
+        "Challenges": "If new Difficulty is 'Moderate' or 'Difficult', explain the remaining challenges. If Easy: empty string.",
+        "Focus_Areas_for_Refinement": "If new Difficulty is 'Moderate' or 'Difficult': what specific aspects need examination in the next round? If Easy: 'Analysis complete - evidence is clear'. If Difficult: 'Further analysis unlikely to help - accepting uncertainty'."
       }
     
     # CES-specific refinement output format (includes Stress)
@@ -182,9 +241,12 @@ reasoning_methods:
           "Depression": "High" or "Medium" or "Low",
           "Stress": "High" or "Medium" or "Low"
         },
-        "Refined_Analysis": "Explain how your re-analysis *addressed the previous 'Challenges' and 'Focus_Areas'* and led to the new prediction.",
-        "Difficulty": "Easy" or "Medium" or "Hard",
-        "Changes_from_Initial": "Describe what changed (prediction, confidence, and/or difficulty rating) and why. If no change, explain why."
+        "Counter_Evidence": "Briefly list the strongest evidence AGAINST your refined prediction (2-3 points max). If none, state 'None identified'.",
+        "Refined_Analysis": "Explain what you learned from re-examination and why your refined prediction is appropriate despite any counter-evidence.",
+        "Difficulty": "Easy" or "Moderate" or "Difficult",
+        "Changes_from_Initial": "Explicitly state: (1) What changed in prediction/confidence/difficulty? (2) WHY it changed OR why it remained the same.",
+        "Challenges": "If new Difficulty is 'Moderate' or 'Difficult', explain the remaining challenges. If Easy: empty string.",
+        "Focus_Areas_for_Refinement": "If new Difficulty is 'Moderate' or 'Difficult': what specific aspects need examination in the next round? If Easy: 'Analysis complete - evidence is clear'. If Difficult: 'Further analysis unlikely to help - accepting uncertainty'."
       }
 
 # Output constraints

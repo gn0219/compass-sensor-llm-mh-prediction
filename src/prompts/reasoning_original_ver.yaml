@@ -1,0 +1,291 @@
+# Reasoning Methods and Output Constraints Configuration
+# Defines different reasoning approaches and output formatting
+
+metadata:
+  name: "Reasoning & Output Configuration"
+  version: "1.0"
+  description: "Templates for reasoning instructions and output constraints"
+
+# ============================================================================
+# REASONING METHODS
+# ============================================================================
+reasoning_methods:
+  # -------------------------
+  # 1. Direct Prediction
+  # -------------------------
+  direct:
+    name: "Direct"
+    description: "Immediate prediction without explicit reasoning steps"
+    instruction: |
+      Based on the behavioral data provided, make your prediction.
+    
+    output_format: |
+      Please provide your prediction in the following JSON format:
+      {
+        "Prediction": {
+          "Anxiety": "Low Risk" or "High Risk",
+          "Depression": "Low Risk" or "High Risk"
+        }
+      }
+    
+    # CES-specific output format (includes Stress)
+    output_format_ces: |
+      Please provide your prediction in the following JSON format:
+      {
+        "Prediction": {
+          "Anxiety": "Low Risk" or "High Risk",
+          "Depression": "Low Risk" or "High Risk",
+          "Stress": "Low Risk" or "High Risk"
+        }
+      }
+  
+  # -------------------------
+  # 2. Chain-of-Thought (CoT)
+  # -------------------------
+  cot:
+    name: "Chain-of-Thought"
+    description: "Step-by-step reasoning process"
+    instruction: |
+      Please think step-by-step about the behavioral patterns and provide your 
+      reasoning before making a prediction.
+      
+      Follow these steps:
+      1. **Observe Patterns**: Identify key behavioral features and their values
+      2. **Compare to Clinical Knowledge**: Relate patterns to known indicators
+      3. **Assess Risk Factors**: Evaluate presence of risk/protective factors
+      4. **Make Prediction**: Provide final risk assessment
+    
+    output_format: |
+      Please provide your response in the following JSON format:
+      {
+        "Step1_ObservePatterns": "Description of observed behavioral patterns",
+        "Step2_CompareToClinicalKnowledge": "How these patterns compare to the clinical knowledge",
+        "Step3_IdentifyRiskFactors": "Key risk or protective factors identified",
+        "Step4_MakePrediction": "Final reasoning and prediction",
+        "Prediction": {
+          "Anxiety": "Low Risk" or "High Risk",
+          "Depression": "Low Risk" or "High Risk"
+        }
+      }
+    
+    # CES-specific output format (includes Stress)
+    output_format_ces: |
+      Please provide your response in the following JSON format:
+      {
+        "Step1_ObservePatterns": "Description of observed behavioral patterns",
+        "Step2_CompareToClinicalKnowledge": "How these patterns compare to the clinical knowledge",
+        "Step3_IdentifyRiskFactors": "Key risk or protective factors identified",
+        "Step4_MakePrediction": "Final reasoning and prediction",
+        "Prediction": {
+          "Anxiety": "Low Risk" or "High Risk",
+          "Depression": "Low Risk" or "High Risk",
+          "Stress": "Low Risk" or "High Risk"
+        }
+      }
+  
+  # -------------------------
+  # 3. Self-Feedback (Self-Evolving)
+  # -------------------------
+  self_feedback:
+    name: "Self-Feedback"
+    description: "Iterative reasoning with self-assessment and refinement"
+    initial_instruction: |
+      Based on the behavioral data and any examples provided, analyze the patterns carefully and make your prediction.
+      
+      IMPORTANT: You must adhere to the following assessment rubric and output format.
+      
+      ## Difficulty Assessment Rubric
+      You MUST classify the difficulty of this prediction as Easy, Medium, or Hard based *only* on the following criteria:
+      - Easy: Strong, consistent data signals with clear directionality and multiple converging cues across modalities. Interpretation is straightforward, with high internal consistency and minimal ambiguity.
+      - Medium: Mixed or partially consistent signals, or moderate evidence favoring one direction. Some conflicting indicators or limited data requiring nuanced interpretation. Partial confidence but not conclusive.
+      - Hard: Very weak, sparse, or contradictory data with multiple plausible interpretations and no clear dominant pattern. High uncertainty and elevated risk of misinterpretation.
+
+    initial_output_format: |
+      Please provide your response in the following JSON format:
+      {
+        "Prediction": {
+          "Anxiety": "Low Risk" or "High Risk",
+          "Depression": "Low Risk" or "High Risk"
+        },
+        "Confidence": {
+          "Anxiety": "High" or "Medium" or "Low",
+          "Depression": "High" or "Medium" or "Low"
+        },
+        "Key_Insights": "Summarize the main patterns and indicators you observed in 2-3 sentences",
+        "Difficulty": "Easy" or "Medium" or "Hard",
+        "Challenges": "Explain *why* you chose this difficulty level based on the Rubric (Easy/Medium/Hard). E.g., for 'Easy', explain what made it straightforward. For 'Medium/Hard', explain the conflicting signals, variability, etc.",
+        "Focus_Areas_for_Refinement": "If Medium or Hard: what aspects should be examined more carefully in a second analysis?"
+      }
+    
+    # CES-specific initial output format (includes Stress)
+    initial_output_format_ces: |
+      Please provide your response in the following JSON format:
+      {
+        "Prediction": {
+          "Anxiety": "Low Risk" or "High Risk",
+          "Depression": "Low Risk" or "High Risk",
+          "Stress": "Low Risk" or "High Risk"
+        },
+        "Confidence": {
+          "Anxiety": "High" or "Medium" or "Low",
+          "Depression": "High" or "Medium" or "Low",
+          "Stress": "High" or "Medium" or "Low"
+        },
+        "Key_Insights": "Summarize the main patterns and indicators you observed in 2-3 sentences",
+        "Difficulty": "Easy" or "Medium" or "Hard",
+        "Challenges": "Explain *why* you chose this difficulty level based on the Rubric (Easy/Medium/Hard). E.g., for 'Easy', explain what made it straightforward. For 'Medium/Hard', explain the conflicting signals, variability, etc.",
+        "Focus_Areas_for_Refinement": "If Medium or Hard: what aspects should be examined more carefully in a second analysis?"
+      }
+    
+    refinement_instruction: |
+      You previously made a prediction that was marked as difficulty: {difficulty}. Here is your previous analysis:
+      
+      {previous_response}
+      
+      ---
+      
+      Now, REFINE this prediction with a critical eye. **IMPORTANT: Actively challenge your initial assessment rather than confirming it.**
+      
+      **Phase 1 — Counter-Perspective Review (Find the conflict)**
+      - Construct a concise, data-grounded counter-argument to your initial conclusion.
+      - List at most **2–3** counter-points. Each should cite concrete evidence from the provided data
+        (e.g., modality/feature and, if relevant, timeframe or trend). Free form is OK; no rigid template.
+      - Do not speculate causes that are not evidenced in data.
+      - Revisit from a different analytical lens (e.g., switch modality or horizon) and directly engage
+        with your prior "Challenges" and "Focus_Areas_for_Refinement".
+      
+      **Phase 2 — Conflict Resolution & Commitment (Resolve the conflict)**
+      - Resolve the identified conflict and **commit to a single most probable prediction**.
+      - Do **not** merely report “it is conflicting.” Justify *why one side outweighs the other* in your
+        Refined_Analysis (e.g., why multi-day mobility consistency outweighs a one-day sleep dip).
+      - If your review **does not introduce stronger or cleaner evidence** than before, prefer **keeping
+        the prior conclusion** (Keep-Unless-Improved).
+      
+      **Phase 3 — Updated Difficulty & Confidence (Report the outcome)**
+      - Re-assign overall Difficulty **based only on evidence quality** (not on the label itself).
+      - Assign per-task Confidence (Anxiety/Depression[/Stress]) consistent with your final reasoning.
+      
+      (Difficulty Rubric)
+      - **Easy:** The counter-arguments (from Phase 1) were weak or easily dismissed. The conflict was **decisively resolved**.
+      - **Medium:** The counter-arguments had merit, but your analysis in Phase 2 **successfully resolved the conflict** and pointed to a *more likely* interpretation.
+      - **Hard:** The data is highly conflicting, and your analysis in Phase 2 **could not fully resolve the stalemate**. You made a 'best guess', but acknowledge the conflict remains. **Further analysis is unlikely to help.** (This 'Hard' assessment will terminate the refinement loop).
+      
+      (Confidence)
+      - Based on your final `Difficulty` (i.e., your resolution success), assign your per-task `Confidence` scores.
+      
+      **CRITICAL INSTRUCTION:**
+      - **If your previous difficulty was Medium**, you should **strongly prefer** resolving to Easy or Hard:
+        (a) **Easy** if counter-arguments were weak and conflict is resolved, OR
+        (b) **Hard** if counter-arguments remain strong and stalemate persists.
+      - **You may keep Medium ONLY IF**:
+        * You made measurable progress in resolving the conflict (e.g., identified new converging/diverging evidence), AND
+        * You provide concrete, data-backed justification for why Easy/Hard is not yet appropriate, AND
+        * You define clear, actionable Focus Areas for the next (final) round.
+      - **Without concrete justification, Medium → Medium signals lack of progress.**
+      - Be decisive: strongly prefer committing to Easy or Hard based on your Phase 2 Conflict Resolution.
+
+      **Phase 4 — Define Next Steps (if Medium)**
+      **If, and only if, your new 'Difficulty' is 'Medium'**:
+      1.  **Challenges**: Briefly explain *what ambiguity still remains* after your Phase 2 resolution.
+      2.  **Focus_Areas_for_Refinement**: Define 1-2 specific 'Focus Areas' for the *next (and final)* round of analysis to resolve this remaining ambiguity.
+      (If Easy or Hard, these fields can be empty strings).
+
+    refinement_output_format: |
+      Please provide your refined response in the following JSON format:
+      {
+        "Refined_Prediction": {
+          "Anxiety": "Low Risk" or "High Risk",
+          "Depression": "Low Risk" or "High Risk"
+        },
+        "Confidence": {
+          "Anxiety": "High" or "Medium" or "Low",
+          "Depression": "High" or "Medium" or "Low"
+        },
+        "Counter_Evidence": "Briefly summarize the strongest evidence AGAINST your refined prediction (from Phase 1 Devil's Advocate).",
+        "Refined_Analysis": "Explain *how* your Conflict Resolution (Phase 2) addressed previous 'Challenges' and 'Focus Areas', and *why* your refined prediction holds despite the 'Counter_Evidence'.",
+        "Difficulty": "Easy" or "Medium" or "Hard",
+        "Changes_from_Initial": "MUST explicitly state: (1) What changed in prediction/confidence/difficulty? (2) WHY it changed OR why it remained the same. **If Difficulty stayed Medium after being Medium, you MUST provide concrete, data-backed justification showing measurable progress and explaining why Easy/Hard is not yet appropriate.**",
+        "Challenges": "If new Difficulty is 'Medium', define the remaining challenges (from Phase 4). Otherwise, empty string.",
+        "Focus_Areas_for_Refinement": "If new Difficulty is 'Medium', define the focus areas for the *next* round (from Phase 4). Otherwise, empty string."
+      }
+    
+    # CES-specific refinement output format (includes Stress)
+    refinement_output_format_ces: |
+      Please provide your refined response in the following JSON format:
+      {
+        "Refined_Prediction": {
+          "Anxiety": "Low Risk" or "High Risk",
+          "Depression": "Low Risk" or "High Risk",
+          "Stress": "Low Risk" or "High Risk"
+        },
+        "Confidence": {
+          "Anxiety": "High" or "Medium" or "Low",
+          "Depression": "High" or "Medium" or "Low",
+          "Stress": "High" or "Medium" or "Low"
+        },
+        "Counter_Evidence": "Briefly summarize the strongest evidence AGAINST your refined prediction (from Phase 1 Devil's Advocate).",
+        "Refined_Analysis": "Explain *how* your Conflict Resolution (Phase 2) addressed previous 'Challenges' and 'Focus Areas', and *why* your refined prediction holds despite the 'Counter_Evidence'.",
+        "Difficulty": "Easy" or "Medium" or "Hard",
+        "Changes_from_Initial": "MUST explicitly state: (1) What changed in prediction/confidence/difficulty (especially Difficulty!)? (2) WHY it changed OR why it remained the same. **If Difficulty stayed Medium after being Medium, you MUST provide concrete, data-backed justification showing measurable progress and explaining why Easy/Hard is not yet appropriate.**",
+        "Challenges": "If new Difficulty is 'Medium', define the remaining challenges (from Phase 4). Otherwise, empty string.",
+        "Focus_Areas_for_Refinement": "If new Difficulty is 'Medium', define the focus areas for the *next* round (from Phase 4). Otherwise, empty string."
+      }
+
+# Output constraints
+# output_constraints:
+  # header: "## Guidelines"
+  # do_header: "\n**DO:**"
+  # do:
+  #   - "Consider temporal patterns (long-term trends, recent changes, deltas if provided)"
+  #   - "Cite specific features you used and tie them to clinical associations"
+  #   - "Follow the exact output schema"
+  
+  # dont_header: "\n**DON'T:**"
+  # dont:
+  #   - "Don't predict 'Medium Risk' - only Low Risk or High Risk"
+  
+  # # Response format requirements
+  # format_requirements:
+  #   response_type: "json"
+  #   ensure_parseable: true
+  #   prediction_format: "Must be exactly 'Low Risk' or 'High Risk'"
+  #   required_fields:
+  #     - "Prediction"
+  #     - "Anxiety"
+  #     - "Depression"
+  
+  # # Reasoning quality guidelines
+  # reasoning_quality:
+  #   - "Be specific: cite actual feature values"
+  #   - "Be balanced: consider both risk and protective factors"
+  #   - "Be evidence-based: link observations to clinical knowledge"
+  #   - "Be concise: focus on the most relevant patterns"
+
+# ============================================================================
+# TASK COMPLETION PROMPT
+# ============================================================================
+task_completion:
+  header: "## Your Prediction Task"
+  instruction: |
+    Now, please analyze the following user's behavioral data and provide your 
+    prediction for their anxiety and depression risk levels.
+  
+  # CES-specific instruction (includes stress)
+  instruction_ces: |
+    Now, please analyze the following user's behavioral data and provide your 
+    prediction for their anxiety, depression, and stress risk levels.
+  
+  # MentalIoT-specific instruction (same as CES, includes stress)
+  instruction_mentaliot: |
+    Now, please analyze the following user's behavioral data and provide your 
+    prediction for their anxiety, depression, and stress risk levels.
+  
+  data_header: "### User Data to Predict"
+  
+  reminder: |
+    Remember to:
+    - Consider all available features
+    - Follow the specified reasoning method
+    - Use the exact output format required
+    - Provide clear, evidence-based reasoning
+
