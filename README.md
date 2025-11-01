@@ -1,4 +1,4 @@
-# Compass Sensor LLM Mental Health Prediction
+# 🧭COMPass Sensor LLM Mental Health Prediction
 
 Sensor data-based LLM project for mental health prediction.
 
