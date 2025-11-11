@@ -61,10 +61,6 @@ We compare representation formats on GLOBEM:
 - **Our Baseline**: integrates statistical, structural, and temporal features with natural-language descriptions (inspired by [SensorLM](https://arxiv.org/abs/2506.09108))
 
 #### 2) In-Context Learning Strategies
-<div align="center">
-  <img src="assets/reasoning.png" width="900" alt="ICL strategies comparison">
-  <p><i>Figure: ICL strategies and their impact at a glance</i></p>
-</div>
 
 - **Zero-shot** (no demonstrations)
 - **Cross-Random** (random cross-user examples)
@@ -81,16 +77,16 @@ We compare representation formats on GLOBEM:
 
 ## 📊 Results (mapped to RQ1–RQ3)
 
-### RQ1 — Pipeline Overview
+### RQ1: Pipeline Overview
 Our pipeline is organized into three stages:
 
-1. **Preparation** — LLM model selection and data preprocessing  
-2. **Context Engineering** — sensor data representation (fixed) + prompt construction (fixed) + exemplar selection (Zero-shot / Cross-Random / Cross-Retrieval / Personal-Recent / Hybrid) + reasoning design (DP / CoT / SR)
-3. **Evaluation** — consistent metrics and efficiency reporting across datasets and models
+1. **Preparation**: LLM model selection and data preprocessing  
+2. **Context Engineering**: sensor data representation (see config/{dataset}_use_cols.json) + prompt construction (see src/prompts/*) + exemplar selection (Zero-shot / Cross-Random / Cross-Retrieval / Personal-Recent / Hybrid) + reasoning design (DP / CoT / SR)  
+3. **Evaluation**: consistent metrics and efficiency reporting across datasets and models
 
-This structure encourages reproducible comparisons and isolates the effects of example selection and reasoning.
+This structure encourages systematic comparisons and isolates the effects of exemplar selection and reasoning.
 
-### RQ2 — Predictive Performance
+### RQ2: Predictive Performance
 
 #### GLOBEM
 <div align="center">
@@ -100,34 +96,40 @@ This structure encourages reproducible comparisons and isolates the effects of e
 
 **Observations (concise)**
 - **Personal-Recent** and **Hybrid** consistently outperform cross-user baselines.  
-- **CoT** helps **when context is reliable**; with poorly matched cross-user examples it can be neutral or even harmful.  
 - Well-matched cross-user retrieval can be competitive when it captures the target user’s **behavioral regime**.
 
-#### CES (College Students)
+#### CES
 <div align="center">
   <img src="assets/ces_icl.png" width="900" alt="CES results">
   <p><i>Figure: ICL strategies on CES</i></p>
 </div>
 
 **Observations (concise)**
-- Personalization yields the most stable gains.  
-<!-- - **CoT** improves interpretability and stability; **SR** can add robustness on harder cases. -->
+- Personalization yields the most stable gains.
 
-#### Mental-IoT (General Population)
+#### Mental-IoT
 <div align="center">
   <img src="assets/miot_icl.png" width="900" alt="Mental-IoT results">
   <p><i>Figure: ICL strategies on Mental-IoT</i></p>
 </div>
 
 **Observations (concise)**
-- Harder overall due to sparsity/short windows; benefits vary by target.  
-<!-- - Depending on the setting, **CoT** or **SR** can be preferable; personalization remains helpful when available. -->
+- Again, personalization yields the most stable gains.
+
+#### Model Back-Ends (across datasets)
+- **GPT-5** generally achieved the strongest overall Macro-F1 while using a moderate number of completion tokens.
+- **Claude Sonnet 4.5** was competitive and tended to produce shorter outputs, which can be favorable for cost/latency.
+- **Gemini 2.5 Pro** often generated longer completions without consistent gains in Macro-F1 across our settings.
+- **Open-source 20B** trailed the leading commercial models on average but remained a useful baseline; smaller open models were used in ablations where context length allowed.
+- **Stability note:** Smaller open models and **Gemini 2.5 Pro** showed **higher variance across datasets and context setups**, especially with cross-user or zero-shot prompts. Variance **reduced** when using **Personal-Recent** exemplars and a lightweight reasoning cue, but gaps did not fully close.
+- **Interpretation:** Context quality is critical, **but model-side stability still matters**. Treat these back-ends as baselines or budget options unless your application can tolerate variability (see logs for per-setting dispersion).
+
 
 #### Reasoning Comparison (beyond a Macro-F1 table)
 
 <div align="center">
   <img src="assets/reasoning.png" width="900" alt="Reasoning comparison">
-  <p><i>Figure: Reasoning variants (DP / CoT / SR)</i></p>
+  <p><i>Figure: Reasoning variants (DP / CoT / SR) with GPT-5</i></p>
 </div>
 
 **Key Observations**
@@ -137,7 +139,7 @@ This structure encourages reproducible comparisons and isolates the effects of e
 - **Heterogeneity matters**: Variation within and across users makes models fragile to poorly matched context; **exemplar source and recency—rather than quantity—are the dominant drivers** of gains.
 - **Cross-user retrieval**: Similarity-based **Cross-Retrieval showed limited benefit vs. zero-shot** in our settings; **Hybrid/Personal-Recent** were more reliable.
 
-### RQ3 — Optimal Pipeline Configuration (Performance × Efficiency)
+### RQ3: Optimal Pipeline Configuration (Performance × Efficiency)
 
 <div align="center">
   <img src="assets/performance_efficiency.png" width="900" alt="Performance and efficiency">
@@ -167,7 +169,7 @@ This structure encourages reproducible comparisons and isolates the effects of e
 
 ### Prerequisites
 
-- Python 3.9+ (Implemented with Python 3.12.3)
+- Python 3.9+ (tested with 3.12.3)
 - API keys for at least one LLM provider:
   - OpenAI (GPT models)
   - Anthropic (Claude) via OpenRouter *(optional)*
@@ -228,7 +230,7 @@ python run_evaluation.py --mode single --verbose
 
 **Step 2: Generate and save prompts for reproducible experiments**
 
-Since we test multiple LLM models (GPT-4o, Claude, Gemini, etc.) on the **same prompts** to ensure fair comparison, we first generate and save prompts:
+Since we test multiple LLM models (GPT-5, Claude, Gemini, etc.) on the **same prompts** to ensure fair comparison, we first generate and save prompts:
 
 ```bash
 # Generate prompts for full test set and save them
@@ -239,14 +241,14 @@ python run_evaluation.py --mode batch --seed 42 \
 
 This creates a folder in `saved_prompts/` with the experiment configuration (e.g., `ces_compass_4shot_personalrecent_cot_seed42/`).
 
-> **💡 For quick testing**: Add `--n_samples 5` to test with a smaller subset before running the full evaluation. - only 5 sample prediction
+> **💡 For quick testing**: Add `--n_samples 5` to test with a smaller subset before running the full evaluation.
 
 **Step 3: Run experiments with different models using saved prompts**
 
 Now test different models on the **exact same prompts**:
 
 ```bash
-# Test with GPT-4o (with checkpointing for long runs)
+# Test with GPT-5 (with checkpointing for long runs)
 python run_evaluation.py --mode batch --load-prompts ces_compass_4shot_personalrecent_cot_seed42 \
   --model gpt-5 --checkpoint-every 10
 
@@ -311,7 +313,7 @@ python run_evaluation.py --strategy hybrid_blend --n_shot 4
 
 - For **Cross-Retrieval** and **Hybrid**, we use TimeRAG-accelerated DTW for similarity-based retrieval
 - For **Hybrid**, we combine: \( k/2 \) cross-user examples + \( k/2 \) personal-recent examples
-- See [Cross-Retrieval Method](#-cross-retrieval-method-timerag) section below for algorithm details
+- See [Cross-Retrieval Method](#cross-retrieval-method-timerag) section below for algorithm details
 
 #### Reasoning Methods
 
@@ -329,7 +331,7 @@ python run_evaluation.py --reasoning self_feedback
 #### Model Selection
 
 ```bash
-# GPT-4o (default, best performance)
+# GPT-5 (default, best performance)
 python run_evaluation.py --model gpt-5
 
 # Claude Sonnet 4.5
