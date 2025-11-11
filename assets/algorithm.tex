@@ -1,0 +1,43 @@
+
+\begin{algorithm}[t]
+    \caption{Label-Balanced ICL with TimeRAG Retrieval}
+    \label{alg:timerag-icl}
+    \begin{algorithmic}[1]
+    \REQUIRE Training set $\mathcal{D} = \{(T_i, y_i)\}_{i=1}^N$, target $T_t$, $k$ examples, pool size $M$, diversity factor $\alpha$
+    \ENSURE ICL examples $\mathcal{S} = \{(T_i, y_i)\}_{i=1}^k$ with balanced labels
+    
+    \STATE \textbf{// TimeRAG: Reduce $N$ samples to $M$ representatives via clustering}
+    \STATE Flatten each $T_i \in \mathbb{R}^{d \times w}$ to $\mathbf{z}_i \in \mathbb{R}^{dw}$
+    \STATE Cluster: $\{\mathcal{K}_1, \ldots, \mathcal{K}_M\} = \text{KMeans}(\{\mathbf{z}_i\}, M)$
+    \STATE Select centroid-nearest from each cluster: $\mathcal{P} = \{(T_{j^*}, y_{j^*})\}_{j=1}^M$
+    
+    \STATE \textbf{// DTW Ranking: Find most similar representatives}
+    \FOR{$(T_i, y_i) \in \mathcal{P}$}
+        \STATE $d_i = \text{DTW}((T_t - \mu_i)/\sigma_i, (T_i - \mu_i)/\sigma_i)$ \hfill \textit{// Normalize by candidate stats}
+    \ENDFOR
+    \STATE Retrieve top-$(k \times \alpha)$: $\mathcal{R} = \text{TopK}(\mathcal{P}, k \times \alpha, d)$
+    
+    \STATE \textbf{// Label Stratification: Balance anxiety × depression labels}
+    \STATE Group by label: $\mathcal{R}_\ell = \{(T_i, y_i) \in \mathcal{R} : y_i = \ell\}$ for $\ell \in \{00, 01, 10, 11\}$
+    \STATE Allocate quota: $q_\ell = \lfloor k / |\mathcal{L}| \rfloor$ + remainder to largest groups
+    \FOR{each label $\ell$}
+        \STATE Select top-$q_\ell$ from $\mathcal{R}_\ell$ by DTW distance $\rightarrow \mathcal{S}$
+    \ENDFOR
+    \STATE Shuffle $\mathcal{S}$
+    \RETURN $\mathcal{S}$
+    \end{algorithmic}
+    \end{algorithm}
+    
+    % Notation (can be included in main text or caption)
+    \paragraph{Notation.}
+    $T_i \in \mathbb{R}^{d \times w}$: time series ($d$ features, $w$ days);
+    $y_i = (y_i^{\text{anx}}, y_i^{\text{dep}}) \in \{0,1\}^2$: binary labels;
+    $k$: number of ICL examples (e.g., 4-shot);
+    $M$: pool size (default 300);
+    $\alpha$: diversity factor (default 2.0).
+    
+    \paragraph{Complexity.}
+    TimeRAG construction: $O(N \cdot dw)$;
+    DTW ranking: $O(M \cdot w^2 d)$;
+    Stratification: $O(k\alpha \log(k\alpha))$.
+    Total per query: $O(M w^2 d)$, with $M \ll N$ providing $\sim$30× speedup.
