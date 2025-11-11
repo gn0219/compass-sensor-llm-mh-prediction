@@ -21,14 +21,7 @@ This repository contains the implementation and experimental framework for **COM
 2. **🎯 In-Context Learning (ICL) Strategy** — Selection and composition of demonstration examples
 3. **🧠 Reasoning Method** — Cognitive strategies that guide model inference
 
-### 🔑 Key Highlights
-
-- **Multi-Dataset Evaluation**: Validated across **GLOBEM** (N=414, 3 institutions), **CES** (N=225), and **Mental-IoT** (N=200) for depression, anxiety, and stress prediction
-- **Performance-Efficiency Trade-offs**: Hybrid ICL + CoT reasoning achieves **78.3% accuracy** while zero-shot direct prediction maintains **<15s latency** and **<$0.02 cost**
-- **Contextualized Features**: Our **COMPass representation** integrates statistical summaries, behavioral patterns, and semantic descriptions, outperforming raw statistics by **+12.8% F1**
-- **Self-Refinement Gains**: Iterative reasoning improves performance by **+5.2% F1** with acceptable cost overhead
-
----
+We validated across **GLOBEM** (N=414, 3 institutions), **CES** (N=300), and **Mental-IoT** (N=200) for depression, anxiety, and stress prediction.
 
 ## 📑 Table of Contents
 
@@ -75,7 +68,7 @@ We compare three representation formats on GLOBEM dataset:
 #### 2. In-Context Learning Strategies
 
 <div align="center">
-  <img src="assets/reasoning.png" width="100%" alt="ICL Strategies Comparison">
+  <img src="assets/reasoning.png" width="900" alt="ICL Strategies Comparison">
   <p><i>Figure: Comparison of ICL strategies and their impact on performance</i></p>
 </div>
 
@@ -102,7 +95,7 @@ Our experiments evaluate 4 LLM models (GPT-4o, Claude Sonnet 4.5, Gemini 2.5 Pro
 #### GLOBEM (Multi-Institution)
 
 <div align="center">
-  <img src="assets/globem_icl.png" width="95%" alt="GLOBEM Results">
+  <img src="assets/globem_icl.png" width="900" alt="GLOBEM Results">
   <p><i>Table 7: Performance comparison across ICL strategies and reasoning methods on GLOBEM dataset</i></p>
 </div>
 
@@ -114,7 +107,7 @@ Our experiments evaluate 4 LLM models (GPT-4o, Claude Sonnet 4.5, Gemini 2.5 Pro
 #### CES (College Students)
 
 <div align="center">
-  <img src="assets/ces_icl.png" width="95%" alt="CES Results">
+  <img src="assets/ces_icl.png" width="900" alt="CES Results">
   <p><i>Table 8: Performance comparison across ICL strategies and reasoning methods on CES dataset</i></p>
 </div>
 
@@ -126,7 +119,7 @@ Our experiments evaluate 4 LLM models (GPT-4o, Claude Sonnet 4.5, Gemini 2.5 Pro
 #### Mental-IoT (General Population)
 
 <div align="center">
-  <img src="assets/miot_icl.png" width="95%" alt="Mental-IoT Results">
+  <img src="assets/miot_icl.png" width="900" alt="Mental-IoT Results">
   <p><i>Table 9: Performance comparison across ICL strategies and reasoning methods on Mental-IoT dataset</i></p>
 </div>
 
@@ -138,7 +131,7 @@ Our experiments evaluate 4 LLM models (GPT-4o, Claude Sonnet 4.5, Gemini 2.5 Pro
 ### Reasoning Comparison
 
 <div align="center">
-  <img src="assets/reasoning.png" width="80%" alt="Self-Refinement Results">
+  <img src="assets/reasoning.png" width="900" alt="Self-Refinement Results">
   <p><i>Table 5: Reasoning Performance (Macro F1 Score)</i></p>
 </div>
 
@@ -147,7 +140,7 @@ Our experiments evaluate 4 LLM models (GPT-4o, Claude Sonnet 4.5, Gemini 2.5 Pro
 ### Performance vs. Efficiency Analysis
 
 <div align="center">
-  <img src="assets/performance_efficiency.png" width="85%" alt="Performance and Efficiency">
+  <img src="assets/performance_efficiency.png" width="900" alt="Performance and Efficiency">
   <p><i>Figure: Performance and efficiency comparison across ICL strategies and reasoning methods.</i></p>
 </div>
 
@@ -389,7 +382,7 @@ compass-sensor-llm-mh-prediction/
 Below is a complete example of how prompts are constructed for mental health prediction tasks, showing the integration of system instructions, ICL examples, and reasoning guidance:
 
 <div align="center">
-  <img src="assets/full_prompt_example.png" width="90%" alt="Full Prompt Example">
+  <img src="assets/full_prompt_example.png" width="900" alt="Full Prompt Example">
   <p><i>Figure: Complete prompt structure showing system instructions, feature descriptions, ICL examples, and task specification</i></p>
 </div>
 
@@ -400,14 +393,14 @@ Different reasoning methods guide the LLM's cognitive process in distinct ways:
 **Direct Prediction (DP)**
 
 <div align="center">
-  <img src="assets/prompt_reasoning_DP.png" width="85%" alt="Direct Prediction Prompt">
+  <img src="assets/prompt_reasoning_DP.png" width="900" alt="Direct Prediction Prompt">
   <p><i>Figure: Direct prediction prompt - single-step classification without intermediate reasoning</i></p>
 </div>
 
 **Chain-of-Thought (CoT)**
 
 <div align="center">
-  <img src="assets/prompt_reasoning_CoT.png" width="85%" alt="Chain-of-Thought Prompt">
+  <img src="assets/prompt_reasoning_CoT.png" width="900" alt="Chain-of-Thought Prompt">
   <p><i>Figure: Chain-of-Thought prompt - structured step-by-step reasoning process</i></p>
 </div>
 
@@ -416,11 +409,11 @@ Different reasoning methods guide the LLM's cognitive process in distinct ways:
 <div align="center">
   
 - **Initial Prediction**:
-<img src="assets/prompt_reasoning_SR_initial.png" width="85%" alt="Self-Refinement Initial">
+<img src="assets/prompt_reasoning_SR_initial.png" width="900" alt="Self-Refinement Initial">
 <p><i>Figure: Self-refinement initial prediction phase</i></p>
 
 - **Critique & Refinement**:
-<img src="assets/prompt_reasoning_SR_refined.png" width="85%" alt="Self-Refinement Refined">
+<img src="assets/prompt_reasoning_SR_refined.png" width="900" alt="Self-Refinement Refined">
 <p><i>Figure: Self-refinement critique and revision phase</i></p>
 
 </div>
