@@ -15,140 +15,151 @@
 
 ## 💡 Overview
 
-This repository contains the implementation and experimental framework for **COMPass**, a comprehensive study examining how **context** shapes LLM performance in mental health prediction from passive sensor data. We systematically evaluate three critical context dimensions:
+**COMPass** is a study designed for **systematic** evaluation (with reproducibility in mind) of how *context* governs LLM behavior in passive-sensing mental health prediction. Rather than a single model, we treat context as a three-axis design space under a shared **clinical instruction**—functional-impairment framing, domain cues, and a fixed output schema.
 
-1. **📊 Sensor-to-Text Representation** — How sensor data is formatted and presented to LLMs
-2. **🎯 In-Context Learning (ICL) Strategy** — Selection and composition of demonstration examples
-3. **🧠 Reasoning Method** — Cognitive strategies that guide model inference
+- **📊 Sensor-to-Text Representation** — how multiday signals are expressed as textual evidence  
+- **🎯 In-Context Learning (ICL) Strategy** — how demonstrations are sourced and selected (zero-shot / cross-user-random / cross-user-retrieval / personal-recent / hybrid)
+- **🧠 Reasoning Method** — how the model reasons (direct prediction / chain-of-thought / self-refinement)
 
-We validated across **GLOBEM** (N=414, 3 institutions), **CES** (N=300), and **Mental-IoT** (N=200) for depression, anxiety, and stress prediction.
+We implement a consistent pipeline of **Preparation → Context Engineering → Evaluation** across GLOBEM, CES, and Mental-IoT and multiple LLM back-ends, reporting performance (mainly Macro-F1) alongside efficiency indicators (e.g., token usage and latency). The goal is **practical design guidance**: when representation, exemplar policy, and reasoning align to improve both performance and efficiency, when they conflict, and a sensible default (e.g., *personal-recent + CoT*) for real-world, personalized sensing systems.
+
 
 ## 📑 Table of Contents
 
 - [About](#-about)
-- [Results](#-results)
+- [Results (RQ1–RQ3)](#-results-mapped-to-rq1rq3)
 - [Getting Started](#-getting-started)
 - [Usage](#-usage)
 - [Repository Structure](#-repository-structure)
 - [Supplementary Materials](#-supplementary-materials)
-- [Citation](#-citation)
-- [Contact](#-contact)
+- [Dataset Citations](#dataset-citations)
 
 ---
 
 ## 📖 About
 
 ### Motivation
-
-While Large Language Models show promise for mental health applications, their effectiveness heavily depends on **how context is constructed**. This work provides the first systematic investigation of context design choices in sensor-based mental health modeling.
+LLMs are promising for behavioral and mental health modeling, but their effectiveness depends critically on **how context is constructed**. COMPass offers a systematic investigation of context design for sensor-based prediction.
 
 ### Research Questions
-
-1. How can we systematically design an end-to-end LLM pipeline that predicts users’ mental health states from multimodal sensing data?
-2. How much can context-aware LLMs improve mental-health-state prediction from multimodal sensing data compared to traditional ML models and LLMs without contextual enrichment?
-3. What is the optimal pipeline configuration considering both prediction accuracy and computational efficiency?
+1. **RQ1**: How can we **systematically design an end-to-end LLM pipeline** that predicts users' mental health states from multimodal sensing data?
+2. **RQ2**: How much can **context-aware LLMs** improve mental-health-state prediction from multimodal sensing data compared to **traditional ML models** and **LLMs without contextual enrichment**?
+3. **RQ3**: What is the **optimal pipeline configuration** considering both **prediction accuracy** and **computational efficiency**?
 
 ### Datasets
-
 <div align="center">
-  <img src="assets/dataset.png" width="100%" alt="Dataset">
-  <p><i>Figure: Dataset Descrption</i></p>
+  <img src="assets/dataset.png" width="100%" alt="Dataset overview">
+  <p><i>Figure: Dataset overview</i></p>
 </div>
 
 ### Context Dimensions Explored
 
-#### 1. Sensor-to-Text Representation
+#### 1) Sensor-to-Text Representation
+We compare representation formats on GLOBEM:
+- [**Method A**](https://dl.acm.org/doi/abs/10.1145/3659604): markdown table with daily aggregates
+- [**Method B**](https://arxiv.org/abs/2401.06866): statistical summaries (e.g., mean, std, min, max)
+- **Our Baseline**: integrates statistical, structural, and temporal features with natural-language descriptions (inspired by [SensorLM](https://arxiv.org/abs/2506.09108))
 
-We compare three representation formats on GLOBEM dataset:
-
-- **COMPass** (Ours): Statistical + structural + temporal features with natural language descriptions (adapted from SensorLM)
-- **Health-LLM**: Statistical summaries (mean, std, min, max)
-- **From Classification to Clinical Insights**: Markdown table format with daily aggregated values
-
-#### 2. In-Context Learning Strategies
-
+#### 2) In-Context Learning Strategies
 <div align="center">
-  <img src="assets/reasoning.png" width="900" alt="ICL Strategies Comparison">
-  <p><i>Figure: Comparison of ICL strategies and their impact on performance</i></p>
+  <img src="assets/reasoning.png" width="900" alt="ICL strategies comparison">
+  <p><i>Figure: ICL strategies and their impact at a glance</i></p>
 </div>
 
-- **Zero-shot**: No examples provided
-- **Cross-Random**: Random examples from other users
-- **Cross-Retrieval**: TimeRAG-based DTW retrieval from other users (see [Supplementary](SUPPLEMENTARY.md#cross-retrieval-method))
-- **Personal-Recent**: Recent historical examples from the same user
-- **Hybrid**: Combination of cross-user random + personal history
+- **Zero-shot** (no demonstrations)
+- **Cross-Random** (random cross-user examples)
+- **Cross-Retrieval** (DTW-based retrieval from other users)
+- **Personal-Recent** (recent examples from the same user)
+- **Hybrid** (combination of cross-user and personal)
 
-#### 3. Reasoning Methods
-
-- **Direct Prediction (DP)**: Single-step classification
-- **Chain-of-Thought (CoT)**: Step-by-step reasoning
-- **Self-Refinement (SR)**: Iterative critique-and-revise process
+#### 3) Reasoning Methods
+- **Direct Prediction (DP)** — single-step classification  
+- **Chain-of-Thought (CoT)** — structured, step-by-step reasoning  
+- **Self-Refinement (SR)** — critique-and-revise iteration
 
 ---
 
-## 📊 Results
+## 📊 Results (mapped to RQ1–RQ3)
 
-### Performance by Dataset and Strategy
+### RQ1 — Pipeline Overview
+Our pipeline is organized into three stages:
 
-Our experiments evaluate 4 LLM models (GPT-4o, Claude Sonnet 4.5, Gemini 2.5 Pro, and an open-source 20B model) across multiple configurations. Below are comprehensive results for each dataset:
+1. **Preparation** — LLM model selection and data preprocessing  
+2. **Context Engineering** — sensor data representation (fixed) + prompt construction (fixed) + exemplar selection (Zero-shot / Cross-Random / Cross-Retrieval / Personal-Recent / Hybrid) + reasoning design (DP / CoT / SR)
+3. **Evaluation** — consistent metrics and efficiency reporting across datasets and models
 
-#### GLOBEM (Multi-Institution)
+This structure encourages reproducible comparisons and isolates the effects of example selection and reasoning.
 
+### RQ2 — Predictive Performance
+
+#### GLOBEM
 <div align="center">
-  <img src="assets/globem_icl.png" width="900" alt="GLOBEM Results">
-  <p><i>Table 7: Performance comparison across ICL strategies and reasoning methods on GLOBEM dataset</i></p>
+  <img src="assets/globem_icl.png" width="900" alt="GLOBEM results">
+  <p><i>Figure: ICL strategies on GLOBEM</i></p>
 </div>
 
-**Key Findings**:
-- **Hybrid-Blend + CoT** achieves best overall performance: 80.2% accuracy (depression), 79.7% accuracy (anxiety)
-- Personal history (Personal-Recent, Hybrid-Blend) consistently outperforms cross-user strategies by 8-12% F1
-- Zero-shot Direct offers fastest inference (14.7s) at minimal cost ($0.013), suitable for resource-constrained scenarios
+**Observations (concise)**
+- **Personal-Recent** and **Hybrid** consistently outperform cross-user baselines.  
+- **CoT** helps **when context is reliable**; with poorly matched cross-user examples it can be neutral or even harmful.  
+- Well-matched cross-user retrieval can be competitive when it captures the target user’s **behavioral regime**.
 
 #### CES (College Students)
-
 <div align="center">
-  <img src="assets/ces_icl.png" width="900" alt="CES Results">
-  <p><i>Table 8: Performance comparison across ICL strategies and reasoning methods on CES dataset</i></p>
+  <img src="assets/ces_icl.png" width="900" alt="CES results">
+  <p><i>Figure: ICL strategies on CES</i></p>
 </div>
 
-**Key Findings**:
-- **Personal-Recent + CoT** achieves highest depression prediction: 78.3% accuracy, 67.9% F1
-- **Hybrid-Blend + CoT** shows best anxiety prediction: 74.0% accuracy, 64.4% F1
-- CES benefits most from personalization, with 10-15% improvement over cross-user strategies
+**Observations (concise)**
+- Personalization yields the most stable gains.  
+<!-- - **CoT** improves interpretability and stability; **SR** can add robustness on harder cases. -->
 
 #### Mental-IoT (General Population)
-
 <div align="center">
-  <img src="assets/miot_icl.png" width="900" alt="Mental-IoT Results">
-  <p><i>Table 9: Performance comparison across ICL strategies and reasoning methods on Mental-IoT dataset</i></p>
+  <img src="assets/miot_icl.png" width="900" alt="Mental-IoT results">
+  <p><i>Figure: ICL strategies on Mental-IoT</i></p>
 </div>
 
-**Key Findings**:
-- Lower overall performance due to higher data sparsity and shorter observation windows
-- **Hybrid-Blend + CoT** shows marginal improvements over zero-shot baseline
-- Stress prediction (52.3% accuracy) more stable than depression/anxiety, suggesting different feature dependencies
+**Observations (concise)**
+- Harder overall due to sparsity/short windows; benefits vary by target.  
+<!-- - Depending on the setting, **CoT** or **SR** can be preferable; personalization remains helpful when available. -->
 
-### Reasoning Comparison
-
-<div align="center">
-  <img src="assets/reasoning.png" width="900" alt="Self-Refinement Results">
-  <p><i>Table 5: Reasoning Performance (Macro F1 Score)</i></p>
-</div>
-
-> See [Supplementary Materials](SUPPLEMENTARY.md#self-refinement-analysis) for detailed implementation notes and usage guidelines for self-refinement.
-
-### Performance vs. Efficiency Analysis
+#### Reasoning Comparison (beyond a Macro-F1 table)
 
 <div align="center">
-  <img src="assets/performance_efficiency.png" width="900" alt="Performance and Efficiency">
-  <p><i>Figure: Performance and efficiency comparison across ICL strategies and reasoning methods.</i></p>
+  <img src="assets/reasoning.png" width="900" alt="Reasoning comparison">
+  <p><i>Figure: Reasoning variants (DP / CoT / SR)</i></p>
 </div>
 
-**Key Takeaways**:
-- **Context Quality Matters**: Personal-Recent and Hybrid-Blend achieve **higher accuracy (78-80%)** while being **more efficient** (33-35s latency) compared to cross-user strategies (38-40s)
-- **Better Context = Better Efficiency**: Contrary to typical trade-offs, providing relevant personal context improves both performance and speed by reducing reasoning complexity
-- **Zero-shot Direct**: Minimal accuracy (55-67%) but fastest inference (~15s) and lowest cost (~$0.013) for resource-constrained scenarios
-- **Recommended Default**: Personal-Recent + CoT offers best overall results for personalized mental health applications
+**Key Observations**
+- **Dataset/setting dependence**: In **zero-shot settings, DP outperforms CoT on CES/GLOBEM**, while **CoT outperforms DP on Mental-IoT**—multi-step reasoning without demonstrations is dataset-dependent, not uniformly helpful.
+- **Reasoning × context coupling**: With **Personal-Recent** exemplars, **DP already matches CoT** (limited sensitivity to reasoning); with **Cross-Random**, structured reasoning can **underperform zero-shot**. Well-aligned exemplars are the precondition for reasoning gains.
+- **Few-shot nuance**: Under **four-shot Personal-Recent**, no single reasoning strategy dominates across datasets; **on Mental-IoT, Self-Refinement is consistently best**, but this advantage is **not universal**.
+- **Heterogeneity matters**: Variation within and across users makes models fragile to poorly matched context; **exemplar source and recency—rather than quantity—are the dominant drivers** of gains.
+- **Cross-user retrieval**: Similarity-based **Cross-Retrieval showed limited benefit vs. zero-shot** in our settings; **Hybrid/Personal-Recent** were more reliable.
+
+### RQ3 — Optimal Pipeline Configuration (Performance × Efficiency)
+
+<div align="center">
+  <img src="assets/performance_efficiency.png" width="900" alt="Performance and efficiency">
+  <p><i>Figure: Performance–efficiency landscape under context and reasoning choices</i></p>
+</div>
+
+**Token Cost Drivers (cost/usage)**
+- In our runs, completion tokens varied largely by **model family** and **reasoning depth**, with prompts held constant across models; output tokens are the key cost driver and full distributions are available in the repo.
+- Within a given model, moving from **Direct Prediction (DP)** to **Chain-of-Thought (CoT)** typically increases completion length, while moving from **zero-shot** to **few-shot** tends to contribute a smaller increment; see tables/plots for per-setting details.
+
+**Latency × Performance (how they co-move)**
+- **Context design materially affects both metrics**: in several cases, **higher Macro-F1 coincided with equal or lower latency**—i.e., not a strict trade-off.  
+  - **CES:** **Personal-Recent** outperformed **cross-user random** on **both** Macro-F1 and latency; **Hybrid** ranked second.  
+  - **GLOBEM:** With **Personal-Recent** demonstrations, Macro-F1 was **similar across reasoning methods** (small spread). **Personal-Recent + Direct Prediction** performed **on par** with higher-latency reasoning.  
+  - **Mental-IoT:** In zero-shot, **CoT** was strong at moderate latency; with **Personal-Recent** demonstrations and **Self-Refinement (SR)**, top Macro-F1 was reached with a larger latency budget.
+
+**Design Rules (practical guide)**
+- **No strict trade-off:** With well-chosen demonstrations and a suitable reasoning mode, accuracy **and** latency can improve together.  
+- **Context > Size:** Prioritize **exemplar relevance and recency**; gains are driven more by where examples come from than by simply adding more.  
+- **A reasonable starting point:** **Personal-Recent** exemplars plus a lightweight reasoning cue (e.g., **CoT**) provide a balanced baseline; when latency is critical, **Personal-Recent + Direct Prediction** can be competitive.
+
+> **Note**: The README summarizes key trends. See `experiment_summary.csv` and result JSON files for detailed accuracy/latency/token/cost data.
 
 ---
 
@@ -156,7 +167,7 @@ Our experiments evaluate 4 LLM models (GPT-4o, Claude Sonnet 4.5, Gemini 2.5 Pro
 
 ### Prerequisites
 
-- Python 3.9+
+- Python 3.9+ (Implemented with Python 3.12.3)
 - API keys for at least one LLM provider:
   - OpenAI (GPT models)
   - Anthropic (Claude) via OpenRouter *(optional)*
@@ -207,19 +218,73 @@ CES_BASE_PATH = '../dataset/CES'
 
 ### Quick Start
 
-Run a single prediction with default settings (4-shot Hybrid ICL + CoT):
+**Step 1: Test with a single prediction**
+
+Run a single prediction to verify your setup (default: 4-shot Hybrid ICL + CoT):
 
 ```bash
 python run_evaluation.py --mode single --verbose
 ```
 
-### Batch Evaluation
+**Step 2: Generate and save prompts for reproducible experiments**
 
-Evaluate on 30 samples with stratified sampling:
+Since we test multiple LLM models (GPT-4o, Claude, Gemini, etc.) on the **same prompts** to ensure fair comparison, we first generate and save prompts:
 
 ```bash
-python run_evaluation.py --mode batch --n_samples 30 --seed 42
+# Generate prompts for full test set and save them
+python run_evaluation.py --mode batch --seed 42 \
+  --strategy personal_recent --n_shot 4 --reasoning cot \
+  --save-prompts
 ```
+
+This creates a folder in `saved_prompts/` with the experiment configuration (e.g., `ces_compass_4shot_personalrecent_cot_seed42/`).
+
+> **💡 For quick testing**: Add `--n_samples 5` to test with a smaller subset before running the full evaluation. - only 5 sample prediction
+
+**Step 3: Run experiments with different models using saved prompts**
+
+Now test different models on the **exact same prompts**:
+
+```bash
+# Test with GPT-4o (with checkpointing for long runs)
+python run_evaluation.py --mode batch --load-prompts ces_compass_4shot_personalrecent_cot_seed42 \
+  --model gpt-5 --checkpoint-every 10
+
+# Test with Claude Sonnet 4.5
+python run_evaluation.py --mode batch --load-prompts ces_compass_4shot_personalrecent_cot_seed42 \
+  --model claude-4.5-sonnet --checkpoint-every 10
+
+# Test with Gemini 2.5 Pro
+python run_evaluation.py --mode batch --load-prompts ces_compass_4shot_personalrecent_cot_seed42 \
+  --model gemini-2.5-pro --checkpoint-every 10
+```
+
+This workflow ensures that **all model comparisons use identical inputs**, eliminating variability from prompt generation and enabling true apples-to-apples comparison.
+
+**Checkpoint Files Structure**:
+```
+results/
+├── ces_compass_4shot_personalrecent_cot_seed42_gpt_5_cot_42_20250111_143022_checkpoint_10.json
+├── ces_compass_4shot_personalrecent_cot_seed42_gpt_5_cot_42_20250111_143022_checkpoint_20.json
+├── ces_compass_4shot_personalrecent_cot_seed42_gpt_5_cot_42_20250111_143022_checkpoint_30.json
+└── ... (saved every 10 samples)
+```
+
+Each checkpoint contains:
+- All predictions up to that point
+- Metadata (timestamps, model config, etc.)
+- Progress information for resumption
+
+**Resume from checkpoint** if interrupted:
+```bash
+python run_evaluation.py --mode batch \
+  --resume-from results/ces_compass_4shot_personalrecent_cot_seed42_gpt_5_cot_42_20250111_143022_checkpoint_30.json
+```
+
+> **💡 Tips**: 
+> - Use `--checkpoint-every 10` for experiments with large samples to avoid losing progress
+> - Use `--save-prompts-only` to generate prompts without calling any LLM first
+> - Checkpoints are automatically cleaned up (keeps only the most recent one) to save disk space
 
 ### Configuration Options
 
@@ -238,25 +303,15 @@ python run_evaluation.py --strategy cross_retrieval --n_shot 4
 # Personal-recent (recent examples from same user)
 python run_evaluation.py --strategy personal_recent --n_shot 4
 
-# Hybrid-blend (mix of cross-retrieval + personal)
+# Hybrid (mix of cross-random + personal)
 python run_evaluation.py --strategy hybrid_blend --n_shot 4
 ```
 
-**ICL Selection Formulas**:
+**ICL Selection Details**:
 
-For **Cross-Retrieval** and **Hybrid-Blend**, we use TimeRAG-accelerated DTW:
-
-$$
-\text{DTW}(X, Y) = \min_{\pi} \sqrt{\sum_{(i,j) \in \pi} \|X_i - Y_j\|^2}
-$$
-
-where \( X, Y \) are normalized time series. See [Supplementary](SUPPLEMENTARY.md#cross-retrieval-method) for the full algorithm.
-
-For **Hybrid-Blend**, we combine sources:
-
-$$
-\mathcal{S}_{\text{hybrid}} = \mathcal{S}_{\text{cross}}^{k/2} \cup \mathcal{S}_{\text{personal}}^{k/2}
-$$
+- For **Cross-Retrieval** and **Hybrid**, we use TimeRAG-accelerated DTW for similarity-based retrieval
+- For **Hybrid**, we combine: \( k/2 \) cross-user examples + \( k/2 \) personal-recent examples
+- See [Cross-Retrieval Method](#-cross-retrieval-method-timerag) section below for algorithm details
 
 #### Reasoning Methods
 
@@ -287,32 +342,16 @@ python run_evaluation.py --model gemini-2.5-pro
 python run_evaluation.py --model gpt-oss-20b
 ```
 
-#### Advanced Options
+#### Additional Options
 
-**Save prompts for later reuse** (useful for comparing models with identical inputs):
-
-```bash
-# Generate and save prompts
-python run_evaluation.py --mode batch --n_samples 100 --save-prompts
-
-# Reuse saved prompts with different model
-python run_evaluation.py --mode batch --load-prompts EXP_NAME --model claude-4.5-sonnet
-```
-
-**Checkpointing for long experiments**:
+**Run end-to-end without saving prompts** (not recommended for multi-model comparison):
 
 ```bash
-# Save checkpoint every 10 samples
-python run_evaluation.py --mode batch --n_samples 200 --checkpoint-every 10
+# Full test set
+python run_evaluation.py --mode batch --seed 42
 
-# Resume from checkpoint
-python run_evaluation.py --mode batch --resume-from results/checkpoint_050.json
-```
-
-**Prompt-only mode** (generate prompts without calling LLM):
-
-```bash
-python run_evaluation.py --mode batch --save-prompts-only --n_samples 500
+# Or with a smaller subset for testing
+python run_evaluation.py --mode batch --n_samples 30 --seed 42
 ```
 
 ### Configuration Files
@@ -363,17 +402,36 @@ compass-sensor-llm-mh-prediction/
 ├── saved_prompts/                   # Cached prompts (for reuse)
 │   └── [experiment_name]/          # Organized by configuration
 │
+├── example_prompt_and_result/       # Example predictions (see below)
+│
 ├── run_evaluation.py                # Main entry point
 ├── requirements.txt                 # Python dependencies
 ├── experiment_summary.csv           # Aggregated results across experiments
-├── README.md                        # This file
-└── SUPPLEMENTARY.md                 # Detailed supplementary materials
+└── README.md                        # This file
+
+dataset/
+├── CES/                             # Download from link below
+├── Globem/                          # Download from link below
+└── MentalIot/                       # Download from link below
 ```
+
+### 📂 Example Results
+
+Due to dataset End-User License Agreements (EULAs), we cannot publicly share all per-sample prediction results. However, we provide representative examples in [`example_prompt_and_result/`](./example_prompt_and_result):
+
+- **Prompts**: Complete prompt structure including ICL examples and reasoning instructions
+- **Model Outputs**: Raw predictions and reasoning traces
+- **Metadata**: Sample information and ground truth labels
+
+**Available Examples**:
+- Mental-IoT dataset with 4-shot Personal-Recent + Self-Refinement strategy
+- See [`example_prompt_and_result/mentaliot_compass_4shot_personalrecent_selffeedback_seed42_prompt/`](./example_prompt_and_result/mentaliot_compass_4shot_personalrecent_selffeedback_seed42_prompt/) for full prompt files
+
+> **Note**: For full experimental results on your own data, please follow the [Usage](#-usage) instructions to run evaluations with your dataset access.
 
 ---
 
 ## 📚 Supplementary Materials
-
 
 ### 🎨 Prompt Visualizations
 
@@ -459,9 +517,9 @@ Output: k balanced ICL examples
 
 ### Dataset Citations
 
-- **GLOBEM**: [Link to GLOBEM paper]
-- **CES**: [Link to CES paper]
-- **Mental-IoT**: [Link to Mental-IoT paper]
+- **GLOBEM**: [Paper](https://dl.acm.org/doi/abs/10.1145/3569485), [Dataset](https://the-globem.github.io/)
+- **CES**: [Paper](https://dl.acm.org/doi/10.1145/3643501), [Dataset](https://www.kaggle.com/datasets/subigyanepal/college-experience-dataset)
+- **Mental-IoT**: [Paper](https://dl.acm.org/doi/abs/10.1145/3749485), [Dataset](https://github.com/Kaist-ICLab/multimodal-mh-detection)
 
 
 ---
