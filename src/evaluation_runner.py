@@ -15,7 +15,7 @@ from tqdm import tqdm
 
 from . import config
 from .data_utils import sample_batch_stratified
-from .sensor_transformation import sample_input_data, aggregate_window_features, check_missing_ratio
+from .sensor_transformation import sample_input_data, check_missing_ratio, aggregate_window_features
 from .example_selection import select_icl_examples, build_retrieval_candidate_pool
 from .prompt_utils import build_prompt
 from .reasoning import LLMReasoner
@@ -55,16 +55,19 @@ def select_icl(
     feat_df, lab_df, cols: Dict, input_sample: Dict,
     n_shot: int, strategy: str, use_dtw: bool, random_state: Optional[int],
     step_timings: Dict[str, List[float]], verbose: bool,
-    retrieval_candidates: Optional[List[Dict]] = None, dataset: str = 'globem'
+    retrieval_candidates: Optional[List[Dict]] = None, dataset: str = 'globem',
+    lab_df_for_icl=None, full_lab_df_for_personal=None
 ):
     """
     Select ICL examples if needed, append timing, and return (icl_examples, icl_strategy).
     
     Args:
-        strategy: 'cross_random', 'cross_retrieval', 'personal_recent', 'hybrid_blend', or 'none'
-        use_dtw: For hybrid_blend, whether to use DTW for cross-user part
+        strategy: 'cross_random', 'cross_retrieval', 'personal_recent', 'hybrid', or 'none'
+        use_dtw: For hybrid, whether to use DTW for cross-user part
         retrieval_candidates: Prebuilt candidate pool for retrieval strategies
         dataset: Dataset type ('globem' or 'ces')
+        lab_df_for_icl: Trainset for cross-user ICL
+        full_lab_df_for_personal: Full data (train+test) for personal ICL
     """
     icl_examples = None
     icl_strategy = 'zero_shot'
@@ -72,13 +75,16 @@ def select_icl(
     if n_shot > 0 and strategy != 'none':
         if verbose:
             msg = f"\n[ICL] Selecting {n_shot} examples (strategy: {strategy}"
-            if strategy == 'hybrid_blend':
+            if strategy == 'hybrid':
                 msg += f", cross-user: {'DTW' if use_dtw else 'random'}"
             msg += ")..."
             print(msg)
         with timeit(step_timings, 'icl_selection'):
+            # Choose appropriate lab_df based on strategy
+            icl_lab_df = full_lab_df_for_personal if strategy in ['personal_recent', 'hybrid'] and full_lab_df_for_personal is not None else lab_df_for_icl if lab_df_for_icl is not None else lab_df
+            
             icl_examples = select_icl_examples(
-                feat_df, lab_df, cols,
+                feat_df, icl_lab_df, cols,
                 input_sample['user_id'], input_sample['ema_date'],
                 n_shot=n_shot, strategy=strategy, use_dtw=use_dtw,
                 random_state=random_state, target_sample=input_sample,
@@ -235,89 +241,22 @@ def records_to_report_items(records: List[Dict]) -> List[Dict]:
     
     return items
 
-def run_single_prediction(prompt_manager: PromptManager, reasoner: LLMReasoner,
-                          feat_df, lab_df, cols: Dict, n_shot: int = 5, strategy: str = 'cross_random',
-                          use_dtw: bool = False, reasoning_method: str = 'cot', 
-                          random_state: Optional[int] = None, llm_seed: Optional[int] = None,
-                          verbose: bool = True, dataset: str = 'globem') -> Optional[Dict]:
-    """Run a single prediction for demonstration."""
-    if verbose:
-        print(f"\n🔍 SINGLE SAMPLE PREDICTION")
-
-    all_step_timings = new_step_timings()
-
-    input_sample = sample_input_data(feat_df, lab_df, cols, random_state)
-
-    if input_sample is None:
-        print("[ERROR] Failed to sample valid input data")
-        return None
-    
-    print_input_sample_info(input_sample, 0.0, verbose)
-
-    # ICL
-    icl_examples, icl_strategy = select_icl(
-        feat_df, lab_df, cols, input_sample, n_shot, strategy, use_dtw,
-        random_state, all_step_timings, verbose, None, dataset  # No prebuilt pool for single prediction
-    )
-
-    # Prompt
-    prompt = build_prompt_with_timing(
-        prompt_manager, input_sample, cols, icl_examples, icl_strategy, reasoning_method, all_step_timings, verbose, feat_df=feat_df
-    )
-
-    # Predict
-    all_predictions, failed_count = [], 0
-    all_predictions, all_step_timings, failed_count, last_pred = predict(
-        all_predictions, all_step_timings,
-        input_sample['user_id'], input_sample['ema_date'],
-        input_sample['labels']['phq4_anxiety_EMA'], input_sample['labels']['phq4_depression_EMA'],
-        failed_count, reasoner, reasoning_method, prompt,
-        true_stress=input_sample['labels'].get('stress', None),
-        llm_seed=llm_seed, sc_samples=5, verbose=verbose,
-    )
-
-    if last_pred is None:
-        print("[ERROR] Prediction failed for the sampled input")
-        return None
-
-    # Output
-    print_prediction_results(last_pred['prediction'], input_sample['labels'], verbose)
-    print_timing_breakdown(all_step_timings, reasoning_method, verbose)
-
-    # if verbose:
-    #     print("=" * 60 + "\n")
-
-    return {
-        'experiment_config': {
-            'n_shot': n_shot, 'icl_strategy': icl_strategy,
-            'reasoning_method': reasoning_method, 'model': reasoner.model,
-            'random_state': random_state, 'llm_seed': llm_seed
-        },
-        'prompt_used': prompt,
-        'input_sample': input_sample,
-        'prediction': last_pred['prediction'],   # pure prediction
-        'record': last_pred,                     # full record if needed downstream
-        'usage': reasoner.get_usage_summary(),
-        'step_timings': all_step_timings,
-        'total_time': sum(sum(v) for v in all_step_timings.values()),
-    }
-
-
 def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
                          feat_df, lab_df, cols: Dict, n_samples: int = 30, n_shot: int = 5, 
                          strategy: str = 'cross_random', use_dtw: bool = False, reasoning_method: str = 'cot', 
                          random_state: Optional[int] = 42, llm_seed: Optional[int] = None, 
                          collect_prompts: bool = False, verbose: bool = True,
-                         use_all_samples: bool = False, initial_timings: Optional[Dict[str, float]] = None,
+                         initial_timings: Optional[Dict[str, float]] = None,
                          dataset: str = 'globem') -> Optional[Dict]:
     """Run batch evaluation on multiple samples.
     
-    Args:
-        use_all_samples: If True, use all samples in lab_df (ignores n_samples).
-                        Useful for multi-institution testset where samples are pre-selected.
+    For pre-generated testsets (all datasets now), uses all samples from lab_df.
+    For ad-hoc evaluation, samples n_samples from lab_df.
     """
     
     # Determine actual number of samples to use
+    # If lab_df is small (<= n_samples * 2), assume it's a pre-selected testset and use all
+    use_all_samples = len(lab_df) <= n_samples * 2
     actual_n_samples = len(lab_df) if use_all_samples else n_samples
     
     if verbose:
@@ -341,46 +280,39 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
     
     collected_prompts, collected_metadata = ([], []) if collect_prompts else (None, None)
     
-    # For multi-institution testset or CES/MentalIoT, load historical data for ICL
+    # Load trainset for ICL examples (universal approach)
+    # For personal_recent, we need full data (train+test) to access all historical samples
+    # For cross-user strategies, we use trainset only to prevent future data leakage
     lab_df_for_icl = None
-    if dataset == 'ces' and hasattr(config, 'CES_TRAIN_DF'):
-        # For CES, use train_df for ICL examples
-        lab_df_for_icl = config.CES_TRAIN_DF
-    elif dataset == 'mentaliot' and hasattr(config, 'MENTALIOT_TRAIN_DF'):
-        # For MentalIoT, use train_df for ICL examples
-        lab_df_for_icl = config.MENTALIOT_TRAIN_DF
+    full_lab_df_for_personal = None
+    
+    train_df_attr = f'{dataset.upper()}_TRAIN_DF'
+    full_df_attr = f'{dataset.upper()}_FULL_LAB_DF'
+    
+    # For GLOBEM, use pre-aggregated features for prompt generation
+    # (feat_df contains raw data for DTW)
+    aggregated_feat_df = feat_df  # Default: same as feat_df
+    if dataset == 'globem' and hasattr(config, 'GLOBEM_AGGREGATED_FEAT_DF'):
+        aggregated_feat_df = config.GLOBEM_AGGREGATED_FEAT_DF
+    
+    if hasattr(config, train_df_attr):
+        lab_df_for_icl = getattr(config, train_df_attr)
         if verbose:
-            print(f"  [Using MentalIoT train set for ICL: {len(lab_df_for_icl)} samples]")
-    elif use_all_samples and config.USE_MULTI_INSTITUTION_TESTSET:
-        # Load full historical data for ICL (all weeks, not just testset)
-        from .sensor_transformation import load_globem_data
+            print(f"  [Using {dataset.upper()} train set for cross-user ICL: {len(lab_df_for_icl)} samples]")
+    
+    if strategy in ['personal_recent', 'hybrid'] and hasattr(config, full_df_attr):
+        full_lab_df_for_personal = getattr(config, full_df_attr)
         if verbose:
-            print("  [Loading historical data for ICL...]")
-        
-        all_historical_dfs = []
-        for institution in config.MULTI_INSTITUTION_CONFIG.keys():
-            _, hist_lab, _ = load_globem_data(
-                institution=institution, 
-                target=config.DEFAULT_TARGET
-            )
-            hist_lab['institution'] = institution
-            all_historical_dfs.append(hist_lab)
-        
-        lab_df_for_icl = pd.concat(all_historical_dfs, ignore_index=True)
-        if verbose:
-            print(f"  Loaded {len(lab_df_for_icl)} historical samples for ICL")
+            print(f"  [Using {dataset.upper()} full data for personal ICL: {len(full_lab_df_for_personal)} samples (train+test)]")
     
     # Build retrieval candidate pool ONCE for entire evaluation (if using retrieval)
     retrieval_candidates = None
-    if strategy in ['cross_retrieval', 'hybrid_blend'] and (strategy == 'cross_retrieval' or use_dtw):
+    if strategy in ['cross_retrieval', 'hybrid'] and (strategy == 'cross_retrieval' or use_dtw):
         if verbose:
             print(f"\n[Retrieval Setup] Building candidate pool for {strategy}...")
         
-        # Use trainset: all historical data excluding testset
-        if use_all_samples and lab_df_for_icl is not None:
-            trainset = lab_df_for_icl[~lab_df_for_icl.get('is_testset', False)] if 'is_testset' in lab_df_for_icl.columns else lab_df_for_icl
-        else:
-            trainset = lab_df_for_icl if lab_df_for_icl is not None else lab_df
+        # Use trainset (ICL pool)
+        trainset = lab_df_for_icl if lab_df_for_icl is not None else lab_df
         
         retrieval_candidates = build_retrieval_candidate_pool(
             feat_df, trainset, cols,
@@ -405,28 +337,16 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
             user_id = row[cols['user_id']]
             ema_date = row[cols['date']]
             
-            # Get aggregated features (different for CES/MentalIoT vs GLOBEM)
-            if dataset in ['ces', 'mentaliot']:
-                # For CES/MentalIoT, aggregated_features is already in feat_df
-                feat_row = feat_df[
-                    (feat_df[cols['user_id']] == user_id) & 
-                    (feat_df[cols['date']] == ema_date)
-                ]
-                if len(feat_row) > 0:
-                    agg_feats = feat_row.iloc[0].to_dict()
-                else:
-                    # No data for this sample
-                    agg_feats = None
+            # Get aggregated features from pre-aggregated file (all datasets now use this)
+            feat_row = aggregated_feat_df[
+                (aggregated_feat_df[cols['user_id']] == user_id) & 
+                (aggregated_feat_df[cols['date']] == ema_date)
+            ]
+            if len(feat_row) > 0:
+                agg_feats = feat_row.iloc[0].to_dict()
             else:
-                # For GLOBEM, compute on-the-fly
-                agg_feats = aggregate_window_features(
-                    feat_df, user_id, ema_date, cols,
-                    window_days=config.AGGREGATION_WINDOW_DAYS,
-                    mode=config.DEFAULT_AGGREGATION_MODE,
-                    use_immediate_window=config.USE_IMMEDIATE_WINDOW,
-                    immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
-                    adaptive_window=config.USE_ADAPTIVE_WINDOW
-                )
+                # No data for this sample
+                agg_feats = None
             
             # For pre-selected testset: include ALL samples even if agg_feats is None
             if agg_feats is None:
@@ -474,14 +394,15 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
                 user_id = row[cols['user_id']]
                 ema_date = row[cols['date']]
                 
-                agg_feats = aggregate_window_features(
-                    feat_df, user_id, ema_date, cols,
-                    window_days=config.AGGREGATION_WINDOW_DAYS,
-                     mode=config.DEFAULT_AGGREGATION_MODE,
-                     use_immediate_window=config.USE_IMMEDIATE_WINDOW,
-                     immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
-                     adaptive_window=config.USE_ADAPTIVE_WINDOW
-                 )
+                # Get aggregated features from pre-aggregated file
+                feat_row = feat_df[
+                    (feat_df[cols['user_id']] == user_id) & 
+                    (feat_df[cols['date']] == ema_date)
+                ]
+                if len(feat_row) > 0:
+                    agg_feats = feat_row.iloc[0].to_dict()
+                else:
+                    agg_feats = None
                 
                 if agg_feats is not None and check_missing_ratio(agg_feats):
                     labels = row[cols['labels']].to_dict()
@@ -510,17 +431,19 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
     all_predictions, failed_count = [], 0
     for i, input_sample in enumerate(tqdm(input_samples, desc="Generating prompts", disable=not verbose)):
 
-        # ICL - use lab_df_for_icl if available (full historical data)
-        # For CES/MentalIoT, always use trainset (lab_df_for_icl), not testset (lab_df)
-        if dataset in ['ces', 'mentaliot'] and lab_df_for_icl is not None:
-            icl_lab_df = lab_df_for_icl
+        # ICL - Select appropriate data source based on strategy
+        # Personal strategies: use full data (train+test) with date filtering
+        # Cross-user strategies: use trainset only to prevent future leakage
+        if strategy in ['personal_recent', 'hybrid']:
+            icl_lab_df = full_lab_df_for_personal if full_lab_df_for_personal is not None else (lab_df_for_icl if lab_df_for_icl is not None else lab_df)
         else:
-            icl_lab_df = lab_df_for_icl if (use_all_samples and lab_df_for_icl is not None) else lab_df
+            icl_lab_df = lab_df_for_icl if lab_df_for_icl is not None else lab_df
         
         icl_examples, icl_strategy = select_icl(
             feat_df, icl_lab_df, cols, input_sample, n_shot, strategy, use_dtw,
             (random_state + i * 1000) if random_state else None,
-            all_step_timings, verbose, retrieval_candidates, dataset
+            all_step_timings, verbose, retrieval_candidates, dataset,
+            lab_df_for_icl, full_lab_df_for_personal
         )
 
         # Prompt
@@ -543,14 +466,21 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
             else:
                 agg_feats_filtered = agg_feats
             
-            # Get stress label if available (for CES)
-            true_stress = input_sample['labels'].get('stress', None)
+            # Get labels dynamically based on dataset
+            labels = input_sample['labels']
+            anxiety_key = cols['labels'][0] if len(cols['labels']) > 0 else list(labels.keys())[0]
+            depression_key = cols['labels'][1] if len(cols['labels']) > 1 else list(labels.keys())[1]
+            stress_key = cols['labels'][2] if len(cols['labels']) > 2 else 'stress'
+            
+            true_anxiety = labels[anxiety_key]
+            true_depression = labels[depression_key]
+            true_stress = labels.get(stress_key, None)
             
             metadata_entry = {
                 'user_id': input_sample['user_id'],
                 'ema_date': str(input_sample['ema_date']),
-                'true_anxiety': input_sample['labels']['phq4_anxiety_EMA'],
-                'true_depression': input_sample['labels']['phq4_depression_EMA'],
+                'true_anxiety': true_anxiety,
+                'true_depression': true_depression,
             }
             
             # Add stress if available (before features to maintain label grouping)
@@ -585,13 +515,13 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
             
             collected_metadata.append(metadata_entry)
 
-        # Predict
+        # Predict (use dynamically extracted labels)
         all_predictions, all_step_timings, failed_count, last_pred = predict(
             all_predictions, all_step_timings,
             input_sample['user_id'], input_sample['ema_date'],
-            input_sample['labels']['phq4_anxiety_EMA'], input_sample['labels']['phq4_depression_EMA'],
+            true_anxiety, true_depression,
             failed_count, reasoner, reasoning_method, prompt,
-            true_stress=input_sample['labels'].get('stress', None),
+            true_stress=true_stress,
             llm_seed=llm_seed, sc_samples=5, verbose=verbose,
         )
 
@@ -612,7 +542,8 @@ def run_batch_evaluation(prompt_manager: PromptManager, reasoner: LLMReasoner,
     print_batch_timing_summary(all_step_timings, verbose)
 
     results_for_report = records_to_report_items(all_predictions)
-    report = generate_comprehensive_report(results_for_report, usage, eval_config)
+    # Pass predictions to generate_comprehensive_report - for self_feedback, usage will be extracted from predictions
+    report = generate_comprehensive_report(results_for_report, usage, eval_config, predictions=all_predictions)
     report['step_timings_avg'] = avg_timings
     report['step_timings_all'] = {k: [float(x) for x in v] for k, v in all_step_timings.items()}
     report['predictions'] = all_predictions  # Store predictions for CSV export
@@ -628,17 +559,15 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
                            n_samples: int = 30, n_shot: int = 5, strategy: str = 'cross_random',
                            use_dtw: bool = False, reasoning_method: str = 'cot',
                            random_state: Optional[int] = 42, 
-                           verbose: bool = True, use_all_samples: bool = False,
+                           verbose: bool = True,
                            initial_timings: Optional[Dict[str, float]] = None,
                            dataset: str = 'globem') -> Dict:
     """
     Generate and save prompts only without calling LLM.
     Returns prompts and metadata for saving to disk.
-    
-    Args:
-        use_all_samples: If True, use all samples in lab_df (ignores n_samples).
     """
     # Determine actual number of samples to use
+    use_all_samples = len(lab_df) <= n_samples * 2
     actual_n_samples = len(lab_df) if use_all_samples else n_samples
     
     if verbose:
@@ -662,46 +591,39 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
     
     collected_prompts, collected_metadata = [], []
     
-    # For multi-institution testset or CES/MentalIoT, load historical data for ICL
+    # Load trainset for ICL examples (universal approach)
+    # For personal_recent, we need full data (train+test) to access all historical samples
+    # For cross-user strategies, we use trainset only to prevent future data leakage
     lab_df_for_icl = None
-    if dataset == 'ces' and hasattr(config, 'CES_TRAIN_DF'):
-        # For CES, use train_df for ICL examples
-        lab_df_for_icl = config.CES_TRAIN_DF
-    elif dataset == 'mentaliot' and hasattr(config, 'MENTALIOT_TRAIN_DF'):
-        # For MentalIoT, use train_df for ICL examples
-        lab_df_for_icl = config.MENTALIOT_TRAIN_DF
+    full_lab_df_for_personal = None
+    
+    train_df_attr = f'{dataset.upper()}_TRAIN_DF'
+    full_df_attr = f'{dataset.upper()}_FULL_LAB_DF'
+    
+    # For GLOBEM, use pre-aggregated features for prompt generation
+    # (feat_df contains raw data for DTW)
+    aggregated_feat_df = feat_df  # Default: same as feat_df
+    if dataset == 'globem' and hasattr(config, 'GLOBEM_AGGREGATED_FEAT_DF'):
+        aggregated_feat_df = config.GLOBEM_AGGREGATED_FEAT_DF
+    
+    if hasattr(config, train_df_attr):
+        lab_df_for_icl = getattr(config, train_df_attr)
         if verbose:
-            print(f"  [Using MentalIoT train set for ICL: {len(lab_df_for_icl)} samples]")
-    elif use_all_samples and config.USE_MULTI_INSTITUTION_TESTSET:
-        # Load full historical data for ICL (all weeks, not just testset)
-        from .sensor_transformation import load_globem_data
+            print(f"  [Using {dataset.upper()} train set for cross-user ICL: {len(lab_df_for_icl)} samples]")
+    
+    if strategy in ['personal_recent', 'hybrid'] and hasattr(config, full_df_attr):
+        full_lab_df_for_personal = getattr(config, full_df_attr)
         if verbose:
-            print("  [Loading historical data for ICL...]")
-        
-        all_historical_dfs = []
-        for institution in config.MULTI_INSTITUTION_CONFIG.keys():
-            _, hist_lab, _ = load_globem_data(
-                institution=institution, 
-                target=config.DEFAULT_TARGET
-            )
-            hist_lab['institution'] = institution
-            all_historical_dfs.append(hist_lab)
-        
-        lab_df_for_icl = pd.concat(all_historical_dfs, ignore_index=True)
-        if verbose:
-            print(f"  Loaded {len(lab_df_for_icl)} historical samples for ICL")
+            print(f"  [Using {dataset.upper()} full data for personal ICL: {len(full_lab_df_for_personal)} samples (train+test)]")
     
     # Build retrieval candidate pool ONCE for entire evaluation (if using retrieval)
     retrieval_candidates = None
-    if strategy in ['cross_retrieval', 'hybrid_blend'] and (strategy == 'cross_retrieval' or use_dtw):
+    if strategy in ['cross_retrieval', 'hybrid'] and (strategy == 'cross_retrieval' or use_dtw):
         if verbose:
             print(f"\n[Retrieval Setup] Building candidate pool for {strategy}...")
         
-        # Use trainset: all historical data excluding testset
-        if use_all_samples and lab_df_for_icl is not None:
-            trainset = lab_df_for_icl[~lab_df_for_icl.get('is_testset', False)] if 'is_testset' in lab_df_for_icl.columns else lab_df_for_icl
-        else:
-            trainset = lab_df_for_icl if lab_df_for_icl is not None else lab_df
+        # Use trainset (ICL pool)
+        trainset = lab_df_for_icl if lab_df_for_icl is not None else lab_df
         
         retrieval_candidates = build_retrieval_candidate_pool(
             feat_df, trainset, cols,
@@ -726,28 +648,16 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
             user_id = row[cols['user_id']]
             ema_date = row[cols['date']]
             
-            # Get aggregated features (different for CES/MentalIoT vs GLOBEM)
-            if dataset in ['ces', 'mentaliot']:
-                # For CES/MentalIoT, aggregated_features is already in feat_df
-                feat_row = feat_df[
-                    (feat_df[cols['user_id']] == user_id) & 
-                    (feat_df[cols['date']] == ema_date)
-                ]
-                if len(feat_row) > 0:
-                    agg_feats = feat_row.iloc[0].to_dict()
-                else:
-                    # No data for this sample
-                    agg_feats = None
+            # Get aggregated features from pre-aggregated file (all datasets now use this)
+            feat_row = aggregated_feat_df[
+                (aggregated_feat_df[cols['user_id']] == user_id) & 
+                (aggregated_feat_df[cols['date']] == ema_date)
+            ]
+            if len(feat_row) > 0:
+                agg_feats = feat_row.iloc[0].to_dict()
             else:
-                # For GLOBEM, compute on-the-fly
-                agg_feats = aggregate_window_features(
-                    feat_df, user_id, ema_date, cols,
-                    window_days=config.AGGREGATION_WINDOW_DAYS,
-                    mode=config.DEFAULT_AGGREGATION_MODE,
-                    use_immediate_window=config.USE_IMMEDIATE_WINDOW,
-                    immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
-                    adaptive_window=config.USE_ADAPTIVE_WINDOW
-                )
+                # No data for this sample
+                agg_feats = None
             
             # For pre-selected testset: include ALL samples even if agg_feats is None
             if agg_feats is None:
@@ -794,23 +704,28 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
                 user_id = row[cols['user_id']]
                 ema_date = row[cols['date']]
                 
-                agg_feats = aggregate_window_features(
-                    feat_df, user_id, ema_date, cols,
-                    window_days=config.AGGREGATION_WINDOW_DAYS,
-                    mode=config.DEFAULT_AGGREGATION_MODE,
-                    use_immediate_window=config.USE_IMMEDIATE_WINDOW,
-                    immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
-                    adaptive_window=config.USE_ADAPTIVE_WINDOW
-                )
+                # Get aggregated features from pre-aggregated file (all datasets now use this)
+                feat_row = feat_df[
+                    (feat_df[cols['user_id']] == user_id) & 
+                    (feat_df[cols['date']] == ema_date)
+                ]
+                if len(feat_row) == 0:
+                    attempts += 1
+                    continue
+                agg_feats = feat_row.iloc[0].to_dict()
                 
-                if agg_feats is not None and check_missing_ratio(agg_feats):
-                    labels = row[cols['labels']].to_dict()
-                    input_samples.append({
-                        'aggregated_features': agg_feats,
-                        'labels': labels,
-                        'user_id': user_id,
-                        'ema_date': ema_date
-                    })
+                # Check missing ratio
+                if not check_missing_ratio(agg_feats):
+                    attempts += 1
+                    continue
+                
+                labels = row[cols['labels']].to_dict()
+                input_samples.append({
+                    'aggregated_features': agg_feats,
+                    'labels': labels,
+                    'user_id': user_id,
+                    'ema_date': ema_date
+                })
                 
                 attempts += 1
             
@@ -830,17 +745,19 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
     # Generate prompts for each sample
     for i, input_sample in enumerate(tqdm(input_samples, desc="Generating prompts", disable=not verbose)):
 
-        # ICL - use lab_df_for_icl if available (full historical data)
-        # For CES/MentalIoT, always use trainset (lab_df_for_icl), not testset (lab_df)
-        if dataset in ['ces', 'mentaliot'] and lab_df_for_icl is not None:
-            icl_lab_df = lab_df_for_icl
+        # ICL - Select appropriate data source based on strategy
+        # Personal strategies: use full data (train+test) with date filtering
+        # Cross-user strategies: use trainset only to prevent future leakage
+        if strategy in ['personal_recent', 'hybrid']:
+            icl_lab_df = full_lab_df_for_personal if full_lab_df_for_personal is not None else (lab_df_for_icl if lab_df_for_icl is not None else lab_df)
         else:
-            icl_lab_df = lab_df_for_icl if (use_all_samples and lab_df_for_icl is not None) else lab_df
+            icl_lab_df = lab_df_for_icl if lab_df_for_icl is not None else lab_df
         
         icl_examples, icl_strategy = select_icl(
             feat_df, icl_lab_df, cols, input_sample, n_shot, strategy, use_dtw,
             (random_state + i * 1000) if random_state else None,
-            all_step_timings, False, retrieval_candidates, dataset  # verbose=False, pass retrieval pool
+            all_step_timings, False, retrieval_candidates, dataset,  # verbose=False, pass retrieval pool
+            lab_df_for_icl, full_lab_df_for_personal
         )
 
         # Prompt
@@ -862,14 +779,21 @@ def run_batch_prompts_only(prompt_manager: PromptManager, feat_df, lab_df, cols:
         else:
             agg_feats_filtered = agg_feats
         
-        # Get stress label if available (for CES)
-        true_stress = input_sample['labels'].get('stress', None)
+        # Get labels dynamically based on dataset
+        labels = input_sample['labels']
+        anxiety_key = cols['labels'][0] if len(cols['labels']) > 0 else list(labels.keys())[0]
+        depression_key = cols['labels'][1] if len(cols['labels']) > 1 else list(labels.keys())[1]
+        stress_key = cols['labels'][2] if len(cols['labels']) > 2 else 'stress'
+        
+        true_anxiety = labels[anxiety_key]
+        true_depression = labels[depression_key]
+        true_stress = labels.get(stress_key, None)
         
         metadata_entry = {
             'user_id': input_sample['user_id'],
             'ema_date': str(input_sample['ema_date']),
-            'true_anxiety': input_sample['labels']['phq4_anxiety_EMA'],
-            'true_depression': input_sample['labels']['phq4_depression_EMA'],
+            'true_anxiety': true_anxiety,
+            'true_depression': true_depression,
         }
         
         # Add stress if available (before features to maintain label grouping)
@@ -1045,8 +969,9 @@ def run_batch_with_loaded_prompts(reasoner: LLMReasoner, prompts: List[str], met
     if verbose:
         print(f"\n{'=' * 60}\n[Data] CALCULATING METRICS\n{'=' * 60}\n")
 
-    results = [
-        {
+    results = []
+    for p in all_predictions:
+        result = {
             'labels': {
                 'phq4_anxiety_EMA': p['true_anxiety'],
                 'phq4_depression_EMA': p['true_depression'],
@@ -1056,10 +981,16 @@ def run_batch_with_loaded_prompts(reasoner: LLMReasoner, prompts: List[str], met
                 'Depression_binary': p['pred_depression'],
             },
         }
-        for p in all_predictions
-    ]
+        
+        # Add stress if available (CES/MentalIoT dataset)
+        if 'true_stress' in p:
+            result['labels']['stress'] = p['true_stress']
+            result['prediction']['Stress_binary'] = p.get('pred_stress', 0)
+        
+        results.append(result)
 
-    report = generate_comprehensive_report(results, reasoner.get_usage_summary())
+    # Pass predictions to generate_comprehensive_report - for self_feedback, usage will be extracted from predictions
+    report = generate_comprehensive_report(results, reasoner.get_usage_summary(), predictions=all_predictions)
     report['predictions'] = all_predictions  # Store predictions for CSV export
     print_comprehensive_report(report)
     return report

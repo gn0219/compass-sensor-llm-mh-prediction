@@ -19,29 +19,25 @@ from dtaidistance import dtw_ndim
 from tqdm import tqdm
 
 try:
-    from .sensor_transformation import aggregate_window_features, check_missing_ratio, get_user_window_data
+    from .sensor_transformation import (
+        aggregate_window_features, check_missing_ratio, get_user_window_data,
+        _get_statistical_features, _extract_time_series_from_window_data, _extract_time_series_from_raw_data
+    )
     from .timerag_retrieval import (
         build_retrieval_candidate_pool_timerag, sample_from_timerag_pool_dtw,
         build_retrieval_candidate_pool_timerag_ces, sample_from_timerag_pool_dtw_ces
     )
     from . import config
 except ImportError:
-    from sensor_transformation import aggregate_window_features, check_missing_ratio, get_user_window_data
+    from sensor_transformation import (
+        aggregate_window_features, check_missing_ratio, get_user_window_data,
+        _get_statistical_features, _extract_time_series_from_window_data, _extract_time_series_from_raw_data
+    )
     from timerag_retrieval import (
         build_retrieval_candidate_pool_timerag, sample_from_timerag_pool_dtw,
         build_retrieval_candidate_pool_timerag_ces, sample_from_timerag_pool_dtw_ces
     )
     import config
-
-
-def _get_statistical_features() -> Optional[List[str]]:
-    """Get statistical features for the current target."""
-    if config.DEFAULT_TARGET == 'compass':
-        config_path = Path(__file__).parent.parent / 'config' / 'globem_use_cols.json'
-        with open(config_path, 'r') as f:
-            cols_config = json.load(f)
-        return list(cols_config['compass']['feature_set']['statistical'].keys())
-    return None
 
 
 def build_retrieval_candidate_pool_mentaliot(
@@ -180,7 +176,7 @@ def select_icl_examples(
         target_user_id: Target user ID
         target_ema_date: Target EMA date
         n_shot: Number of examples to select
-        strategy: 'cross_random', 'cross_retrieval', 'personal_recent', or 'hybrid_blend'
+        strategy: 'cross_random', 'cross_retrieval', 'personal_recent', or 'hybrid'
         use_dtw: Whether to use DTW for hybrid (if False, uses random for cross-user part)
         random_state: Random seed for reproducibility
         target_sample: Target sample dict (required for retrieval-based selection)
@@ -274,8 +270,8 @@ def select_icl_examples(
             feat_df, personal_lab, cols, n_shot, target_ema_date, dataset=dataset
         )
     
-    elif strategy == 'hybrid_blend':
-        # Hybrid-Blend: Mix personal recent + cross-user
+    elif strategy == 'hybrid':
+        # Hybrid: Mix personal recent + cross-user
         n_personal = n_shot // 2
         n_cross = n_shot - n_personal
         
@@ -352,6 +348,11 @@ def _sample_cross_random(
     else:
         rng = np.random.RandomState()
     
+    # For GLOBEM, use pre-aggregated features instead of raw daily features
+    aggregated_feat_df = feat_df
+    if dataset == 'globem' and hasattr(config, 'GLOBEM_AGGREGATED_FEAT_DF'):
+        aggregated_feat_df = config.GLOBEM_AGGREGATED_FEAT_DF
+    
     # Create stratification key from all available labels
     label_cols = cols['labels']
     lab_pool_copy = lab_pool.copy()
@@ -419,29 +420,17 @@ def _sample_cross_random(
             user_id = row[cols['user_id']]
             ema_date = row[cols['date']]
             
-            # Aggregate features (different logic for CES vs GLOBEM)
-            if dataset == 'ces':
-                # For CES, aggregated_features is already in feat_df
-                feat_row = feat_df[
-                    (feat_df[cols['user_id']] == user_id) & 
-                    (feat_df[cols['date']] == ema_date)
-                ]
-                if len(feat_row) == 0:
-                    attempts += 1
-                    continue
-                agg_feats = feat_row.iloc[0].to_dict()
-            else:
-                # For GLOBEM, compute on-the-fly
-                agg_feats = aggregate_window_features(
-                    feat_df, user_id, ema_date, cols,
-                    window_days=config.AGGREGATION_WINDOW_DAYS,
-                    mode=config.DEFAULT_AGGREGATION_MODE,
-                    use_immediate_window=config.USE_IMMEDIATE_WINDOW,
-                    immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
-                    adaptive_window=config.USE_ADAPTIVE_WINDOW
-                )
+            # Get aggregated features from pre-aggregated file (all datasets now use this)
+            feat_row = aggregated_feat_df[
+                (aggregated_feat_df[cols['user_id']] == user_id) & 
+                (aggregated_feat_df[cols['date']] == ema_date)
+            ]
+            if len(feat_row) == 0:
+                attempts += 1
+                continue
+            agg_feats = feat_row.iloc[0].to_dict()
             
-            if agg_feats is not None and (dataset == 'ces' or check_missing_ratio(agg_feats)):
+            if agg_feats is not None and check_missing_ratio(agg_feats):
                 labels = row[cols['labels']].to_dict()
                 examples.append({
                     'aggregated_features': agg_feats,
@@ -488,25 +477,16 @@ def _sample_cross_random(
                 ema_date = row[cols['date']]
                 
                 # Aggregate features
-                if dataset in ['ces', 'mentaliot']:
-                    feat_row = feat_df[
-                        (feat_df[cols['user_id']] == user_id) & 
-                        (feat_df[cols['date']] == ema_date)
-                    ]
-                    if len(feat_row) == 0:
-                        continue
-                    agg_feats = feat_row.iloc[0].to_dict()
-                else:
-                    agg_feats = aggregate_window_features(
-                        feat_df, user_id, ema_date, cols,
-                        window_days=config.AGGREGATION_WINDOW_DAYS,
-                        mode=config.DEFAULT_AGGREGATION_MODE,
-                        use_immediate_window=config.USE_IMMEDIATE_WINDOW,
-                        immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
-                        adaptive_window=config.USE_ADAPTIVE_WINDOW
-                    )
+                # Get aggregated features from pre-aggregated file (all datasets)
+                feat_row = aggregated_feat_df[
+                    (aggregated_feat_df[cols['user_id']] == user_id) & 
+                    (aggregated_feat_df[cols['date']] == ema_date)
+                ]
+                if len(feat_row) == 0:
+                    continue
+                agg_feats = feat_row.iloc[0].to_dict()
                 
-                if agg_feats is not None and (dataset in ['ces', 'mentaliot'] or check_missing_ratio(agg_feats)):
+                if agg_feats is not None and check_missing_ratio(agg_feats):
                     labels = row[cols['labels']].to_dict()
                     examples.append({
                         'aggregated_features': agg_feats,
@@ -635,7 +615,12 @@ def _sample_from_prebuilt_pool_dtw(
         return [c['sample'] for c in candidates] if candidates else None
     
     # Get statistical features
-    stat_features = _get_statistical_features()
+    stat_features = _get_statistical_features(cols)
+    
+    if stat_features is None or len(stat_features) == 0:
+        print(f"[ERROR] No statistical features found in _get_statistical_features()")
+        print(f"  cols keys: {cols.keys() if cols else None}")
+        return None
     
     # Extract target time series
     target_ts = _extract_time_series_from_raw_data(
@@ -644,7 +629,9 @@ def _sample_from_prebuilt_pool_dtw(
     )
     
     if target_ts is None:
-        print("Warning: Could not extract target time series")
+        print(f"Warning: Could not extract target time series for user={target_sample['user_id']}, date={target_sample['ema_date']}")
+        print(f"  stat_features: {len(stat_features) if stat_features else None}")
+        print(f"  feat_df shape: {feat_df.shape}")
         return None
     
     # Compute DTW distances using dtaidistance (multi-dimensional)
@@ -721,7 +708,7 @@ def _sample_cross_retrieval(
     t1 = time.time()
     
     # Get statistical features for compass mode
-    stat_features = _get_statistical_features()
+    stat_features = _get_statistical_features(cols)
     
     target_ts = _extract_time_series_from_raw_data(
         feat_df, target_sample['user_id'], target_sample['ema_date'], cols,
@@ -821,34 +808,27 @@ def _sample_personal_recent(
     # Need to search more to account for samples with missing data
     max_search = min(len(sorted_lab), n_samples * 3)  # Search up to 3x to find valid samples
     
+    # For GLOBEM, use pre-aggregated features instead of raw daily features
+    aggregated_feat_df = feat_df
+    if dataset == 'globem' and hasattr(config, 'GLOBEM_AGGREGATED_FEAT_DF'):
+        aggregated_feat_df = config.GLOBEM_AGGREGATED_FEAT_DF
+    
     examples = []
     for idx in sorted_lab.head(max_search).index:
         row = sorted_lab.loc[idx]
         user_id = row[cols['user_id']]
         ema_date = row[cols['date']]
         
-        # Aggregate features (different logic for CES vs GLOBEM)
-        if dataset == 'ces':
-            # For CES, aggregated_features is already in feat_df
-            feat_row = feat_df[
-                (feat_df[cols['user_id']] == user_id) & 
-                (feat_df[cols['date']] == ema_date)
-            ]
-            if len(feat_row) == 0:
-                continue
-            agg_feats = feat_row.iloc[0].to_dict()
-        else:
-            # For GLOBEM, compute on-the-fly
-            agg_feats = aggregate_window_features(
-                feat_df, user_id, ema_date, cols,
-                window_days=config.AGGREGATION_WINDOW_DAYS,
-                mode=config.DEFAULT_AGGREGATION_MODE,
-                use_immediate_window=config.USE_IMMEDIATE_WINDOW,
-                immediate_window_days=config.IMMEDIATE_WINDOW_DAYS,
-                adaptive_window=config.USE_ADAPTIVE_WINDOW
-            )
+        # Get aggregated features from pre-aggregated file (all datasets now use this)
+        feat_row = aggregated_feat_df[
+            (aggregated_feat_df[cols['user_id']] == user_id) & 
+            (aggregated_feat_df[cols['date']] == ema_date)
+        ]
+        if len(feat_row) == 0:
+            continue
+        agg_feats = feat_row.iloc[0].to_dict()
         
-        if agg_feats is not None and (dataset == 'ces' or check_missing_ratio(agg_feats)):
+        if agg_feats is not None and check_missing_ratio(agg_feats):
             labels = row[cols['labels']].to_dict()
             examples.append({
                 'aggregated_features': agg_feats,
@@ -886,7 +866,7 @@ def _build_candidate_pool_dtw(
     candidates = []
     
     # Get statistical features for compass mode
-    stat_features = _get_statistical_features()
+    stat_features = _get_statistical_features(cols)
     
     for idx in lab_pool.index:
         row = lab_pool.loc[idx]
@@ -931,77 +911,6 @@ def _build_candidate_pool_dtw(
                 })
     
     return candidates
-
-
-def _extract_time_series_from_window_data(
-    window_data: pd.DataFrame, stat_features: Optional[List[str]] = None
-) -> Optional[np.ndarray]:
-    """
-    Extract time series from already-filtered window data.
-    
-    Args:
-        window_data: Already filtered and sorted DataFrame (from get_user_window_data)
-        stat_features: List of statistical feature columns to extract
-        
-    Returns:
-        numpy array of shape (n_days, n_features) or None if insufficient data
-    """
-    if stat_features is None or window_data is None or len(window_data) == 0:
-        return None
-    
-    # Extract feature values for each day
-    time_series_list = []
-    
-    for _, row in window_data.iterrows():
-        day_features = []
-        for feat_col in stat_features:
-            if feat_col in row:
-                val = row[feat_col]
-                # Convert to float, handle NaN
-                if pd.isna(val):
-                    day_features.append(0.0)
-                else:
-                    day_features.append(float(val))
-            else:
-                day_features.append(0.0)
-        
-        time_series_list.append(day_features)
-    
-    if not time_series_list:
-        return None
-    
-    # Convert to numpy array: shape (n_days, n_features)
-    time_series = np.array(time_series_list)
-    
-    return time_series
-
-
-def _extract_time_series_from_raw_data(
-    feat_df: pd.DataFrame, user_id: str, ema_date: pd.Timestamp, cols: Dict,
-    window_days: int = 28, stat_features: Optional[List[str]] = None
-) -> Optional[np.ndarray]:
-    """
-    Extract actual 28-day time series from raw feat_df.
-    
-    Args:
-        feat_df: Raw feature dataframe
-        user_id: User ID
-        ema_date: EMA date
-        cols: Column configuration
-        window_days: Number of days to look back (default 28)
-        stat_features: List of statistical feature columns to extract
-        
-    Returns:
-        numpy array of shape (n_days, n_features) where n_days <= window_days
-        Returns None if insufficient data
-    """
-    # Use shared utility to get window data
-    window_data = get_user_window_data(feat_df, user_id, ema_date, cols, window_days)
-    
-    if window_data is None or len(window_data) < window_days * 0.5:
-        return None
-    
-    return _extract_time_series_from_window_data(window_data, stat_features)
 
 
 def _extract_time_series(agg_feats: Dict, cols: Dict) -> Optional[np.ndarray]:

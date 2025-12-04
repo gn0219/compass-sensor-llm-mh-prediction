@@ -28,9 +28,9 @@ def calculate_binary_metrics(y_true: List[int], y_pred: List[int],
     
     accuracy = accuracy_score(y_true, y_pred)
     balanced_acc = balanced_accuracy_score(y_true, y_pred)
-    precision = precision_score(y_true, y_pred, zero_division=0)
-    recall = recall_score(y_true, y_pred, zero_division=0)
-    f1 = f1_score(y_true, y_pred, zero_division=0)
+    precision = precision_score(y_true, y_pred, zero_division=0, average='macro')
+    recall = recall_score(y_true, y_pred, zero_division=0, average='macro')
+    f1 = f1_score(y_true, y_pred, zero_division=0, average='macro')
     cm = confusion_matrix(y_true, y_pred, labels=[0, 1])  # Explicitly specify labels to avoid warnings
     
     # Extract TP, TN, FP, FN from confusion matrix
@@ -124,6 +124,84 @@ def calculate_mental_health_metrics(results: List[Dict], anxiety_label_key: str 
 def calculate_classification_metrics(y_true: List[int], y_pred: List[int], target: str = '') -> Dict:
     """Wrapper for classification metrics."""
     return calculate_binary_metrics(y_true, y_pred, None, target)
+
+
+def extract_usage_from_predictions(predictions: List[Dict]) -> Dict:
+    """
+    Extract usage statistics from predictions (for self_feedback where usage is embedded in predictions).
+    
+    For self_feedback, each prediction has iteration-level usage in:
+    prediction['prediction']['Reasoning']['all_iterations'][i]['usage']
+    
+    Returns a usage_stats dict compatible with calculate_efficiency_metrics.
+    """
+    all_latencies = []
+    all_costs = []
+    all_total_tokens = []
+    all_prompt_tokens = []
+    all_completion_tokens = []
+    
+    for pred in predictions:
+        if 'prediction' in pred and 'Reasoning' in pred['prediction']:
+            reasoning = pred['prediction']['Reasoning']
+            
+            # Check if this is self_feedback
+            if reasoning.get('method') == 'self_feedback' and 'all_iterations' in reasoning:
+                # Sum up usage across all iterations for this sample
+                sample_latency = 0
+                sample_cost = 0
+                sample_total_tokens = 0
+                sample_prompt_tokens = 0
+                sample_completion_tokens = 0
+                
+                for iteration in reasoning['all_iterations']:
+                    if 'usage' in iteration:
+                        usage = iteration['usage']
+                        sample_latency += usage.get('latency', 0)
+                        sample_cost += usage.get('cost', 0)
+                        sample_total_tokens += usage.get('total_tokens', 0)
+                        sample_prompt_tokens += usage.get('prompt_tokens', 0)
+                        sample_completion_tokens += usage.get('completion_tokens', 0)
+                
+                all_latencies.append(sample_latency)
+                all_costs.append(sample_cost)
+                all_total_tokens.append(sample_total_tokens)
+                all_prompt_tokens.append(sample_prompt_tokens)
+                all_completion_tokens.append(sample_completion_tokens)
+    
+    # If no usage found, return empty stats
+    if not all_latencies:
+        return {
+            'num_requests': 0,
+            'total_latency': 0,
+            'total_cost': 0,
+            'total_tokens': 0,
+            'prompt_tokens': 0,
+            'completion_tokens': 0,
+            'latencies': [],
+            'costs': [],
+            'total_tokens_list': [],
+            'prompt_tokens_list': [],
+            'completion_tokens_list': []
+        }
+    
+    # Build usage_stats dict compatible with calculate_efficiency_metrics
+    return {
+        'num_requests': len(all_latencies),
+        'total_latency': sum(all_latencies),
+        'total_cost': sum(all_costs),
+        'total_tokens': sum(all_total_tokens),
+        'prompt_tokens': sum(all_prompt_tokens),
+        'completion_tokens': sum(all_completion_tokens),
+        'latencies': all_latencies,
+        'costs': all_costs,
+        'total_tokens_list': all_total_tokens,
+        'prompt_tokens_list': all_prompt_tokens,
+        'completion_tokens_list': all_completion_tokens,
+        'gpu_memory_used': [],
+        'gpu_utilization': [],
+        'peak_gpu_memory': 0.0
+    }
 
 
 def calculate_efficiency_metrics(usage_stats: Dict) -> Dict:
@@ -220,15 +298,37 @@ def calculate_efficiency_metrics(usage_stats: Dict) -> Dict:
     }
 
 
-def generate_comprehensive_report(results: List[Dict], usage_stats: Dict, config: Optional[Dict] = None) -> Dict:
-    """Generate comprehensive performance report with classification and efficiency metrics."""
+def generate_comprehensive_report(results: List[Dict], usage_stats: Dict, config: Optional[Dict] = None, 
+                                  predictions: Optional[List[Dict]] = None) -> Dict:
+    """
+    Generate comprehensive performance report with classification and efficiency metrics.
+    
+    Args:
+        results: List of result dicts for classification metrics
+        usage_stats: Usage statistics dict (may be empty for self_feedback)
+        config: Configuration dict
+        predictions: Optional list of predictions (used to extract usage for self_feedback)
+    
+    For self_feedback, if usage_stats is empty or has num_requests=0, will attempt to
+    extract usage from predictions which contain iteration-level usage data.
+    """
     classification_metrics = calculate_mental_health_metrics(results)
+    
+    # For self_feedback, usage_stats may be empty - extract from predictions
+    if (not usage_stats or usage_stats.get('num_requests', 0) == 0) and predictions:
+        # Check if this is self_feedback by looking at first prediction
+        if predictions and 'prediction' in predictions[0]:
+            reasoning = predictions[0]['prediction'].get('Reasoning', {})
+            if reasoning.get('method') == 'self_feedback':
+                print("  [Info] Extracting usage from self_feedback predictions...")
+                usage_stats = extract_usage_from_predictions(predictions)
+    
     efficiency_metrics = calculate_efficiency_metrics(usage_stats)
     
     # Summary statistics
     summary = {
         'total_samples': len(results),
-        'total_requests': usage_stats.get('num_requests', 0),
+        'total_requests': usage_stats.get('num_requests', 0) if usage_stats else 0,
         'anxiety_accuracy': classification_metrics['anxiety']['accuracy'],
         'anxiety_f1': classification_metrics['anxiety']['f1_score'],
         'depression_accuracy': classification_metrics['depression']['accuracy'],
@@ -481,6 +581,72 @@ def save_metrics_to_csv(metrics: Dict, filepath: str):
     df = metrics_to_dataframe(metrics)
     df.to_csv(filepath)
     print(f"Metrics saved to: {filepath}")
+
+
+def convert_checkpoint_to_report(checkpoint_data: Dict, config: Optional[Dict] = None) -> Dict:
+    """
+    Convert a checkpoint file (predictions-only) to a comprehensive report.
+    
+    Useful for self_feedback results that were saved as checkpoints without cost_efficiency.
+    Extracts usage from predictions and generates classification and efficiency metrics.
+    
+    Args:
+        checkpoint_data: Dict containing at least 'predictions' key
+        config: Optional config dict
+    
+    Returns:
+        Comprehensive report with classification_performance, cost_efficiency, etc.
+    """
+    predictions = checkpoint_data.get('predictions', [])
+    
+    if not predictions:
+        raise ValueError("No predictions found in checkpoint data")
+    
+    # Convert predictions to results format for classification metrics (inline)
+    results_for_report = []
+    for pred in predictions:
+        # Build labels dict
+        labels = {}
+        if 'true_anxiety' in pred:
+            labels['phq4_anxiety_EMA'] = pred['true_anxiety']
+        if 'true_depression' in pred:
+            labels['phq4_depression_EMA'] = pred['true_depression']
+        if 'true_stress' in pred:
+            labels['stress'] = pred['true_stress']
+        
+        # Build prediction dict
+        prediction = {}
+        if 'pred_anxiety' in pred:
+            prediction['Anxiety_binary'] = pred['pred_anxiety']
+        if 'pred_depression' in pred:
+            prediction['Depression_binary'] = pred['pred_depression']
+        if 'pred_stress' in pred:
+            prediction['Stress_binary'] = pred['pred_stress']
+        
+        results_for_report.append({
+            'labels': labels,
+            'prediction': prediction
+        })
+    
+    # Extract usage from predictions (will auto-detect self_feedback)
+    usage_stats = extract_usage_from_predictions(predictions)
+    
+    # Generate comprehensive report
+    report = generate_comprehensive_report(
+        results_for_report, 
+        usage_stats, 
+        config=config,
+        predictions=predictions
+    )
+    
+    # Add predictions to report
+    report['predictions'] = predictions
+    
+    # Add metadata if present
+    if 'metadata' in checkpoint_data:
+        report['metadata'] = checkpoint_data['metadata']
+    
+    return report
 
 
 def export_comprehensive_report(report: Dict, base_filepath: str, predictions: List[Dict] = None, reasoning_method: str = 'direct'):

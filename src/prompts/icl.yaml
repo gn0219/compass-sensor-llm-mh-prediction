@@ -63,7 +63,7 @@ strategies:
     n_examples: 4
     temporal_constraint: "most_recent"
   
-  hybrid_blend:
+  hybrid:
     description: "Mix of personal recent and cross-user examples"
     example_selection: "mixed"
     n_examples: 4

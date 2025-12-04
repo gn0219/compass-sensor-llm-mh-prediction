@@ -110,6 +110,98 @@ def load_mentaliot_data(use_cols_path: str = './config/mentaliot_use_cols.json')
     return feat_df, lab_df, cols
 
 
+def load_dataset_testset(dataset_type: str = 'globem') -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, Dict]:
+    """
+    Universal testset loader for all datasets (GLOBEM, CES, MentalIoT).
+    
+    Loads pre-generated testset and trainset from CSV files.
+    Eliminates need for runtime testset generation and ensures consistency.
+    
+    Args:
+        dataset_type: 'globem', 'ces', or 'mentaliot'
+    
+    Returns:
+        (feat_df, lab_df, test_df, train_df, cols)
+        - feat_df: All features (for aggregation/retrieval)
+        - lab_df: All labels (combined test + train)
+        - test_df: Test samples only
+        - train_df: Training samples (for ICL)
+        - cols: Column configuration
+    """
+    dataset_config = config.DATASET_CONFIGS[dataset_type]
+    
+    print(f"\n[Loading {dataset_config['name']} testset...]")
+    
+    # Load testset and trainset
+    test_df = pd.read_csv(dataset_config['testset_file'], low_memory=False)
+    train_df = pd.read_csv(dataset_config['trainset_file'], low_memory=False)
+    
+    # Load column configuration
+    with open(dataset_config['use_cols_path'], 'r') as f:
+        use_cols = json.load(f)
+    cols = use_cols.get('compass', use_cols)  # Handle both formats
+    
+    # Convert date columns
+    date_col = cols['date']
+    test_df[date_col] = pd.to_datetime(test_df[date_col])
+    train_df[date_col] = pd.to_datetime(train_df[date_col])
+    
+    # Combine for full label df
+    lab_df = pd.concat([train_df, test_df], ignore_index=True)
+    
+    # Load features based on dataset type
+    if dataset_type == 'globem':
+        # GLOBEM: Load daily features (for DTW/ML) and pre-aggregated (for prompts)
+        if dataset_config.get('has_daily_features') and os.path.exists(dataset_config['daily_features_file']):
+            # Load combined daily features (faster, recommended)
+            print(f"  Loading daily features from {dataset_config['daily_features_file']}")
+            feat_df = pd.read_csv(dataset_config['daily_features_file'], low_memory=False)
+            feat_df[date_col] = pd.to_datetime(feat_df[date_col])
+        else:
+            # Fallback: Load raw features from individual institutions
+            print(f"  Loading raw features from {dataset_config['base_path']}")
+            feat_dfs = []
+            
+            if 'institution' in test_df.columns:
+                # Multi-institution GLOBEM
+                institutions = test_df['institution'].unique()
+                for inst in institutions:
+                    feat_path = f"{dataset_config['base_path']}/{inst}/FeatureData/rapids.csv"
+                    if os.path.exists(feat_path):
+                        inst_feat = pd.read_csv(feat_path, low_memory=False)
+                        inst_feat['institution'] = inst
+                        inst_feat[date_col] = pd.to_datetime(inst_feat[date_col])
+                        feat_dfs.append(inst_feat)
+                feat_df = pd.concat(feat_dfs, ignore_index=True) if feat_dfs else pd.DataFrame()
+            else:
+                # Single institution GLOBEM (legacy)
+                feat_path = f"{dataset_config['base_path']}/FeatureData/rapids.csv"
+                feat_df = pd.read_csv(feat_path, low_memory=False)
+                feat_df[date_col] = pd.to_datetime(feat_df[date_col])
+        
+        # Also load pre-aggregated features for fast prompt generation
+        print(f"  Loading pre-aggregated features from {dataset_config['aggregated_file']}")
+        aggregated_feat_df = pd.read_csv(dataset_config['aggregated_file'], low_memory=False)
+        aggregated_feat_df[date_col] = pd.to_datetime(aggregated_feat_df[date_col])
+        
+        # Store aggregated features in config for prompt generation
+        config.GLOBEM_AGGREGATED_FEAT_DF = aggregated_feat_df
+    elif dataset_config['has_pre_aggregated']:
+        # CES/MentalIoT: Load pre-aggregated features
+        print(f"  Loading pre-aggregated features from {dataset_config['aggregated_file']}")
+        feat_df = pd.read_csv(dataset_config['aggregated_file'], low_memory=False)
+        feat_df[date_col] = pd.to_datetime(feat_df[date_col])
+    else:
+        # Should not reach here
+        raise ValueError(f"Unknown dataset configuration for {dataset_type}")
+    
+    print(f"  Testset: {len(test_df)} samples from {test_df[cols['user_id']].nunique()} users")
+    print(f"  Trainset: {len(train_df)} samples")
+    print(f"  Labels: {dataset_config['labels']}")
+    
+    return feat_df, lab_df, test_df, train_df, cols
+
+
 def sample_mentaliot_testset(
     n_samples_per_user: int = 10,
     random_state: Optional[int] = None,

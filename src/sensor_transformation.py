@@ -14,10 +14,10 @@ from scipy import stats as scipy_stats
 
 try:
     from . import config
-    from .data_utils import binarize_labels, filter_testset_by_historical_labels, sample_multiinstitution_testset, load_globem_data
+    from .data_utils import binarize_labels
 except ImportError:
     import config
-    from data_utils import binarize_labels, filter_testset_by_historical_labels, sample_multiinstitution_testset
+    from data_utils import binarize_labels
 
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
@@ -53,6 +53,102 @@ def get_user_window_data(feat_df: pd.DataFrame, user_id: str, ema_date: pd.Times
     
     # Sort by date for chronological ordering
     return user_feats.sort_values(cols['date'])
+
+
+def _get_statistical_features(cols: Optional[Dict] = None) -> Optional[List[str]]:
+    """
+    Get list of statistical feature columns for time series extraction.
+    
+    Args:
+        cols: Column configuration (optional). If provided, will extract from feature_set.
+    
+    Returns:
+        List of feature column names or None if not found
+    """
+    # Try cols first
+    if cols and 'feature_set' in cols and isinstance(cols['feature_set'], dict):
+        if 'statistical' in cols['feature_set'] and isinstance(cols['feature_set']['statistical'], dict):
+            return list(cols['feature_set']['statistical'].keys())
+    
+    # Fallback: Try to load from config
+    try:
+        stat_features = config.STATISTICAL_FEATURES
+        return stat_features
+    except AttributeError:
+        pass
+    
+    return None
+
+
+def _extract_time_series_from_window_data(
+    window_data: pd.DataFrame, stat_features: Optional[List[str]] = None
+) -> Optional[np.ndarray]:
+    """
+    Extract time series from already-filtered window data.
+    
+    Args:
+        window_data: Already filtered and sorted DataFrame (from get_user_window_data)
+        stat_features: List of statistical feature columns to extract
+        
+    Returns:
+        numpy array of shape (n_days, n_features) or None if insufficient data
+    """
+    if stat_features is None or window_data is None or len(window_data) == 0:
+        return None
+    
+    # Extract feature values for each day
+    time_series_list = []
+    
+    for _, row in window_data.iterrows():
+        day_features = []
+        for feat_col in stat_features:
+            if feat_col in row:
+                val = row[feat_col]
+                # Convert to float, handle NaN
+                if pd.isna(val):
+                    day_features.append(0.0)
+                else:
+                    day_features.append(float(val))
+            else:
+                day_features.append(0.0)
+        
+        time_series_list.append(day_features)
+    
+    if not time_series_list:
+        return None
+    
+    # Convert to numpy array: shape (n_days, n_features)
+    time_series = np.array(time_series_list)
+    
+    return time_series
+
+
+def _extract_time_series_from_raw_data(
+    feat_df: pd.DataFrame, user_id: str, ema_date: pd.Timestamp, cols: Dict,
+    window_days: int = 28, stat_features: Optional[List[str]] = None
+) -> Optional[np.ndarray]:
+    """
+    Extract actual 28-day time series from raw feat_df.
+    
+    Args:
+        feat_df: Raw feature dataframe
+        user_id: User ID
+        ema_date: EMA date
+        cols: Column configuration
+        window_days: Number of days to look back (default 28)
+        stat_features: List of statistical feature columns to extract
+        
+    Returns:
+        numpy array of shape (n_days, n_features) where n_days <= window_days
+        Returns None if insufficient data
+    """
+    # Use shared utility to get window data
+    window_data = get_user_window_data(feat_df, user_id, ema_date, cols, window_days)
+    
+    if window_data is None or len(window_data) < window_days * 0.5:
+        return None
+    
+    return _extract_time_series_from_window_data(window_data, stat_features)
 
 
 def aggregate_window_features(feat_df: pd.DataFrame, user_id: str, ema_date: pd.Timestamp,
@@ -458,7 +554,33 @@ def check_missing_ratio(data, threshold: float = 0.7) -> bool:
                 return False
             missing_ratio = missing_values / total_values
         else:
-            raise ValueError(f"Unsupported dict format: {data.keys()}")
+            # Flat structure (e.g., GLOBEM pre-aggregated data)
+            # Check statistical feature columns (ending with _mean, _std, _min, _max)
+            total_values = 0
+            missing_values = 0
+            
+            # Metadata keys to skip
+            skip_keys = {'pid', 'user_id', 'date', 'ema_date', 'institution', 'is_testset', 
+                        'phq4_EMA', 'phq4_anxiety_EMA', 'phq4_depression_EMA', 'pss4_EMA',
+                        'positive_affect_EMA', 'negative_affect_EMA', 'aggregation_mode',
+                        'window_days', 'user_info', 'labels'}
+            
+            for key, value in data.items():
+                # Skip metadata and direction keys
+                if key in skip_keys or key.endswith('_direction'):
+                    continue
+                
+                # Check statistical and structural feature values
+                if key.endswith(('_mean', '_std', '_min', '_max', '_slope')):
+                    total_values += 1
+                    if value is None or (isinstance(value, float) and np.isnan(value)):
+                        missing_values += 1
+            
+            if total_values == 0:
+                # No statistical features found, check if it's truly empty or just different format
+                return len(data) > len(skip_keys)
+            
+            missing_ratio = missing_values / total_values
     else:
         raise ValueError(f"Unsupported data type: {type(data)}")
     
@@ -847,6 +969,176 @@ def _get_slope_direction(slope_value) -> str:
         return 'decreasing'
     else:
         return 'stable'
+
+
+def features_to_text_globem(agg_feats: Dict, cols: Dict, feat_df: pd.DataFrame = None) -> str:
+    """
+    Convert GLOBEM aggregated sensor features to natural language text.
+    
+    GLOBEM data is pre-aggregated with flat columns like:
+    - Statistical: "Location - total distance_mean", "_std", "_min", "_max"
+    - Structural: "Location - total distance_past_2weeks_slope", "_past_2weeks_direction", 
+                  "_recent_2weeks_slope", "_recent_2weeks_direction"
+    - Semantic: "Sleep duration_pattern", "Physical activity_circadian_28day", etc.
+    
+    Args:
+        agg_feats: Dictionary containing aggregated features (from aggregated_globem.csv)
+        cols: Column configuration
+        feat_df: Feature DataFrame (not used for GLOBEM, but kept for API consistency)
+    
+    Returns:
+        Formatted text representation
+    """
+    text = ""
+    
+    # Get ordered list of statistical features from cols (to preserve original order)
+    # If not available, fall back to detecting from data
+    stat_feature_bases = []
+    
+    if cols and 'feature_set' in cols and isinstance(cols['feature_set'], dict):
+        statistical_feats = cols['feature_set'].get('statistical', {})
+        if statistical_feats:
+            # Use the order from use_cols configuration
+            for feat_col, feat_name in statistical_feats.items():
+                # Convert feature name to the format in aggregated CSV
+                # e.g., "Location - total distance" -> "Location - total distance"
+                stat_feature_bases.append(feat_name)
+    
+    if not stat_feature_bases:
+        # Fallback: detect from data (but use set to avoid duplicates, then sorted for consistency)
+        base_set = set()
+        for key in agg_feats.keys():
+            if key.endswith('_mean') and key not in ['phq4_EMA', 'phq4_anxiety_EMA', 'phq4_depression_EMA', 
+                                                      'pss4_EMA', 'positive_affect_EMA', 'negative_affect_EMA']:
+                # Remove "_mean" to get base feature name
+                base = key[:-5]
+                base_set.add(base)
+        stat_feature_bases = sorted(base_set)
+    
+    # === STATISTICAL & STRUCTURAL FEATURES ===
+    text += "28 day summary features (P2W slope and R2W slope are calculated based on the past 2 weeks and recent 2 weeks trend):\n"
+    
+    for base in stat_feature_bases:
+        # Statistical values
+        mean_val = agg_feats.get(f"{base}_mean", None)
+        std_val = agg_feats.get(f"{base}_std", None)
+        min_val = agg_feats.get(f"{base}_min", None)
+        max_val = agg_feats.get(f"{base}_max", None)
+        
+        # Format statistical values
+        mean_str = f"{mean_val:.1f}" if isinstance(mean_val, (int, float)) and not np.isnan(mean_val) else 'N/A'
+        std_str = f"{std_val:.1f}" if isinstance(std_val, (int, float)) and not np.isnan(std_val) else 'N/A'
+        min_str = f"{min_val:.1f}" if isinstance(min_val, (int, float)) and not np.isnan(min_val) else 'N/A'
+        max_str = f"{max_val:.1f}" if isinstance(max_val, (int, float)) and not np.isnan(max_val) else 'N/A'
+        
+        # Only add if at least one value exists
+        if not all(s == 'N/A' for s in [mean_str, std_str, min_str, max_str]):
+            text += f"{base}: "
+            text += f"mean={mean_str}, "
+            text += f"std={std_str}, "
+            text += f"min={min_str}, "
+            text += f"max={max_str}\n"
+        
+        # Structural: slopes and directions
+        past_slope = agg_feats.get(f"{base}_past_2weeks_slope", None)
+        past_dir = agg_feats.get(f"{base}_past_2weeks_direction", 'stable')
+        recent_slope = agg_feats.get(f"{base}_recent_2weeks_slope", None)
+        recent_dir = agg_feats.get(f"{base}_recent_2weeks_direction", 'stable')
+        
+        # Format slope values
+        past_slope_str = f"{past_slope:.2f}" if isinstance(past_slope, (int, float)) and not np.isnan(past_slope) else 'N/A'
+        recent_slope_str = f"{recent_slope:.2f}" if isinstance(recent_slope, (int, float)) and not np.isnan(recent_slope) else 'N/A'
+        
+        # Only add slope information if at least one exists
+        if not all(s == 'N/A' for s in [past_slope_str, recent_slope_str]):
+            text += f"- P2W slope=({past_dir}, {past_slope_str}), R2W slope=({recent_dir}, {recent_slope_str})\n\n"
+        elif not all(s == 'N/A' for s in [mean_str, std_str, min_str, max_str]):
+            text += "\n"
+    
+    # === SEMANTIC FEATURES ===
+    # Find semantic features (pattern, circadian, yesterday_transition)
+    # Use fixed order to match original compass format
+    semantic_order = ['Sleep duration', 'Physical activity', 'Location entropy', 'Phone usage']
+    semantic_bases_found = set()
+    
+    for key in agg_feats.keys():
+        if '_pattern' in key or '_circadian_28day' in key or '_yesterday_transition' in key:
+            # Extract base feature name
+            if '_pattern' in key:
+                base = key.replace('_pattern', '')
+            elif '_circadian_28day' in key:
+                base = key.replace('_circadian_28day', '')
+            elif '_yesterday_transition' in key:
+                base = key.replace('_yesterday_transition', '')
+            else:
+                continue
+            semantic_bases_found.add(base)
+    
+    if semantic_bases_found:
+        text += "The following shows weekday/weekend patterns, 28-day circadian rhythms (mean), "
+        text += "and yesterday's transitions (morning/afternoon/evening/night).\n\n"
+        
+        # Use semantic_order, but only for features that exist in the data
+        for base in semantic_order:
+            if base not in semantic_bases_found:
+                continue
+            text += f"- {base}\n"
+            
+            # Pattern (weekday vs weekend)
+            pattern_key = f"{base}_pattern"
+            if pattern_key in agg_feats and agg_feats[pattern_key]:
+                pattern_str = agg_feats[pattern_key]
+                if isinstance(pattern_str, str):
+                    try:
+                        # Parse string representation of dict
+                        pattern = eval(pattern_str) if pattern_str != 'null' else None
+                        if pattern and isinstance(pattern, dict):
+                            weekday = pattern.get('weekday', 'N/A')
+                            weekend = pattern.get('weekend', 'N/A')
+                            diff = pattern.get('difference', 'N/A')
+                            text += f"  - Weekday: {weekday}, Weekend: {weekend} (diff={diff})\n"
+                    except:
+                        pass
+            
+            # Circadian (28-day rhythms)
+            circadian_key = f"{base}_circadian_28day"
+            if circadian_key in agg_feats and agg_feats[circadian_key]:
+                circadian_str = agg_feats[circadian_key]
+                if isinstance(circadian_str, str):
+                    try:
+                        circadian = eval(circadian_str) if circadian_str != 'null' else None
+                        if circadian and isinstance(circadian, dict):
+                            text += f"  - 28 day rhythms: "
+                            for period in ['morning', 'afternoon', 'evening', 'night']:
+                                if period in circadian:
+                                    if period != 'night':
+                                        text += f"{period}={circadian[period]}, "
+                                    else:
+                                        text += f"{period}={circadian[period]}\n"
+                    except:
+                        pass
+            
+            # Yesterday transition
+            transition_key = f"{base}_yesterday_transition"
+            if transition_key in agg_feats and agg_feats[transition_key]:
+                transition_str = agg_feats[transition_key]
+                if isinstance(transition_str, str):
+                    try:
+                        transition = eval(transition_str) if transition_str != 'null' else None
+                        if transition and isinstance(transition, dict):
+                            text += f"  - Yesterday transition: "
+                            for period in ['morning', 'afternoon', 'evening', 'night']:
+                                if period in transition:
+                                    if period != 'night':
+                                        text += f"{period}={transition[period]}, "
+                                    else:
+                                        text += f"{period}={transition[period]}\n"
+                    except:
+                        pass
+            
+            text += "\n"
+    
+    return text
 
 
 def features_to_text(agg_feats, cols: Dict, include_stats: bool = True) -> str:
@@ -1248,8 +1540,12 @@ def sample_to_prompt(sample: Dict, cols: Dict, format_type: str = 'structured',
         # MentalIoT format: aggregated_features is a row dictionary from aggregated_mentaliot.csv
         agg_feats = sample['aggregated_features']
         prompt += features_to_text_mentaliot(agg_feats, cols, feat_df)
+    elif dataset == 'globem':
+        # GLOBEM format: aggregated_features is a row dictionary from aggregated_globem.csv (flat structure)
+        agg_feats = sample['aggregated_features']
+        prompt += features_to_text_globem(agg_feats, cols, feat_df)
     else:
-        # Default: compass/structured format (GLOBEM)
+        # Default: compass/structured format (legacy nested structure)
         agg_feats = sample['aggregated_features']
         if isinstance(agg_feats, dict):
             # window_days = agg_feats.get('window_days', 7)

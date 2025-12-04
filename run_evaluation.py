@@ -12,11 +12,7 @@ import json
 import os
 from datetime import datetime
 
-from src.sensor_transformation import load_globem_data
-from src.data_utils import (
-    sample_multiinstitution_testset, filter_testset_by_historical_labels,
-    sample_ces_testset
-)
+from src.data_utils import load_dataset_testset
 from src.reasoning import LLMReasoner
 from src.prompt_manager import PromptManager
 from src.prompt_utils import (
@@ -25,7 +21,7 @@ from src.prompt_utils import (
     load_prompts_from_disk,
     build_experiment_prefix,
 )
-from src.evaluation_runner import run_single_prediction, run_batch_evaluation, run_batch_with_loaded_prompts, run_batch_prompts_only
+from src.evaluation_runner import run_batch_evaluation, run_batch_with_loaded_prompts, run_batch_prompts_only
 from src.performance import export_comprehensive_report
 from src import config
 
@@ -38,17 +34,15 @@ def main():
     )
     
     # Core experimental parameters
-    parser.add_argument('--mode', type=str, default='single', choices=['single', 'batch'],
-                       help='Evaluation mode')
-    parser.add_argument('--n_samples', type=int, default=config.DEFAULT_BATCH_SIZE,
-                       help='Number of test samples (batch mode only)')
+    parser.add_argument('--n_samples', type=int, default=None,
+                       help='Number of test samples for evaluation (default: use all samples in testset)')
     parser.add_argument('--n_shot', type=int, default=config.DEFAULT_N_SHOT,
                        help='Number of ICL examples')
     parser.add_argument('--strategy', type=str, default='cross_random',
-                       choices=['cross_random', 'cross_retrieval', 'personal_recent', 'hybrid_blend', 'none'],
-                       help='ICL strategy: cross_random (random from others), cross_retrieval (DTW from others), personal_recent (recent from self), hybrid_blend (mix), none (zero-shot)')
+                       choices=['cross_random', 'cross_retrieval', 'personal_recent', 'hybrid', 'none'],
+                       help='ICL strategy: cross_random (random from others), cross_retrieval (DTW from others), personal_recent (recent from self), hybrid (mix), none (zero-shot)')
     parser.add_argument('--use-dtw', action='store_true',
-                       help='For hybrid_blend: use DTW for cross-user part (default: random)')
+                       help='For hybrid: use DTW for cross-user part (default: random)')
     parser.add_argument('--reasoning', type=str, default=config.DEFAULT_REASONING_METHOD,
                        choices=['direct', 'cot', 'self_feedback'],
                        help='LLM reasoning method')
@@ -85,8 +79,6 @@ def main():
         print("Warning: n_shot > 0 but strategy is 'none'. Will use zero-shot.")
     
     if args.save_prompts_only:
-        if args.mode == 'single':
-            raise ValueError("--save-prompts-only is only available for batch mode")
         if args.load_prompts:
             raise ValueError("Cannot use --save-prompts-only with --load-prompts")
         # Automatically enable save-prompts when save-prompts-only is set
@@ -96,15 +88,14 @@ def main():
     print("\n" + "="*60)
     print("LLM MENTAL HEALTH PREDICTION EVALUATION")
     print("="*60)
-    print(f"  Mode: {args.mode} | Model: {args.model}")
+    print(f"  Model: {args.model}")
     if not args.load_prompts:
         print(f"  ICL Strategy: {args.strategy} | N-Shot: {args.n_shot}")
         print(f"  Reasoning: {args.reasoning}")
-        if args.mode == 'batch':
-            print(f"  Samples: {args.n_samples} | Stratified: {config.USE_STRATIFIED_SAMPLING}")
-        print(f"\n  Data Config (see src/config.py to change):")
-        print(f"     Format: {config.DEFAULT_TARGET}")
-        print(f"     Test Filter: {config.FILTER_TESTSET_BY_HISTORY} (min {config.MIN_HISTORICAL_LABELS} labels)")
+        print(f"  Samples: {args.n_samples} | Stratified: {config.USE_STRATIFIED_SAMPLING}")
+        print(f"\n  Dataset: {config.DATASET_TYPE.upper()}")
+        print(f"     Features: {config.CURRENT_DATASET_CONFIG['name']}")
+        print(f"     Similarity: {config.CURRENT_DATASET_CONFIG['similarity_method']}")
     if args.seed:
         print(f"  Random Seed: {args.seed}")
     if args.load_prompts:
@@ -122,76 +113,40 @@ def main():
         import time
         initial_timings = {}
         
-        # Load dataset based on config.DATASET_TYPE
-        if config.DATASET_TYPE == 'ces':
-            print("\n[Loading CES dataset...]")
-            t0_total = time.time()
-            feat_df, test_df, train_df, cols = sample_ces_testset(
-                n_users=config.CES_N_USERS,
-                min_ema_per_user=config.CES_MIN_EMA_PER_USER,
-                samples_per_user=config.CES_SAMPLES_PER_USER,
-                random_state=args.seed
-            )
-            # For CES, we use test_df as lab_df (testset)
-            # train_df is used for ICL examples - store it globally
-            lab_df = test_df
-            # Store train_df for ICL example selection
-            # We'll pass it via USE_MULTI_INSTITUTION_TESTSET flag and store in config
+        # Universal dataset loading
+        print(f"\n[Loading {config.DATASET_TYPE.upper()} dataset...]")
+        t0_total = time.time()
+        
+        feat_df, lab_df, test_df, train_df, cols = load_dataset_testset(config.DATASET_TYPE)
+        
+        # If n_samples not specified, use all samples in testset
+        if args.n_samples is None:
+            args.n_samples = len(test_df)
+            print(f"  Using all {args.n_samples} samples from testset")
+        
+        total_time = time.time() - t0_total
+        initial_timings['loading'] = total_time * 0.3
+        initial_timings['test_sampling'] = total_time * 0.7
+        
+        print(f"  ✓ Features: {feat_df.shape[0]} rows")
+        print(f"  ✓ Test set: {test_df.shape[0]} samples")
+        print(f"  ✓ Train set: {train_df.shape[0]} samples (for ICL)")
+        print(f"  ✓ Labels: {cols['labels']}")
+        
+        # Store test/train/full dataframes in config for ICL selection
+        # full_lab_df (train+test) needed for personal_recent strategy
+        if config.DATASET_TYPE == 'globem':
+            config.GLOBEM_TEST_DF = test_df
+            config.GLOBEM_TRAIN_DF = train_df
+            config.GLOBEM_FULL_LAB_DF = lab_df  # For personal_recent ICL
+        elif config.DATASET_TYPE == 'ces':
+            config.CES_TEST_DF = test_df
             config.CES_TRAIN_DF = train_df
-            total_time = time.time() - t0_total
-            initial_timings['loading'] = total_time * 0.3
-            initial_timings['test_sampling'] = total_time * 0.7
+            config.CES_FULL_LAB_DF = lab_df  # For personal_recent ICL
         elif config.DATASET_TYPE == 'mentaliot':
-            print("\n[Loading MentalIoT dataset...]")
-            t0_total = time.time()
-            from src.data_utils import sample_mentaliot_testset
-            feat_df, lab_df, test_df, train_df, cols = sample_mentaliot_testset(
-                n_samples_per_user=10,  # 10 samples per user
-                random_state=args.seed
-            )
-            # Store test_df and train_df for ICL examples
             config.MENTALIOT_TEST_DF = test_df
             config.MENTALIOT_TRAIN_DF = train_df
-            # Use test_df as lab_df for prediction
-            lab_df = test_df
-            total_time = time.time() - t0_total
-            initial_timings['loading'] = total_time * 0.3
-            initial_timings['test_sampling'] = total_time * 0.7
-        elif config.DATASET_TYPE == 'globem':
-            print("\n[Loading GLOBEM dataset...]")
-            
-            # Check if multi-institution testset mode is enabled
-            if config.USE_MULTI_INSTITUTION_TESTSET:
-                t0_total = time.time()
-                feat_df, lab_df, cols = sample_multiinstitution_testset(
-                    institutions_config=config.MULTI_INSTITUTION_CONFIG,
-                    min_ema_per_user=config.MIN_EMA_PER_USER,
-                    samples_per_user=config.SAMPLES_PER_USER,
-                    random_state=args.seed,
-                    target=config.DEFAULT_TARGET
-                )
-                total_time = time.time() - t0_total
-                # For multi-institution, loading and sampling happen together
-                # Approximate: 30% loading, 70% sampling
-                initial_timings['loading'] = total_time * 0.3
-                initial_timings['test_sampling'] = total_time * 0.7
-            else:
-                t0_load = time.time()
-                feat_df, lab_df, cols = load_globem_data(institution=config.DEFAULT_INSTITUTION, target=config.DEFAULT_TARGET)
-                initial_timings['loading'] = time.time() - t0_load
-                
-                print(f"  Target: {config.DEFAULT_TARGET}")
-                print(f"  Features: {feat_df.shape[0]} rows | Labels: {lab_df.shape[0]} rows")
-                
-                # Filter test set by historical labels (for fair ICL comparison)
-                t0_sampling = time.time()
-                if config.FILTER_TESTSET_BY_HISTORY:
-                    lab_df = filter_testset_by_historical_labels(
-                        lab_df, cols, min_historical=config.MIN_HISTORICAL_LABELS
-                    )
-                initial_timings['test_sampling'] = time.time() - t0_sampling
-        else:
-            raise ValueError(f"Unknown DATASET_TYPE: {config.DATASET_TYPE}. Must be 'globem' or 'ces'")
+            config.MENTALIOT_FULL_LAB_DF = lab_df  # For personal_recent ICL
         
         print("\n[Initializing Prompt Manager...]")
         prompt_manager = PromptManager()
@@ -212,104 +167,85 @@ def main():
     exp_prefix = build_experiment_prefix(args.n_shot, args.strategy, 
                                         reasoning=args.reasoning, 
                                         seed=args.seed)
-    # Run evaluation
-    if args.mode == 'single':
-        result = run_single_prediction(
-            prompt_manager, reasoner, feat_df, lab_df, cols, 
-            n_shot=args.n_shot, strategy=args.strategy, use_dtw=args.use_dtw,
-            reasoning_method=args.reasoning, random_state=args.seed, 
-            llm_seed=args.llm_seed, verbose=args.verbose,
+    # Run evaluation (batch mode)
+    if args.load_prompts:
+        print(f"\n[Loading prompts from: {args.load_prompts}]")
+        prompts, labels, metadata = load_prompts_from_disk(args.load_prompts)
+        
+        # If n_samples not specified, use the number of prompts loaded
+        if args.n_samples is None:
+            args.n_samples = metadata.get('num_samples', len(prompts))
+            print(f"  Using all {args.n_samples} samples from saved prompts")
+        
+        # Use provided folder (should be prefix) as exp_prefix
+        exp_prefix = os.path.basename(args.load_prompts)
+        
+        # Setup checkpoint path
+        os.makedirs(args.output_dir, exist_ok=True)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        base = f"{exp_prefix}_{model_name}_{args.reasoning}_{args.llm_seed}_{timestamp}"
+        checkpoint_base = os.path.join(args.output_dir, base)
+        
+        # labels contains the sample metadata (user_id, dates, true labels)
+        result = run_batch_with_loaded_prompts(
+            reasoner, prompts, labels, reasoning_method=args.reasoning,
+            llm_seed=args.llm_seed, 
+            checkpoint_path=checkpoint_base if args.checkpoint_every > 0 else None,
+            checkpoint_every=args.checkpoint_every,
+            resume_from=args.resume_from,
+            verbose=args.verbose
+        )
+    elif args.save_prompts_only:
+        # Generate and save prompts only (no LLM calls)
+        result = run_batch_prompts_only(
+            prompt_manager, feat_df, test_df, cols,
+            n_samples=args.n_samples, n_shot=args.n_shot,
+            strategy=args.strategy, use_dtw=args.use_dtw,
+            reasoning_method=args.reasoning, random_state=args.seed,
+            verbose=args.verbose,
+            initial_timings=initial_timings,
             dataset=config.DATASET_TYPE
         )
+        exp_prefix = build_experiment_prefix(args.n_shot, args.strategy,
+                                            reasoning=args.reasoning,
+                                            seed=args.seed)
+    else:
+        result = run_batch_evaluation(
+            prompt_manager, reasoner, feat_df, test_df, cols, 
+            n_samples=args.n_samples, n_shot=args.n_shot, 
+            strategy=args.strategy, use_dtw=args.use_dtw,
+            reasoning_method=args.reasoning, random_state=args.seed, 
+            llm_seed=args.llm_seed,
+            collect_prompts=args.save_prompts, verbose=args.verbose,
+            initial_timings=initial_timings,
+            dataset=config.DATASET_TYPE
+        )
+        exp_prefix = build_experiment_prefix(args.n_shot, args.strategy,
+                                            reasoning=args.reasoning,
+                                            seed=args.seed)
         
-        if result:
-            os.makedirs(args.output_dir, exist_ok=True)
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            # dataset_sensor_nshot_source_seed_Model_reasoning_llmseed_timestamp.json
-            filename = f"{exp_prefix}_{model_name}_{args.reasoning}_{args.llm_seed}_{timestamp}.json"
-            result_file = os.path.join(args.output_dir, filename)
-            
-            with open(result_file, 'w') as f:
-                json.dump(result, f, indent=2, cls=NumpyEncoder)
-            
-            print(f"\n[Result saved to: {result_file}]")
-    
-    elif args.mode == 'batch':
-        if args.load_prompts:
-            print(f"\n[Loading prompts from: {args.load_prompts}]")
-            prompts, labels, metadata = load_prompts_from_disk(args.load_prompts)
-            
-            # Use provided folder (should be prefix) as exp_prefix
-            exp_prefix = os.path.basename(args.load_prompts)
-            
-            # Setup checkpoint path
+    if result:
+        if args.save_prompts_only:
+            # Only save prompts, skip result export
+            if 'prompts' in result and 'metadata' in result:
+                step_timings = result.get('step_timings', None)
+                save_prompts_to_disk(result['prompts'], result['metadata'], exp_prefix, args.seed, 
+                                    args.prompts_dir, step_timings)
+                print(f"\n[Prompts saved: {exp_prefix} ({result['n_samples']} samples)]")
+        else:
+            # Normal batch mode: export results
             os.makedirs(args.output_dir, exist_ok=True)
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             base = f"{exp_prefix}_{model_name}_{args.reasoning}_{args.llm_seed}_{timestamp}"
-            checkpoint_base = os.path.join(args.output_dir, base)
-            
-            # labels contains the sample metadata (user_id, dates, true labels)
-            result = run_batch_with_loaded_prompts(
-                reasoner, prompts, labels, reasoning_method=args.reasoning,
-                llm_seed=args.llm_seed, 
-                checkpoint_path=checkpoint_base if args.checkpoint_every > 0 else None,
-                checkpoint_every=args.checkpoint_every,
-                resume_from=args.resume_from,
-                verbose=args.verbose
-            )
-        elif args.save_prompts_only:
-            # Generate and save prompts only (no LLM calls)
-            result = run_batch_prompts_only(
-                prompt_manager, feat_df, lab_df, cols,
-                n_samples=args.n_samples, n_shot=args.n_shot,
-                strategy=args.strategy, use_dtw=args.use_dtw,
-                reasoning_method=args.reasoning, random_state=args.seed,
-                verbose=args.verbose,
-                use_all_samples=config.USE_MULTI_INSTITUTION_TESTSET,
-                initial_timings=initial_timings,
-                dataset=config.DATASET_TYPE
-            )
-            exp_prefix = build_experiment_prefix(args.n_shot, args.strategy,
-                                                reasoning=args.reasoning,
-                                                seed=args.seed)
-        else:
-            result = run_batch_evaluation(
-                prompt_manager, reasoner, feat_df, lab_df, cols, 
-                n_samples=args.n_samples, n_shot=args.n_shot, 
-                strategy=args.strategy, use_dtw=args.use_dtw,
-                reasoning_method=args.reasoning, random_state=args.seed, 
-                llm_seed=args.llm_seed,
-                collect_prompts=args.save_prompts, verbose=args.verbose,
-                use_all_samples=config.USE_MULTI_INSTITUTION_TESTSET,
-                initial_timings=initial_timings,
-                dataset=config.DATASET_TYPE
-            )
-            exp_prefix = build_experiment_prefix(args.n_shot, args.strategy,
-                                                reasoning=args.reasoning,
-                                                seed=args.seed)
-            
-        if result:
-            if args.save_prompts_only:
-                # Only save prompts, skip result export
-                if 'prompts' in result and 'metadata' in result:
-                    step_timings = result.get('step_timings', None)
-                    save_prompts_to_disk(result['prompts'], result['metadata'], exp_prefix, args.seed, 
-                                        args.prompts_dir, step_timings)
-                    print(f"\n[Prompts saved: {exp_prefix} ({result['n_samples']} samples)]")
-            else:
-                # Normal batch mode: export results
-                os.makedirs(args.output_dir, exist_ok=True)
-                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                base = f"{exp_prefix}_{model_name}_{args.reasoning}_{args.llm_seed}_{timestamp}"
-                base_filepath = os.path.join(args.output_dir, base)
-                predictions = result.get('predictions', None)
-                export_comprehensive_report(result, base_filepath, predictions=predictions)
-                print(f"\nResults saved with model comparison name: {exp_prefix}")
-                if args.save_prompts and 'prompts' in result and 'metadata' in result:
-                    # Save folder is just prefix (no model/reasoning/llm_seed/timestamp)
-                    step_timings = result.get('step_timings', None)
-                    save_prompts_to_disk(result['prompts'], result['metadata'], exp_prefix, args.seed, 
-                                        args.prompts_dir, step_timings)
+            base_filepath = os.path.join(args.output_dir, base)
+            predictions = result.get('predictions', None)
+            export_comprehensive_report(result, base_filepath, predictions=predictions)
+            print(f"\nResults saved with model comparison name: {exp_prefix}")
+            if args.save_prompts and 'prompts' in result and 'metadata' in result:
+                # Save folder is just prefix (no model/reasoning/llm_seed/timestamp)
+                step_timings = result.get('step_timings', None)
+                save_prompts_to_disk(result['prompts'], result['metadata'], exp_prefix, args.seed, 
+                                    args.prompts_dir, step_timings)
     
     print("\nEvaluation complete!\n")
 

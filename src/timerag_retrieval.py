@@ -19,100 +19,21 @@ from dtaidistance import dtw_ndim
 from tqdm import tqdm
 
 try:
-    from .sensor_transformation import aggregate_window_features, get_user_window_data
+    from .sensor_transformation import (
+        aggregate_window_features, get_user_window_data,
+        _get_statistical_features, _extract_time_series_from_window_data, _extract_time_series_from_raw_data
+    )
     from . import config
     # Import helper functions to avoid circular dependency
     import importlib
     _example_selection = None
 except ImportError:
-    from sensor_transformation import aggregate_window_features, get_user_window_data
+    from sensor_transformation import (
+        aggregate_window_features, get_user_window_data,
+        _get_statistical_features, _extract_time_series_from_window_data, _extract_time_series_from_raw_data
+    )
     import config
     _example_selection = None
-
-
-def _get_statistical_features():
-    """Get statistical features for the current target."""
-    if config.DEFAULT_TARGET == 'compass':
-        import json
-        from pathlib import Path
-        config_path = Path(__file__).parent.parent / 'config' / 'globem_use_cols.json'
-        with open(config_path, 'r') as f:
-            cols_config = json.load(f)
-        return list(cols_config['compass']['feature_set']['statistical'].keys())
-    return None
-
-
-def _extract_time_series_from_window_data(
-    window_data, stat_features=None
-):
-    """
-    Extract time series from already-filtered window data.
-    
-    Args:
-        window_data: Already filtered and sorted DataFrame
-        stat_features: List of statistical feature columns to extract
-        
-    Returns:
-        numpy array of shape (n_days, n_features) or None if insufficient data
-    """
-    if stat_features is None or window_data is None or len(window_data) == 0:
-        return None
-    
-    import pandas as pd
-    
-    # Extract feature values for each day
-    time_series_list = []
-    
-    for _, row in window_data.iterrows():
-        day_features = []
-        for feat_col in stat_features:
-            if feat_col in row:
-                val = row[feat_col]
-                # Convert to float, handle NaN
-                if pd.isna(val):
-                    day_features.append(0.0)
-                else:
-                    day_features.append(float(val))
-            else:
-                day_features.append(0.0)
-        
-        time_series_list.append(day_features)
-    
-    if not time_series_list:
-        return None
-    
-    # Convert to numpy array: shape (n_days, n_features)
-    time_series = np.array(time_series_list)
-    
-    return time_series
-
-
-def _extract_time_series_from_raw_data(
-    feat_df, user_id, ema_date, cols,
-    window_days=28, stat_features=None
-):
-    """
-    Extract actual 28-day time series from raw feat_df.
-    
-    Args:
-        feat_df: Raw feature dataframe
-        user_id: User ID
-        ema_date: EMA date
-        cols: Column configuration
-        window_days: Number of days to look back (default 28)
-        stat_features: List of statistical feature columns to extract
-        
-    Returns:
-        numpy array of shape (n_days, n_features) where n_days <= window_days
-        Returns None if insufficient data
-    """
-    # Use shared utility to get window data
-    window_data = get_user_window_data(feat_df, user_id, ema_date, cols, window_days)
-    
-    if window_data is None or len(window_data) < window_days * 0.5:
-        return None
-    
-    return _extract_time_series_from_window_data(window_data, stat_features)
 
 
 def build_retrieval_candidate_pool_timerag(
@@ -147,8 +68,9 @@ def build_retrieval_candidate_pool_timerag(
     print(f"  Target pool size: {pool_size}")
     
     # Get statistical features
-    stat_features = _get_statistical_features()
-    if stat_features is None:
+    stat_features = _get_statistical_features(cols)
+    
+    if stat_features is None or len(stat_features) == 0:
         print("  [ERROR] No statistical features found")
         return None
     
@@ -312,7 +234,7 @@ def sample_from_timerag_pool_dtw(
         return [c['sample'] for c in candidates] if candidates else None
     
     # Get statistical features
-    stat_features = _get_statistical_features()
+    stat_features = _get_statistical_features(cols)
     
     # Extract target time series
     target_ts = _extract_time_series_from_raw_data(

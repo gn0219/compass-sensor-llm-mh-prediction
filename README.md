@@ -220,17 +220,18 @@ CES_BASE_PATH = '../dataset/CES'
 
 ### Quick Start
 
-**Step 1: Test with a single prediction**
+**Step 1: Prepare dataset**
 
-Run a single prediction to verify your setup (default: 4-shot Hybrid ICL + CoT):
+Run the preparation code for CES, GLOBEM, and Mental-IoT dataset.
 
 ```bash
-python run_evaluation.py --mode single --verbose
+python prepare_ces_data.py
 ```
 
 **Step 2: Generate and save prompts for reproducible experiments**
 
 Since we test multiple LLM models (GPT-5, Claude, Gemini, etc.) on the **same prompts** to ensure fair comparison, we first generate and save prompts:
+Set `DATASET_TYPE` in `config.py`
 
 ```bash
 # Generate prompts for full test set and save them
@@ -266,10 +267,11 @@ This workflow ensures that **all model comparisons use identical inputs**, elimi
 **Checkpoint Files Structure**:
 ```
 results/
-├── ces_compass_4shot_personalrecent_cot_seed42_gpt_5_cot_42_20250111_143022_checkpoint_10.json
-├── ces_compass_4shot_personalrecent_cot_seed42_gpt_5_cot_42_20250111_143022_checkpoint_20.json
-├── ces_compass_4shot_personalrecent_cot_seed42_gpt_5_cot_42_20250111_143022_checkpoint_30.json
-└── ... (saved every 10 samples)
+├── chk/
+    ├── ces_compass_4shot_personalrecent_cot_seed42_gpt_5_cot_42_20250111_143022_checkpoint_10.json
+    ├── ces_compass_4shot_personalrecent_cot_seed42_gpt_5_cot_42_20250111_143022_checkpoint_20.json
+    ├── ces_compass_4shot_personalrecent_cot_seed42_gpt_5_cot_42_20250111_143022_checkpoint_30.json
+    └── ... (saved every 10 samples)
 ```
 
 Each checkpoint contains:

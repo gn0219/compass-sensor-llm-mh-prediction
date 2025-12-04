@@ -149,9 +149,9 @@ class PromptManager:
         # Add strategy description
         strategy_descriptions = {
             'cross_random': "The following examples are randomly selected from other users.",
-            'cross_retrieval': "The following examples are selected from other users based on temporal similarity to the target user.",
+            'cross_retrieval': "The following examples are selected from other users based on behavioral pattern similarity to the target user.",
             'personal_recent': "The following examples are the most recent data from the target user's historical records.",
-            'hybrid_blend': "The following examples include both recent data from the target user and similar cases from other users."
+            'hybrid': "The following examples include both recent data from the target user and cases from other users."
         }
         
         if strategy in strategy_descriptions:

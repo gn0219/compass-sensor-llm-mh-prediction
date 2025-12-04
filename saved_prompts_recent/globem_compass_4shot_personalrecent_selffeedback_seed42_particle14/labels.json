@@ -1,0 +1,6208 @@
+[
+  {
+    "user_id": "INS-W_1204",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1204",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 5306.0,
+          "std": 9850.5,
+          "min": 177.8,
+          "max": 38443.8
+        },
+        "Location - time at home": {
+          "mean": 1381.9,
+          "std": 71.2,
+          "min": 1156.0,
+          "max": 1439.8
+        },
+        "Location - entropy": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "Screen - sum duration unlock": {
+          "mean": 247.4,
+          "std": 92.4,
+          "min": 78.7,
+          "max": 414.7
+        },
+        "Screen - average duration unlock": {
+          "mean": 7.5,
+          "std": 5.7,
+          "min": 2.5,
+          "max": 30.7
+        },
+        "Call - sum duration incoming": {
+          "mean": 1060.7,
+          "std": 1122.5,
+          "min": 15.0,
+          "max": 4054.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 464.2,
+          "std": 584.8,
+          "min": 18.0,
+          "max": 2307.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "Steps - sum steps": {
+          "mean": 2983.5,
+          "std": 2244.2,
+          "min": 145.0,
+          "max": 7506.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 40.8,
+          "std": 16.9,
+          "min": 6.0,
+          "max": 76.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1350.5,
+          "std": 51.2,
+          "min": 1258.0,
+          "max": 1435.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 39.8,
+          "std": 16.9,
+          "min": 5.0,
+          "max": 75.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 89.5,
+          "std": 51.2,
+          "min": 5.0,
+          "max": 182.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 473.8,
+          "std": 125.4,
+          "min": 18.5,
+          "max": 664.5
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 17.3,
+          "std": 11.2,
+          "min": 3.0,
+          "max": 42.0
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": -0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": 0.09,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": 0.09,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": 0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": 0.16,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": 0.14,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.04,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 2357.8,
+            "weekend": 902.4,
+            "difference": -1455.4
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 15875.0,
+            "weekend": 5100.0,
+            "difference": -10775.0
+          },
+          "circadian_28day": {
+            "morning": 146.4,
+            "afternoon": 1711.3,
+            "evening": 1048.0,
+            "night": 77.9
+          },
+          "yesterday_transition": {
+            "morning": 18.0,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 127.0
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.0,
+            "weekend": 0.0,
+            "difference": 0.0
+          },
+          "circadian_28day": {
+            "morning": 0.0,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 1266.5,
+            "weekend": 451.7,
+            "difference": -814.8
+          },
+          "circadian_28day": {
+            "morning": 33.5,
+            "afternoon": 54.7,
+            "evening": 66.4,
+            "night": 100.0
+          },
+          "yesterday_transition": {
+            "afternoon": 68.6,
+            "evening": 51.9,
+            "night": 81.6
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1204",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1204",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 4697.0,
+          "std": 9963.7,
+          "min": 1.7,
+          "max": 38443.8
+        },
+        "Location - time at home": {
+          "mean": 1328.2,
+          "std": 265.2,
+          "min": 50.2,
+          "max": 1439.8
+        },
+        "Location - entropy": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "Screen - sum duration unlock": {
+          "mean": 257.0,
+          "std": 95.6,
+          "min": 50.5,
+          "max": 414.7
+        },
+        "Screen - average duration unlock": {
+          "mean": 9.4,
+          "std": 9.7,
+          "min": 2.5,
+          "max": 50.5
+        },
+        "Call - sum duration incoming": {
+          "mean": 1036.1,
+          "std": 1188.9,
+          "min": 15.0,
+          "max": 4054.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 495.8,
+          "std": 604.5,
+          "min": 13.0,
+          "max": 2307.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "Steps - sum steps": {
+          "mean": 2886.4,
+          "std": 2210.6,
+          "min": 145.0,
+          "max": 7506.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 41.0,
+          "std": 17.0,
+          "min": 6.0,
+          "max": 76.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1352.1,
+          "std": 50.6,
+          "min": 1258.0,
+          "max": 1435.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 40.0,
+          "std": 17.0,
+          "min": 5.0,
+          "max": 75.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 87.9,
+          "std": 50.6,
+          "min": 5.0,
+          "max": 182.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 477.2,
+          "std": 144.5,
+          "min": 18.5,
+          "max": 771.0
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 17.0,
+          "std": 11.2,
+          "min": 3.0,
+          "max": 42.0
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": -0.19,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.04,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": -0.28,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.05,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": 0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.08,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.28,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": 0.05,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.07,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": 0.09,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": 0.03,
+          "recent_2weeks_direction": "stable"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 1997.1,
+            "weekend": 902.4,
+            "difference": -1094.7
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 15027.8,
+            "weekend": 5100.0,
+            "difference": -9927.8
+          },
+          "circadian_28day": {
+            "morning": 127.5,
+            "afternoon": 1678.2,
+            "evening": 981.2,
+            "night": 99.5
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 453.0,
+            "evening": 1313.0,
+            "night": 662.0
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.0,
+            "weekend": 0.0,
+            "difference": 0.0
+          },
+          "circadian_28day": {
+            "morning": 0.0,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "evening": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 1355.1,
+            "weekend": 451.7,
+            "difference": -903.4
+          },
+          "circadian_28day": {
+            "morning": 48.5,
+            "afternoon": 72.3,
+            "evening": 93.3,
+            "night": 117.1
+          },
+          "yesterday_transition": {
+            "morning": 360.0,
+            "afternoon": 360.0,
+            "evening": 360.0,
+            "night": 360.0
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1204",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1204",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 4832.1,
+          "std": 11415.8,
+          "min": 1.7,
+          "max": 39955.4
+        },
+        "Location - time at home": {
+          "mean": 1339.4,
+          "std": 264.4,
+          "min": 50.2,
+          "max": 1439.8
+        },
+        "Location - entropy": {
+          "mean": 0.0,
+          "std": 0.1,
+          "min": 0.0,
+          "max": 0.4
+        },
+        "Screen - sum duration unlock": {
+          "mean": 251.0,
+          "std": 96.8,
+          "min": 50.5,
+          "max": 414.7
+        },
+        "Screen - average duration unlock": {
+          "mean": 9.7,
+          "std": 9.7,
+          "min": 2.5,
+          "max": 50.5
+        },
+        "Call - sum duration incoming": {
+          "mean": 1044.5,
+          "std": 1193.3,
+          "min": 15.0,
+          "max": 4054.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 550.5,
+          "std": 621.7,
+          "min": 13.0,
+          "max": 2307.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 0.0,
+          "std": 0.2,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "Steps - sum steps": {
+          "mean": 2807.8,
+          "std": 2169.0,
+          "min": 145.0,
+          "max": 7303.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 40.3,
+          "std": 16.4,
+          "min": 6.0,
+          "max": 76.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1353.8,
+          "std": 51.0,
+          "min": 1253.0,
+          "max": 1435.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 39.3,
+          "std": 16.4,
+          "min": 5.0,
+          "max": 75.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 86.2,
+          "std": 51.0,
+          "min": 5.0,
+          "max": 187.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 468.2,
+          "std": 149.1,
+          "min": 18.5,
+          "max": 771.0
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 17.2,
+          "std": 11.0,
+          "min": 3.0,
+          "max": 42.0
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": -0.32,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 0.31,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.4,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.05,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": 0.1,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": 0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.5,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": -0.06,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": -0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.04,
+          "recent_2weeks_direction": "stable"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 1997.1,
+            "weekend": 985.1,
+            "difference": -1012.0
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 15027.8,
+            "weekend": 4637.2,
+            "difference": -10390.6
+          },
+          "circadian_28day": {
+            "morning": 100.9,
+            "afternoon": 1447.5,
+            "evening": 1150.6,
+            "night": 108.8
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 1148.0,
+            "evening": 5456.0,
+            "night": 312.0
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.0,
+            "weekend": 0.0,
+            "difference": 0.0
+          },
+          "circadian_28day": {
+            "morning": 0.0,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 0.0,
+            "evening": 1.2,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 1355.1,
+            "weekend": 464.1,
+            "difference": -891.0
+          },
+          "circadian_28day": {
+            "morning": 46.3,
+            "afternoon": 72.8,
+            "evening": 84.9,
+            "night": 121.1
+          },
+          "yesterday_transition": {
+            "morning": 0.5,
+            "afternoon": 57.8,
+            "evening": 40.2,
+            "night": 62.1
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1072",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1072",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 15953.0,
+          "std": 20379.4,
+          "min": 805.5,
+          "max": 86342.5
+        },
+        "Location - time at home": {
+          "mean": 1286.7,
+          "std": 138.5,
+          "min": 883.9,
+          "max": 1423.9
+        },
+        "Location - entropy": {
+          "mean": 0.1,
+          "std": 0.3,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "Screen - sum duration unlock": {
+          "mean": 375.3,
+          "std": 71.4,
+          "min": 251.5,
+          "max": 526.3
+        },
+        "Screen - average duration unlock": {
+          "mean": 4.6,
+          "std": 1.2,
+          "min": 2.7,
+          "max": 7.2
+        },
+        "Call - sum duration incoming": {
+          "mean": 646.0,
+          "std": 1243.5,
+          "min": 10.0,
+          "max": 3133.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 132.0,
+          "std": 98.5,
+          "min": 24.0,
+          "max": 270.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 1.0,
+          "std": 1.8,
+          "min": 0.0,
+          "max": 9.0
+        },
+        "Steps - sum steps": {
+          "mean": 5530.9,
+          "std": 2982.0,
+          "min": 798.0,
+          "max": 10603.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 44.2,
+          "std": 12.3,
+          "min": 20.0,
+          "max": 84.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1320.9,
+          "std": 46.5,
+          "min": 1252.0,
+          "max": 1412.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 43.4,
+          "std": 12.3,
+          "min": 19.0,
+          "max": 83.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 119.1,
+          "std": 46.5,
+          "min": 28.0,
+          "max": 188.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 463.2,
+          "std": 39.0,
+          "min": 417.0,
+          "max": 595.0
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 20.3,
+          "std": 7.8,
+          "min": 11.0,
+          "max": 47.0
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.04,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.16,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.18,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": -0.16,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": -0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.05,
+          "recent_2weeks_direction": "stable"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 2044.7,
+            "weekend": 841.5,
+            "difference": -1203.2
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 24924.0,
+            "weekend": 12349.0,
+            "difference": -12575.0
+          },
+          "circadian_28day": {
+            "morning": 439.6,
+            "afternoon": 2814.5,
+            "evening": 2080.1,
+            "night": 196.6
+          },
+          "yesterday_transition": {
+            "morning": 643.0,
+            "afternoon": 2814.0,
+            "evening": 1518.0,
+            "night": 1073.0
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.1,
+            "weekend": 0.4,
+            "difference": 0.3
+          },
+          "circadian_28day": {
+            "morning": 0.0,
+            "afternoon": 0.3,
+            "evening": 0.1,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 1883.2,
+            "weekend": 722.3,
+            "difference": -1160.9
+          },
+          "circadian_28day": {
+            "morning": 78.3,
+            "afternoon": 129.4,
+            "evening": 143.2,
+            "night": 25.3
+          },
+          "yesterday_transition": {
+            "morning": 110.3,
+            "afternoon": 154.2,
+            "evening": 198.2,
+            "night": 41.6
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1072",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1072",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 16178.6,
+          "std": 19693.0,
+          "min": 996.8,
+          "max": 86342.5
+        },
+        "Location - time at home": {
+          "mean": 1280.1,
+          "std": 132.9,
+          "min": 883.9,
+          "max": 1419.0
+        },
+        "Location - entropy": {
+          "mean": 0.2,
+          "std": 0.3,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "Screen - sum duration unlock": {
+          "mean": 372.8,
+          "std": 75.3,
+          "min": 244.9,
+          "max": 526.3
+        },
+        "Screen - average duration unlock": {
+          "mean": 4.5,
+          "std": 1.2,
+          "min": 2.7,
+          "max": 7.2
+        },
+        "Call - sum duration incoming": {
+          "mean": 646.0,
+          "std": 1243.5,
+          "min": 10.0,
+          "max": 3133.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 132.0,
+          "std": 98.5,
+          "min": 24.0,
+          "max": 270.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 1.2,
+          "std": 1.9,
+          "min": 0.0,
+          "max": 9.0
+        },
+        "Steps - sum steps": {
+          "mean": 5750.5,
+          "std": 2829.5,
+          "min": 798.0,
+          "max": 10603.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 44.5,
+          "std": 12.0,
+          "min": 20.0,
+          "max": 84.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1317.2,
+          "std": 44.0,
+          "min": 1252.0,
+          "max": 1412.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 43.7,
+          "std": 12.1,
+          "min": 19.0,
+          "max": 83.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 122.8,
+          "std": 44.0,
+          "min": 28.0,
+          "max": 188.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 462.1,
+          "std": 40.9,
+          "min": 417.0,
+          "max": 595.0
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 20.1,
+          "std": 7.8,
+          "min": 11.0,
+          "max": 47.0
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": 0.2,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": 0.14,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": 0.1,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": -1.15,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": -1.06,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 1.67,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": 0.17,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": 0.24,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": -0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": -0.06,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 0.03,
+          "recent_2weeks_direction": "stable"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 2268.7,
+            "weekend": 841.5,
+            "difference": -1427.2
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 27384.0,
+            "weekend": 12349.0,
+            "difference": -15035.0
+          },
+          "circadian_28day": {
+            "morning": 429.1,
+            "afternoon": 2864.3,
+            "evening": 2265.9,
+            "night": 191.2
+          },
+          "yesterday_transition": {
+            "morning": 244.0,
+            "afternoon": 4499.0,
+            "evening": 2946.0,
+            "night": 90.0
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.1,
+            "weekend": 0.4,
+            "difference": 0.3
+          },
+          "circadian_28day": {
+            "morning": 0.0,
+            "afternoon": 0.3,
+            "evening": 0.1,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 0.2,
+            "evening": 0.5,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 1894.2,
+            "weekend": 722.3,
+            "difference": -1171.9
+          },
+          "circadian_28day": {
+            "morning": 82.0,
+            "afternoon": 124.7,
+            "evening": 143.2,
+            "night": 23.8
+          },
+          "yesterday_transition": {
+            "morning": 84.8,
+            "afternoon": 93.9,
+            "evening": 111.5,
+            "night": 21.0
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1072",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1072",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 15911.3,
+          "std": 19587.8,
+          "min": 1734.3,
+          "max": 86342.5
+        },
+        "Location - time at home": {
+          "mean": 1282.2,
+          "std": 130.3,
+          "min": 883.9,
+          "max": 1406.0
+        },
+        "Location - entropy": {
+          "mean": 0.1,
+          "std": 0.3,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "Screen - sum duration unlock": {
+          "mean": 377.0,
+          "std": 71.2,
+          "min": 244.9,
+          "max": 526.3
+        },
+        "Screen - average duration unlock": {
+          "mean": 4.6,
+          "std": 1.2,
+          "min": 2.7,
+          "max": 7.2
+        },
+        "Call - sum duration incoming": {
+          "mean": 646.0,
+          "std": 1243.5,
+          "min": 10.0,
+          "max": 3133.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 132.0,
+          "std": 98.5,
+          "min": 24.0,
+          "max": 270.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 1.2,
+          "std": 1.9,
+          "min": 0.0,
+          "max": 9.0
+        },
+        "Steps - sum steps": {
+          "mean": 5279.1,
+          "std": 3031.7,
+          "min": 798.0,
+          "max": 10603.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 42.1,
+          "std": 12.9,
+          "min": 20.0,
+          "max": 84.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1327.1,
+          "std": 48.5,
+          "min": 1252.0,
+          "max": 1412.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 41.3,
+          "std": 13.0,
+          "min": 19.0,
+          "max": 83.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 112.9,
+          "std": 48.5,
+          "min": 28.0,
+          "max": 188.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 469.6,
+          "std": 46.1,
+          "min": 417.0,
+          "max": 595.0
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 19.7,
+          "std": 6.2,
+          "min": 11.0,
+          "max": 38.0
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": 0.12,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": -0.08,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": 0.06,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": -0.08,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.04,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": -1.15,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": -0.9,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.08,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": -0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.06,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.05,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 2268.7,
+            "weekend": 867.2,
+            "difference": -1401.5
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 27384.0,
+            "weekend": 11471.2,
+            "difference": -15912.8
+          },
+          "circadian_28day": {
+            "morning": 408.8,
+            "afternoon": 2617.4,
+            "evening": 2060.4,
+            "night": 192.5
+          },
+          "yesterday_transition": {
+            "morning": 254.0,
+            "afternoon": 607.0,
+            "evening": 258.0,
+            "night": 53.0
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.1,
+            "weekend": 0.4,
+            "difference": 0.3
+          },
+          "circadian_28day": {
+            "morning": 0.0,
+            "afternoon": 0.3,
+            "evening": 0.1,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 1894.2,
+            "weekend": 721.7,
+            "difference": -1172.5
+          },
+          "circadian_28day": {
+            "morning": 83.8,
+            "afternoon": 128.6,
+            "evening": 143.4,
+            "night": 22.8
+          },
+          "yesterday_transition": {
+            "morning": 82.2,
+            "afternoon": 165.8,
+            "evening": 127.1
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1049",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1049",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 6093.1,
+          "std": 8014.2,
+          "min": 177.2,
+          "max": 41991.1
+        },
+        "Location - time at home": {
+          "mean": 1217.4,
+          "std": 228.0,
+          "min": 641.1,
+          "max": 1439.9
+        },
+        "Location - entropy": {
+          "mean": 0.2,
+          "std": 0.3,
+          "min": 0.0,
+          "max": 0.7
+        },
+        "Screen - sum duration unlock": {
+          "mean": 186.0,
+          "std": 98.3,
+          "min": 50.8,
+          "max": 456.1
+        },
+        "Screen - average duration unlock": {
+          "mean": 4.3,
+          "std": 2.4,
+          "min": 1.3,
+          "max": 12.9
+        },
+        "Call - sum duration incoming": {
+          "mean": 1049.5,
+          "std": 1071.1,
+          "min": 26.0,
+          "max": 3767.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 829.0,
+          "std": 1472.1,
+          "min": 0.0,
+          "max": 6827.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 9.2,
+          "std": 4.0,
+          "min": 3.0,
+          "max": 20.0
+        },
+        "Steps - sum steps": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        },
+        "Steps - count episodes active bout": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        },
+        "Steps - sum duration active bout": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.07,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.05,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.05,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": 0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": 0.16,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": -0.1,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": 0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.05,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        }
+      },
+      "semantic_features": {
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.4,
+            "weekend": 0.0,
+            "difference": -0.4
+          },
+          "circadian_28day": {
+            "morning": 0.1,
+            "afternoon": 0.1,
+            "evening": 0.0,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.5,
+            "afternoon": 0.1,
+            "evening": 0.0,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 725.5,
+            "weekend": 430.4,
+            "difference": -295.1
+          },
+          "circadian_28day": {
+            "morning": 39.6,
+            "afternoon": 53.7,
+            "evening": 73.4,
+            "night": 48.9
+          },
+          "yesterday_transition": {
+            "morning": 18.3,
+            "afternoon": 13.0,
+            "evening": 57.0
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1049",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1049",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 5848.5,
+          "std": 8111.2,
+          "min": 90.3,
+          "max": 41991.1
+        },
+        "Location - time at home": {
+          "mean": 1222.2,
+          "std": 234.3,
+          "min": 641.1,
+          "max": 1439.9
+        },
+        "Location - entropy": {
+          "mean": 0.2,
+          "std": 0.3,
+          "min": 0.0,
+          "max": 0.7
+        },
+        "Screen - sum duration unlock": {
+          "mean": 191.2,
+          "std": 99.3,
+          "min": 50.8,
+          "max": 456.1
+        },
+        "Screen - average duration unlock": {
+          "mean": 4.5,
+          "std": 2.4,
+          "min": 1.3,
+          "max": 12.9
+        },
+        "Call - sum duration incoming": {
+          "mean": 1297.8,
+          "std": 1200.3,
+          "min": 26.0,
+          "max": 4193.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 1159.2,
+          "std": 1798.0,
+          "min": 0.0,
+          "max": 6827.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 9.5,
+          "std": 4.4,
+          "min": 3.0,
+          "max": 20.0
+        },
+        "Steps - sum steps": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        },
+        "Steps - count episodes active bout": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        },
+        "Steps - sum duration active bout": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": -0.15,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": -0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": -0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": -0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.05,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        }
+      },
+      "semantic_features": {
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.4,
+            "weekend": 0.0,
+            "difference": -0.4
+          },
+          "circadian_28day": {
+            "morning": 0.1,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 745.3,
+            "weekend": 430.4,
+            "difference": -314.9
+          },
+          "circadian_28day": {
+            "morning": 39.9,
+            "afternoon": 57.1,
+            "evening": 75.0,
+            "night": 48.7
+          },
+          "yesterday_transition": {
+            "morning": 77.8,
+            "afternoon": 81.8,
+            "evening": 60.4
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1049",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1049",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 4433.1,
+          "std": 4155.6,
+          "min": 90.3,
+          "max": 12445.5
+        },
+        "Location - time at home": {
+          "mean": 1224.0,
+          "std": 238.7,
+          "min": 641.1,
+          "max": 1439.9
+        },
+        "Location - entropy": {
+          "mean": 0.2,
+          "std": 0.3,
+          "min": 0.0,
+          "max": 0.7
+        },
+        "Screen - sum duration unlock": {
+          "mean": 180.8,
+          "std": 89.4,
+          "min": 50.8,
+          "max": 456.1
+        },
+        "Screen - average duration unlock": {
+          "mean": 4.4,
+          "std": 2.4,
+          "min": 1.3,
+          "max": 12.9
+        },
+        "Call - sum duration incoming": {
+          "mean": 1095.8,
+          "std": 1160.8,
+          "min": 9.0,
+          "max": 4193.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 1257.0,
+          "std": 1798.4,
+          "min": 0.0,
+          "max": 6827.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 10.0,
+          "std": 4.4,
+          "min": 3.0,
+          "max": 20.0
+        },
+        "Steps - sum steps": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        },
+        "Steps - count episodes active bout": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        },
+        "Steps - sum duration active bout": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": -0.06,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": -0.09,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": -0.05,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": -0.08,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": 0.09,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": 0.11,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.05,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        }
+      },
+      "semantic_features": {
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.4,
+            "weekend": 0.0,
+            "difference": -0.4
+          },
+          "circadian_28day": {
+            "morning": 0.1,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 745.3,
+            "weekend": 365.4,
+            "difference": -379.9
+          },
+          "circadian_28day": {
+            "morning": 40.6,
+            "afternoon": 51.3,
+            "evening": 71.7,
+            "night": 53.8
+          },
+          "yesterday_transition": {
+            "morning": 27.5,
+            "afternoon": 50.5,
+            "evening": 53.0,
+            "night": 38.9
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_964",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_964",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 3649.2,
+          "std": 4319.1,
+          "min": 1643.9,
+          "max": 25854.0
+        },
+        "Location - time at home": {
+          "mean": 1264.7,
+          "std": 56.7,
+          "min": 1154.5,
+          "max": 1365.8
+        },
+        "Location - entropy": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.2
+        },
+        "Screen - sum duration unlock": {
+          "mean": 418.2,
+          "std": 82.3,
+          "min": 224.7,
+          "max": 657.2
+        },
+        "Screen - average duration unlock": {
+          "mean": 8.4,
+          "std": 3.3,
+          "min": 4.2,
+          "max": 17.4
+        },
+        "Call - sum duration incoming": {
+          "mean": 715.7,
+          "std": 482.6,
+          "min": 34.0,
+          "max": 1085.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 89.0,
+          "std": 0.0,
+          "min": 89.0,
+          "max": 89.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 287.5,
+          "std": 27.9,
+          "min": 240.0,
+          "max": 364.0
+        },
+        "Steps - sum steps": {
+          "mean": 1218.3,
+          "std": 444.9,
+          "min": 470.0,
+          "max": 2767.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 24.0,
+          "std": 4.3,
+          "min": 13.0,
+          "max": 34.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1401.2,
+          "std": 11.3,
+          "min": 1366.0,
+          "max": 1422.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 23.1,
+          "std": 4.3,
+          "min": 12.0,
+          "max": 33.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 38.8,
+          "std": 11.3,
+          "min": 18.0,
+          "max": 74.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 366.1,
+          "std": 127.1,
+          "min": 175.0,
+          "max": 560.0
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 23.3,
+          "std": 17.8,
+          "min": 0.0,
+          "max": 62.0
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": -0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": -0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.04,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": -0.06,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": -0.09,
+          "recent_2weeks_direction": "decreasing"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 1890.5,
+            "weekend": 748.2,
+            "difference": -1142.3
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 6638.8,
+            "weekend": 2328.5,
+            "difference": -4310.3
+          },
+          "circadian_28day": {
+            "morning": 215.9,
+            "afternoon": 384.8,
+            "evening": 331.8,
+            "night": 285.9
+          },
+          "yesterday_transition": {
+            "morning": 625.0,
+            "afternoon": 239.0,
+            "evening": 178.0,
+            "night": 27.0
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.0,
+            "weekend": 0.0,
+            "difference": 0.0
+          },
+          "circadian_28day": {
+            "morning": 0.0,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 2172.1,
+            "weekend": 827.8,
+            "difference": -1344.3
+          },
+          "circadian_28day": {
+            "morning": 102.5,
+            "afternoon": 154.8,
+            "evening": 70.2,
+            "night": 90.7
+          },
+          "yesterday_transition": {
+            "morning": 130.9,
+            "afternoon": 140.1,
+            "evening": 46.3,
+            "night": 50.3
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_964",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_964",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 3694.7,
+          "std": 4305.5,
+          "min": 1643.9,
+          "max": 25854.0
+        },
+        "Location - time at home": {
+          "mean": 1266.5,
+          "std": 52.0,
+          "min": 1163.2,
+          "max": 1365.8
+        },
+        "Location - entropy": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.2
+        },
+        "Screen - sum duration unlock": {
+          "mean": 426.3,
+          "std": 74.5,
+          "min": 287.3,
+          "max": 657.2
+        },
+        "Screen - average duration unlock": {
+          "mean": 8.5,
+          "std": 3.2,
+          "min": 4.7,
+          "max": 17.4
+        },
+        "Call - sum duration incoming": {
+          "mean": 715.7,
+          "std": 482.6,
+          "min": 34.0,
+          "max": 1085.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 89.0,
+          "std": 0.0,
+          "min": 89.0,
+          "max": 89.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 289.3,
+          "std": 28.2,
+          "min": 240.0,
+          "max": 364.0
+        },
+        "Steps - sum steps": {
+          "mean": 1223.9,
+          "std": 447.3,
+          "min": 470.0,
+          "max": 2767.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 24.4,
+          "std": 5.0,
+          "min": 13.0,
+          "max": 38.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1400.9,
+          "std": 11.2,
+          "min": 1366.0,
+          "max": 1422.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 23.5,
+          "std": 5.0,
+          "min": 12.0,
+          "max": 37.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 39.1,
+          "std": 11.2,
+          "min": 18.0,
+          "max": 74.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 360.9,
+          "std": 120.8,
+          "min": 175.0,
+          "max": 557.0
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 22.9,
+          "std": 16.2,
+          "min": 0.0,
+          "max": 55.0
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": -0.11,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": -0.28,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": 0.07,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": -0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.06,
+          "recent_2weeks_direction": "increasing"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 1779.0,
+            "weekend": 748.2,
+            "difference": -1030.8
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 6237.5,
+            "weekend": 2328.5,
+            "difference": -3909.0
+          },
+          "circadian_28day": {
+            "morning": 216.2,
+            "afternoon": 373.3,
+            "evening": 309.9,
+            "night": 324.5
+          },
+          "yesterday_transition": {
+            "morning": 64.0,
+            "afternoon": 417.0,
+            "evening": 111.0,
+            "night": 197.0
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.0,
+            "weekend": 0.0,
+            "difference": 0.0
+          },
+          "circadian_28day": {
+            "morning": 0.0,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 2158.9,
+            "weekend": 827.8,
+            "difference": -1331.1
+          },
+          "circadian_28day": {
+            "morning": 104.4,
+            "afternoon": 150.9,
+            "evening": 74.0,
+            "night": 96.9
+          },
+          "yesterday_transition": {
+            "morning": 70.3,
+            "afternoon": 69.9,
+            "evening": 110.2,
+            "night": 36.9
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_964",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_964",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 2863.7,
+          "std": 599.6,
+          "min": 1643.9,
+          "max": 4621.1
+        },
+        "Location - time at home": {
+          "mean": 1275.9,
+          "std": 45.4,
+          "min": 1163.2,
+          "max": 1365.8
+        },
+        "Location - entropy": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "Screen - sum duration unlock": {
+          "mean": 441.6,
+          "std": 79.2,
+          "min": 287.3,
+          "max": 657.2
+        },
+        "Screen - average duration unlock": {
+          "mean": 8.8,
+          "std": 3.1,
+          "min": 4.7,
+          "max": 17.4
+        },
+        "Call - sum duration incoming": {
+          "mean": 363.0,
+          "std": 470.2,
+          "min": 27.0,
+          "max": 1028.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": null,
+          "std": null,
+          "min": null,
+          "max": null
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 287.8,
+          "std": 23.5,
+          "min": 240.0,
+          "max": 351.0
+        },
+        "Steps - sum steps": {
+          "mean": 1169.9,
+          "std": 330.9,
+          "min": 470.0,
+          "max": 1781.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 24.4,
+          "std": 5.1,
+          "min": 13.0,
+          "max": 38.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1402.0,
+          "std": 9.0,
+          "min": 1382.0,
+          "max": 1422.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 23.4,
+          "std": 5.0,
+          "min": 12.0,
+          "max": 37.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 38.0,
+          "std": 9.0,
+          "min": 18.0,
+          "max": 58.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 359.9,
+          "std": 131.9,
+          "min": 140.0,
+          "max": 588.0
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 22.6,
+          "std": 15.6,
+          "min": 0.0,
+          "max": 55.0
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": 0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": 1.87,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.05,
+          "recent_2weeks_direction": "stable"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 1779.0,
+            "weekend": 663.5,
+            "difference": -1115.5
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 6237.5,
+            "weekend": 2259.2,
+            "difference": -3978.3
+          },
+          "circadian_28day": {
+            "morning": 192.0,
+            "afternoon": 380.2,
+            "evening": 307.8,
+            "night": 289.9
+          },
+          "yesterday_transition": {
+            "morning": 132.0,
+            "afternoon": 265.0,
+            "evening": 417.0,
+            "night": 169.0
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.0,
+            "weekend": 0.0,
+            "difference": 0.0
+          },
+          "circadian_28day": {
+            "morning": 0.0,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 2158.9,
+            "weekend": 863.7,
+            "difference": -1295.2
+          },
+          "circadian_28day": {
+            "morning": 113.7,
+            "afternoon": 155.9,
+            "evening": 71.1,
+            "night": 100.9
+          },
+          "yesterday_transition": {
+            "morning": 59.6,
+            "afternoon": 180.7,
+            "evening": 49.2,
+            "night": 189.3
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1003",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1003",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 25867.7,
+          "std": 43512.3,
+          "min": 182.9,
+          "max": 207745.4
+        },
+        "Location - time at home": {
+          "mean": 416.8,
+          "std": 586.9,
+          "min": 0.0,
+          "max": 1437.5
+        },
+        "Location - entropy": {
+          "mean": 0.2,
+          "std": 0.3,
+          "min": 0.0,
+          "max": 0.9
+        },
+        "Screen - sum duration unlock": {
+          "mean": 216.4,
+          "std": 65.7,
+          "min": 93.2,
+          "max": 370.4
+        },
+        "Screen - average duration unlock": {
+          "mean": 9.0,
+          "std": 3.6,
+          "min": 4.9,
+          "max": 18.5
+        },
+        "Call - sum duration incoming": {
+          "mean": 847.8,
+          "std": 1468.5,
+          "min": 24.0,
+          "max": 3780.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 452.3,
+          "std": 617.7,
+          "min": 17.0,
+          "max": 2060.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 0.6,
+          "std": 1.2,
+          "min": 0.0,
+          "max": 4.0
+        },
+        "Steps - sum steps": {
+          "mean": 4257.1,
+          "std": 3223.9,
+          "min": 701.0,
+          "max": 11150.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 46.7,
+          "std": 16.8,
+          "min": 18.0,
+          "max": 79.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1337.1,
+          "std": 58.1,
+          "min": 1221.0,
+          "max": 1421.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 45.9,
+          "std": 17.0,
+          "min": 17.0,
+          "max": 79.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 102.9,
+          "std": 58.1,
+          "min": 19.0,
+          "max": 219.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 493.4,
+          "std": 90.6,
+          "min": 269.0,
+          "max": 670.5
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 15.9,
+          "std": 9.8,
+          "min": 4.0,
+          "max": 45.0
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": 0.06,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": 0.05,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": -0.14,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": null,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": 0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.06,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": 0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": -1.28,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": -1.15,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": 0.11,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": -0.57,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": -1.2,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 0.65,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": 0.08,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": -0.27,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": 0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.1,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": 0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.1,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": 0.07,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": -0.2,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.09,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.08,
+          "recent_2weeks_direction": "decreasing"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 1786.2,
+            "weekend": 1051.3,
+            "difference": -734.9
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 15518.5,
+            "weekend": 12779.7,
+            "difference": -2738.8
+          },
+          "circadian_28day": {
+            "morning": 534.2,
+            "afternoon": 2321.1,
+            "evening": 1130.5,
+            "night": 271.3
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.2,
+            "weekend": 0.4,
+            "difference": 0.2
+          },
+          "circadian_28day": {
+            "morning": 0.1,
+            "afternoon": 0.3,
+            "evening": 0.3,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 0.5,
+            "evening": 0.6,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 1071.4,
+            "weekend": 392.3,
+            "difference": -679.1
+          },
+          "circadian_28day": {
+            "morning": 53.6,
+            "afternoon": 84.1,
+            "evening": 61.0,
+            "night": 35.3
+          },
+          "yesterday_transition": {
+            "afternoon": 108.3,
+            "evening": 118.7,
+            "night": 25.0
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1003",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1003",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 64047.2,
+          "std": 101572.9,
+          "min": 182.9,
+          "max": 407673.6
+        },
+        "Location - time at home": {
+          "mean": 239.4,
+          "std": 461.6,
+          "min": 0.0,
+          "max": 1385.6
+        },
+        "Location - entropy": {
+          "mean": 0.3,
+          "std": 0.3,
+          "min": 0.0,
+          "max": 0.9
+        },
+        "Screen - sum duration unlock": {
+          "mean": 206.6,
+          "std": 64.7,
+          "min": 93.2,
+          "max": 370.4
+        },
+        "Screen - average duration unlock": {
+          "mean": 9.1,
+          "std": 3.7,
+          "min": 4.5,
+          "max": 18.5
+        },
+        "Call - sum duration incoming": {
+          "mean": 105.8,
+          "std": 97.8,
+          "min": 24.0,
+          "max": 270.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 384.8,
+          "std": 639.7,
+          "min": 0.0,
+          "max": 2060.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 1.4,
+          "std": 2.8,
+          "min": 0.0,
+          "max": 10.0
+        },
+        "Steps - sum steps": {
+          "mean": 4649.1,
+          "std": 3020.9,
+          "min": 701.0,
+          "max": 11150.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 50.8,
+          "std": 17.5,
+          "min": 18.0,
+          "max": 87.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1326.2,
+          "std": 55.3,
+          "min": 1221.0,
+          "max": 1421.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 50.0,
+          "std": 17.7,
+          "min": 17.0,
+          "max": 86.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 113.8,
+          "std": 55.3,
+          "min": 19.0,
+          "max": 219.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 504.7,
+          "std": 78.2,
+          "min": 385.0,
+          "max": 670.5
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 15.9,
+          "std": 7.5,
+          "min": 7.0,
+          "max": 28.0
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": -0.08,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 0.25,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": -0.24,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 0.32,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.16,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.48,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": -1.0,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": -0.75,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": null,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.43,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.24,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.08,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.09,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.17,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.08,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.11,
+          "recent_2weeks_direction": "increasing"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 1485.2,
+            "weekend": 1051.3,
+            "difference": -433.9
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 16347.8,
+            "weekend": 12779.7,
+            "difference": -3568.1
+          },
+          "circadian_28day": {
+            "morning": 639.6,
+            "afternoon": 2448.8,
+            "evening": 1278.8,
+            "night": 282.0
+          },
+          "yesterday_transition": {
+            "morning": 35.0,
+            "afternoon": 4263.0,
+            "evening": 2578.0,
+            "night": 279.0
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.4,
+            "weekend": 0.4,
+            "difference": 0.0
+          },
+          "circadian_28day": {
+            "morning": 0.1,
+            "afternoon": 0.4,
+            "evening": 0.3,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "afternoon": 0.9,
+            "evening": 0.5,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 1054.9,
+            "weekend": 392.3,
+            "difference": -662.6
+          },
+          "circadian_28day": {
+            "morning": 53.7,
+            "afternoon": 83.2,
+            "evening": 57.5,
+            "night": 26.5
+          },
+          "yesterday_transition": {
+            "morning": 44.7,
+            "afternoon": 87.7,
+            "evening": 42.3,
+            "night": 3.8
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1003",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1003",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 62362.1,
+          "std": 102272.6,
+          "min": 182.9,
+          "max": 407673.6
+        },
+        "Location - time at home": {
+          "mean": 219.8,
+          "std": 433.7,
+          "min": 0.0,
+          "max": 1437.9
+        },
+        "Location - entropy": {
+          "mean": 0.3,
+          "std": 0.3,
+          "min": 0.0,
+          "max": 0.9
+        },
+        "Screen - sum duration unlock": {
+          "mean": 200.6,
+          "std": 71.4,
+          "min": 89.6,
+          "max": 370.4
+        },
+        "Screen - average duration unlock": {
+          "mean": 9.5,
+          "std": 4.1,
+          "min": 4.5,
+          "max": 18.9
+        },
+        "Call - sum duration incoming": {
+          "mean": 105.8,
+          "std": 97.8,
+          "min": 24.0,
+          "max": 270.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 157.7,
+          "std": 246.9,
+          "min": 0.0,
+          "max": 786.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 1.4,
+          "std": 2.7,
+          "min": 0.0,
+          "max": 10.0
+        },
+        "Steps - sum steps": {
+          "mean": 4622.7,
+          "std": 3137.8,
+          "min": 701.0,
+          "max": 11150.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 50.1,
+          "std": 19.1,
+          "min": 18.0,
+          "max": 87.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1327.6,
+          "std": 59.1,
+          "min": 1221.0,
+          "max": 1421.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 49.2,
+          "std": 19.1,
+          "min": 17.0,
+          "max": 86.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 112.4,
+          "std": 59.1,
+          "min": 19.0,
+          "max": 219.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 519.0,
+          "std": 84.4,
+          "min": 385.0,
+          "max": 670.5
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 16.9,
+          "std": 9.0,
+          "min": 7.0,
+          "max": 38.0
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": -0.07,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 0.12,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": -0.34,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 0.32,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": -0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.05,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": -1.01,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 0.5,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": 0.79,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": -0.32,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": 1.0,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": 0.13,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": -0.05,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.19,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.07,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.07,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.13,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.0,
+          "recent_2weeks_direction": "stable"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 1485.2,
+            "weekend": 1070.8,
+            "difference": -414.4
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 16347.8,
+            "weekend": 11159.3,
+            "difference": -5188.5
+          },
+          "circadian_28day": {
+            "morning": 550.7,
+            "afternoon": 2387.3,
+            "evening": 1405.5,
+            "night": 279.1
+          },
+          "yesterday_transition": {
+            "morning": 1410.0,
+            "afternoon": 3662.0,
+            "evening": 3759.0,
+            "night": 260.0
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.4,
+            "weekend": 0.3,
+            "difference": -0.1
+          },
+          "circadian_28day": {
+            "morning": 0.0,
+            "afternoon": 0.3,
+            "evening": 0.3,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 0.6,
+            "evening": 0.1,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 1054.9,
+            "weekend": 369.6,
+            "difference": -685.3
+          },
+          "circadian_28day": {
+            "morning": 54.5,
+            "afternoon": 78.2,
+            "evening": 55.8,
+            "night": 26.4
+          },
+          "yesterday_transition": {
+            "morning": 31.5,
+            "afternoon": 6.7,
+            "evening": 48.2,
+            "night": 3.2
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1205",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1205",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 7915.1,
+          "std": 11410.0,
+          "min": 134.6,
+          "max": 49458.2
+        },
+        "Location - time at home": {
+          "mean": 927.9,
+          "std": 473.7,
+          "min": 0.0,
+          "max": 1327.0
+        },
+        "Location - entropy": {
+          "mean": 0.1,
+          "std": 0.2,
+          "min": 0.0,
+          "max": 0.7
+        },
+        "Screen - sum duration unlock": {
+          "mean": 238.1,
+          "std": 126.3,
+          "min": 0.3,
+          "max": 496.7
+        },
+        "Screen - average duration unlock": {
+          "mean": 6.8,
+          "std": 4.7,
+          "min": 0.3,
+          "max": 16.6
+        },
+        "Call - sum duration incoming": {
+          "mean": 362.5,
+          "std": 294.5,
+          "min": 47.0,
+          "max": 879.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 73.8,
+          "std": 43.1,
+          "min": 35.0,
+          "max": 139.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 833.5,
+          "std": 327.7,
+          "min": 79.0,
+          "max": 1285.0
+        },
+        "Steps - sum steps": {
+          "mean": 2900.5,
+          "std": 2145.6,
+          "min": 156.0,
+          "max": 8754.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 31.6,
+          "std": 12.9,
+          "min": 5.0,
+          "max": 68.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1369.8,
+          "std": 38.6,
+          "min": 1266.0,
+          "max": 1433.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 30.6,
+          "std": 12.9,
+          "min": 4.0,
+          "max": 67.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 70.2,
+          "std": 38.6,
+          "min": 7.0,
+          "max": 174.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 436.0,
+          "std": 77.9,
+          "min": 235.0,
+          "max": 575.0
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 13.7,
+          "std": 6.9,
+          "min": 2.0,
+          "max": 26.0
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": 0.11,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": 0.05,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.12,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": 0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.09,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": -0.07,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": -0.09,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.11,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": 0.4,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": 0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": 0.23,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": 1.2,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.09,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.05,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.04,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.04,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.04,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": -0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.08,
+          "recent_2weeks_direction": "increasing"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 1921.0,
+            "weekend": 591.5,
+            "difference": -1329.5
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 15322.8,
+            "weekend": 4400.8,
+            "difference": -10922.0
+          },
+          "circadian_28day": {
+            "morning": 120.3,
+            "afternoon": 1517.0,
+            "evening": 1039.2,
+            "night": 224.0
+          },
+          "yesterday_transition": {
+            "morning": 18.0,
+            "afternoon": 781.0,
+            "evening": 440.0,
+            "night": 49.0
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.1,
+            "weekend": 0.2,
+            "difference": 0.1
+          },
+          "circadian_28day": {
+            "morning": 0.0,
+            "afternoon": 0.1,
+            "evening": 0.1,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 1188.2,
+            "weekend": 345.0,
+            "difference": -843.2
+          },
+          "circadian_28day": {
+            "morning": 20.3,
+            "afternoon": 62.8,
+            "evening": 70.9,
+            "night": 103.2
+          },
+          "yesterday_transition": {
+            "morning": 69.7,
+            "afternoon": 58.5,
+            "evening": 44.7,
+            "night": 62.9
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1205",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1205",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 8663.3,
+          "std": 11373.0,
+          "min": 134.6,
+          "max": 49458.2
+        },
+        "Location - time at home": {
+          "mean": 888.9,
+          "std": 504.2,
+          "min": 0.0,
+          "max": 1327.0
+        },
+        "Location - entropy": {
+          "mean": 0.1,
+          "std": 0.2,
+          "min": 0.0,
+          "max": 0.7
+        },
+        "Screen - sum duration unlock": {
+          "mean": 229.5,
+          "std": 119.3,
+          "min": 0.3,
+          "max": 496.7
+        },
+        "Screen - average duration unlock": {
+          "mean": 6.4,
+          "std": 4.4,
+          "min": 0.3,
+          "max": 16.6
+        },
+        "Call - sum duration incoming": {
+          "mean": 310.7,
+          "std": 269.7,
+          "min": 43.0,
+          "max": 879.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 64.0,
+          "std": 40.1,
+          "min": 13.0,
+          "max": 139.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 830.2,
+          "std": 352.2,
+          "min": 79.0,
+          "max": 1340.0
+        },
+        "Steps - sum steps": {
+          "mean": 2744.7,
+          "std": 2162.1,
+          "min": 156.0,
+          "max": 8754.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 30.9,
+          "std": 12.7,
+          "min": 5.0,
+          "max": 68.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1372.9,
+          "std": 38.7,
+          "min": 1266.0,
+          "max": 1433.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 29.9,
+          "std": 12.7,
+          "min": 4.0,
+          "max": 67.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 67.1,
+          "std": 38.7,
+          "min": 7.0,
+          "max": 174.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 428.0,
+          "std": 70.7,
+          "min": 235.0,
+          "max": 571.0
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 13.7,
+          "std": 6.6,
+          "min": 4.0,
+          "max": 26.0
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": -0.11,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 0.05,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.08,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": -0.19,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": 0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.05,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": 0.12,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": -0.08,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": 0.13,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": -0.18,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": 0.23,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": -0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": -0.05,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": -0.04,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": -0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 1999.0,
+            "weekend": 591.5,
+            "difference": -1407.5
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 15181.5,
+            "weekend": 4400.8,
+            "difference": -10780.7
+          },
+          "circadian_28day": {
+            "morning": 178.0,
+            "afternoon": 1329.7,
+            "evening": 1032.7,
+            "night": 204.3
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 308.0,
+            "evening": 1209.0,
+            "night": 0.0
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.3,
+            "weekend": 0.2,
+            "difference": -0.1
+          },
+          "circadian_28day": {
+            "morning": 0.0,
+            "afternoon": 0.1,
+            "evening": 0.1,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 1112.2,
+            "weekend": 345.0,
+            "difference": -767.2
+          },
+          "circadian_28day": {
+            "morning": 20.8,
+            "afternoon": 59.5,
+            "evening": 68.8,
+            "night": 96.7
+          },
+          "yesterday_transition": {
+            "afternoon": 57.6,
+            "evening": 77.0,
+            "night": 119.1
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1205",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1205",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 8167.0,
+          "std": 10844.7,
+          "min": 134.6,
+          "max": 49458.2
+        },
+        "Location - time at home": {
+          "mean": 927.8,
+          "std": 490.1,
+          "min": 0.0,
+          "max": 1327.0
+        },
+        "Location - entropy": {
+          "mean": 0.1,
+          "std": 0.2,
+          "min": 0.0,
+          "max": 0.7
+        },
+        "Screen - sum duration unlock": {
+          "mean": 226.5,
+          "std": 113.3,
+          "min": 0.3,
+          "max": 496.7
+        },
+        "Screen - average duration unlock": {
+          "mean": 6.2,
+          "std": 4.2,
+          "min": 0.3,
+          "max": 16.6
+        },
+        "Call - sum duration incoming": {
+          "mean": 268.7,
+          "std": 263.9,
+          "min": 19.0,
+          "max": 879.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 200.4,
+          "std": 437.2,
+          "min": 13.0,
+          "max": 1578.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 911.7,
+          "std": 407.7,
+          "min": 79.0,
+          "max": 1621.0
+        },
+        "Steps - sum steps": {
+          "mean": 2459.4,
+          "std": 1966.2,
+          "min": 156.0,
+          "max": 8754.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 31.2,
+          "std": 11.9,
+          "min": 5.0,
+          "max": 68.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1375.6,
+          "std": 36.7,
+          "min": 1266.0,
+          "max": 1433.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 30.2,
+          "std": 12.0,
+          "min": 4.0,
+          "max": 67.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 64.4,
+          "std": 36.7,
+          "min": 7.0,
+          "max": 174.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 422.9,
+          "std": 69.8,
+          "min": 235.0,
+          "max": 571.0
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 13.5,
+          "std": 6.5,
+          "min": 4.0,
+          "max": 26.0
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": -0.08,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.06,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": -0.13,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": -0.09,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": 0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": 0.07,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": 0.09,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": -0.25,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.66,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": -0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.09,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": -0.05,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": 0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": -0.08,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": -0.07,
+          "recent_2weeks_direction": "decreasing"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 1999.0,
+            "weekend": 572.7,
+            "difference": -1426.3
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 15181.5,
+            "weekend": 4192.5,
+            "difference": -10989.0
+          },
+          "circadian_28day": {
+            "morning": 177.4,
+            "afternoon": 1152.0,
+            "evening": 915.1,
+            "night": 214.8
+          },
+          "yesterday_transition": {
+            "morning": 92.0,
+            "afternoon": 820.0,
+            "evening": 480.0,
+            "night": 518.0
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.3,
+            "weekend": 0.1,
+            "difference": -0.2
+          },
+          "circadian_28day": {
+            "morning": 0.0,
+            "afternoon": 0.1,
+            "evening": 0.1,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 1112.2,
+            "weekend": 364.6,
+            "difference": -747.6
+          },
+          "circadian_28day": {
+            "morning": 21.9,
+            "afternoon": 58.5,
+            "evening": 62.6,
+            "night": 98.2
+          },
+          "yesterday_transition": {
+            "morning": 34.1,
+            "afternoon": 32.0,
+            "evening": 23.8,
+            "night": 134.5
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1040",
+    "ema_date": "2021-06-06 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1040",
+      "ema_date": "2021-06-06T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 13922.2,
+          "std": 17107.5,
+          "min": 239.8,
+          "max": 74500.2
+        },
+        "Location - time at home": {
+          "mean": 1065.9,
+          "std": 284.3,
+          "min": 459.9,
+          "max": 1439.9
+        },
+        "Location - entropy": {
+          "mean": 0.4,
+          "std": 0.3,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "Screen - sum duration unlock": {
+          "mean": 552.5,
+          "std": 177.2,
+          "min": 219.1,
+          "max": 944.0
+        },
+        "Screen - average duration unlock": {
+          "mean": 8.7,
+          "std": 4.1,
+          "min": 2.7,
+          "max": 20.4
+        },
+        "Call - sum duration incoming": {
+          "mean": 267.4,
+          "std": 323.9,
+          "min": 17.0,
+          "max": 1151.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 693.5,
+          "std": 813.3,
+          "min": 35.0,
+          "max": 2681.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 4.8,
+          "std": 5.2,
+          "min": 0.0,
+          "max": 17.0
+        },
+        "Steps - sum steps": {
+          "mean": 4743.7,
+          "std": 3218.1,
+          "min": 696.0,
+          "max": 15973.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 67.7,
+          "std": 33.4,
+          "min": 8.0,
+          "max": 128.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1295.3,
+          "std": 82.4,
+          "min": 1079.0,
+          "max": 1425.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 66.8,
+          "std": 33.4,
+          "min": 7.0,
+          "max": 128.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 144.7,
+          "std": 82.4,
+          "min": 15.0,
+          "max": 361.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 467.9,
+          "std": 125.0,
+          "min": 237.0,
+          "max": 655.0
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 18.5,
+          "std": 14.7,
+          "min": 0.0,
+          "max": 58.0
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": -0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.05,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": 0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": -0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": -0.18,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": -0.04,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": -0.22,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 0.17,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": 0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.05,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": -0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.04,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": -0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.1,
+          "recent_2weeks_direction": "decreasing"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 2267.6,
+            "weekend": 938.5,
+            "difference": -1329.1
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 18223.0,
+            "weekend": 13800.2,
+            "difference": -4422.8
+          },
+          "circadian_28day": {
+            "morning": 1547.2,
+            "afternoon": 1903.7,
+            "evening": 1236.3,
+            "night": 56.4
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.4,
+            "weekend": 0.8,
+            "difference": 0.4
+          },
+          "circadian_28day": {
+            "morning": 0.4,
+            "afternoon": 0.3,
+            "evening": 0.1,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.6,
+            "afternoon": 0.7,
+            "evening": 0.0,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 2998.8,
+            "weekend": 895.3,
+            "difference": -2103.5
+          },
+          "circadian_28day": {
+            "morning": 83.0,
+            "afternoon": 194.8,
+            "evening": 210.4,
+            "night": 89.6
+          },
+          "yesterday_transition": {
+            "morning": 28.6,
+            "afternoon": 183.0,
+            "evening": 294.3,
+            "night": 65.0
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1040",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_1040",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 16499.5,
+          "std": 18843.1,
+          "min": 239.8,
+          "max": 74500.2
+        },
+        "Location - time at home": {
+          "mean": 1030.5,
+          "std": 320.2,
+          "min": 279.4,
+          "max": 1439.9
+        },
+        "Location - entropy": {
+          "mean": 0.5,
+          "std": 0.4,
+          "min": 0.0,
+          "max": 1.2
+        },
+        "Screen - sum duration unlock": {
+          "mean": 541.3,
+          "std": 181.8,
+          "min": 219.1,
+          "max": 944.0
+        },
+        "Screen - average duration unlock": {
+          "mean": 8.5,
+          "std": 4.4,
+          "min": 2.7,
+          "max": 20.4
+        },
+        "Call - sum duration incoming": {
+          "mean": 240.5,
+          "std": 335.5,
+          "min": 17.0,
+          "max": 1151.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 436.8,
+          "std": 556.9,
+          "min": 11.0,
+          "max": 1654.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 5.6,
+          "std": 5.8,
+          "min": 0.0,
+          "max": 19.0
+        },
+        "Steps - sum steps": {
+          "mean": 4787.0,
+          "std": 3375.1,
+          "min": 696.0,
+          "max": 15973.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 69.0,
+          "std": 34.8,
+          "min": 8.0,
+          "max": 128.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1294.1,
+          "std": 86.4,
+          "min": 1079.0,
+          "max": 1425.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 68.1,
+          "std": 34.9,
+          "min": 7.0,
+          "max": 128.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 145.9,
+          "std": 86.4,
+          "min": 15.0,
+          "max": 361.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 449.6,
+          "std": 120.5,
+          "min": 237.0,
+          "max": 653.0
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 17.2,
+          "std": 13.0,
+          "min": 0.0,
+          "max": 57.5
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": -0.13,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 0.04,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": 0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": 0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": 0.05,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": 0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": -0.19,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": -0.23,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": -0.58,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": -0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": -0.05,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 0.05,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.06,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.05,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.05,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": 0.06,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": -0.1,
+          "recent_2weeks_direction": "decreasing"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 2267.6,
+            "weekend": 813.5,
+            "difference": -1454.1
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 18223.0,
+            "weekend": 15414.0,
+            "difference": -2809.0
+          },
+          "circadian_28day": {
+            "morning": 1623.0,
+            "afternoon": 1927.6,
+            "evening": 1175.1,
+            "night": 61.3
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.4,
+            "weekend": 0.9,
+            "difference": 0.5
+          },
+          "circadian_28day": {
+            "morning": 0.4,
+            "afternoon": 0.4,
+            "evening": 0.1,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.9,
+            "afternoon": 0.7,
+            "evening": 0.0,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 2998.8,
+            "weekend": 766.7,
+            "difference": -2232.1
+          },
+          "circadian_28day": {
+            "morning": 78.3,
+            "afternoon": 199.2,
+            "evening": 206.6,
+            "night": 88.4
+          },
+          "yesterday_transition": {
+            "morning": 70.3,
+            "afternoon": 254.9,
+            "evening": 192.8,
+            "night": 83.5
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_1040",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 1,
+    "true_depression": 1,
+    "aggregated_features": {
+      "user_id": "INS-W_1040",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 13006.7,
+          "std": 15420.6,
+          "min": 217.7,
+          "max": 58011.0
+        },
+        "Location - time at home": {
+          "mean": 1105.4,
+          "std": 311.3,
+          "min": 279.4,
+          "max": 1439.9
+        },
+        "Location - entropy": {
+          "mean": 0.4,
+          "std": 0.4,
+          "min": 0.0,
+          "max": 1.2
+        },
+        "Screen - sum duration unlock": {
+          "mean": 591.7,
+          "std": 209.8,
+          "min": 219.1,
+          "max": 1226.2
+        },
+        "Screen - average duration unlock": {
+          "mean": 9.7,
+          "std": 5.4,
+          "min": 2.7,
+          "max": 27.2
+        },
+        "Call - sum duration incoming": {
+          "mean": 257.5,
+          "std": 359.5,
+          "min": 17.0,
+          "max": 1151.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 335.5,
+          "std": 504.9,
+          "min": 0.0,
+          "max": 1654.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 5.5,
+          "std": 5.5,
+          "min": 0.0,
+          "max": 19.0
+        },
+        "Steps - sum steps": {
+          "mean": 4452.1,
+          "std": 3453.7,
+          "min": 193.0,
+          "max": 15973.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 63.7,
+          "std": 36.9,
+          "min": 6.0,
+          "max": 128.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1304.4,
+          "std": 89.2,
+          "min": 1079.0,
+          "max": 1433.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 62.8,
+          "std": 36.9,
+          "min": 5.0,
+          "max": 128.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 135.6,
+          "std": 89.2,
+          "min": 7.0,
+          "max": 361.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 411.9,
+          "std": 144.7,
+          "min": 0.0,
+          "max": 653.0
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 15.8,
+          "std": 12.6,
+          "min": 0.0,
+          "max": 57.5
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": 0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": -0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.05,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": 0.37,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": -0.28,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": -0.47,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": -0.63,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": 0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": 0.06,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": -0.13,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.08,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.08,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": 0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.12,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.07,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.03,
+          "recent_2weeks_direction": "stable"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 1657.3,
+            "weekend": 813.5,
+            "difference": -843.8
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 12525.2,
+            "weekend": 15414.0,
+            "difference": 2888.8
+          },
+          "circadian_28day": {
+            "morning": 1589.4,
+            "afternoon": 1771.3,
+            "evening": 1035.0,
+            "night": 56.4
+          },
+          "yesterday_transition": {
+            "morning": 3178.0,
+            "afternoon": 424.0,
+            "evening": 540.0,
+            "night": 8.0
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.4,
+            "weekend": 0.9,
+            "difference": 0.5
+          },
+          "circadian_28day": {
+            "morning": 0.4,
+            "afternoon": 0.4,
+            "evening": 0.1,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.6,
+            "afternoon": 0.0,
+            "evening": 0.0,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 3319.6,
+            "weekend": 766.7,
+            "difference": -2552.9
+          },
+          "circadian_28day": {
+            "morning": 89.0,
+            "afternoon": 217.1,
+            "evening": 220.5,
+            "night": 95.5
+          },
+          "yesterday_transition": {
+            "morning": 19.9,
+            "afternoon": 115.6,
+            "evening": 225.9,
+            "night": 93.7
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_994",
+    "ema_date": "2021-06-09 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_994",
+      "ema_date": "2021-06-09T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 17599.3,
+          "std": 47392.8,
+          "min": 154.3,
+          "max": 243974.1
+        },
+        "Location - time at home": {
+          "mean": 1217.4,
+          "std": 417.3,
+          "min": 0.0,
+          "max": 1439.9
+        },
+        "Location - entropy": {
+          "mean": 0.1,
+          "std": 0.3,
+          "min": 0.0,
+          "max": 1.2
+        },
+        "Screen - sum duration unlock": {
+          "mean": 372.6,
+          "std": 87.8,
+          "min": 205.7,
+          "max": 574.9
+        },
+        "Screen - average duration unlock": {
+          "mean": 2.8,
+          "std": 0.8,
+          "min": 1.6,
+          "max": 5.0
+        },
+        "Call - sum duration incoming": {
+          "mean": 803.3,
+          "std": 560.1,
+          "min": 101.0,
+          "max": 1968.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 1281.2,
+          "std": 910.1,
+          "min": 56.0,
+          "max": 3547.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 2.6,
+          "std": 1.4,
+          "min": 0.0,
+          "max": 5.0
+        },
+        "Steps - sum steps": {
+          "mean": 5214.7,
+          "std": 2906.6,
+          "min": 1590.0,
+          "max": 11572.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 56.7,
+          "std": 15.1,
+          "min": 34.0,
+          "max": 107.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1301.0,
+          "std": 59.0,
+          "min": 1193.0,
+          "max": 1387.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 56.0,
+          "std": 15.1,
+          "min": 33.0,
+          "max": 106.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 139.0,
+          "std": 59.0,
+          "min": 53.0,
+          "max": 247.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 390.5,
+          "std": 54.9,
+          "min": 261.0,
+          "max": 535.0
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 19.9,
+          "std": 9.5,
+          "min": 11.0,
+          "max": 53.0
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": 0.21,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": 0.27,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.08,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": 0.25,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": 0.26,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": -0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.06,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.07,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": 0.06,
+          "past_2weeks_direction": "increasing",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": 0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": -0.07,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": -0.02,
+          "recent_2weeks_direction": "stable"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 1913.0,
+            "weekend": 800.0,
+            "difference": -1113.0
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 23015.2,
+            "weekend": 14598.0,
+            "difference": -8417.2
+          },
+          "circadian_28day": {
+            "morning": 559.1,
+            "afternoon": 1985.9,
+            "evening": 2153.3,
+            "night": 516.4
+          },
+          "yesterday_transition": {
+            "morning": 1170.0,
+            "afternoon": 980.0,
+            "evening": 639.0,
+            "night": 220.0
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.0,
+            "weekend": 0.3,
+            "difference": 0.3
+          },
+          "circadian_28day": {
+            "morning": 0.0,
+            "afternoon": 0.1,
+            "evening": 0.1,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.1,
+            "afternoon": 0.3,
+            "evening": 0.0,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 1940.0,
+            "weekend": 754.3,
+            "difference": -1185.7
+          },
+          "circadian_28day": {
+            "morning": 87.5,
+            "afternoon": 123.8,
+            "evening": 95.5,
+            "night": 65.7
+          },
+          "yesterday_transition": {
+            "morning": 28.4,
+            "afternoon": 94.5,
+            "evening": 106.1,
+            "night": 70.5
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_994",
+    "ema_date": "2021-06-13 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_994",
+      "ema_date": "2021-06-13T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 20532.7,
+          "std": 47007.1,
+          "min": 492.7,
+          "max": 243974.1
+        },
+        "Location - time at home": {
+          "mean": 1013.0,
+          "std": 581.0,
+          "min": 0.0,
+          "max": 1438.8
+        },
+        "Location - entropy": {
+          "mean": 0.2,
+          "std": 0.3,
+          "min": 0.0,
+          "max": 1.2
+        },
+        "Screen - sum duration unlock": {
+          "mean": 352.9,
+          "std": 81.6,
+          "min": 205.7,
+          "max": 527.5
+        },
+        "Screen - average duration unlock": {
+          "mean": 2.7,
+          "std": 0.8,
+          "min": 1.6,
+          "max": 5.0
+        },
+        "Call - sum duration incoming": {
+          "mean": 707.4,
+          "std": 603.4,
+          "min": 44.0,
+          "max": 1968.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 1092.4,
+          "std": 765.0,
+          "min": 56.0,
+          "max": 2854.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 2.2,
+          "std": 1.4,
+          "min": 0.0,
+          "max": 5.0
+        },
+        "Steps - sum steps": {
+          "mean": 5785.3,
+          "std": 3235.5,
+          "min": 1590.0,
+          "max": 14402.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 60.7,
+          "std": 16.8,
+          "min": 34.0,
+          "max": 107.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1287.8,
+          "std": 64.5,
+          "min": 1131.0,
+          "max": 1387.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 59.9,
+          "std": 16.9,
+          "min": 33.0,
+          "max": 106.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 152.2,
+          "std": 64.5,
+          "min": 53.0,
+          "max": 309.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 389.8,
+          "std": 56.7,
+          "min": 279.0,
+          "max": 539.0
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 18.8,
+          "std": 9.0,
+          "min": 8.0,
+          "max": 48.0
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": 0.03,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.1,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.2,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": 0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.16,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": -0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.05,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.16,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": -0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.06,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": 0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.09,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.0,
+          "recent_2weeks_direction": "stable"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 1859.0,
+            "weekend": 800.0,
+            "difference": -1059.0
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 23630.5,
+            "weekend": 14598.0,
+            "difference": -9032.5
+          },
+          "circadian_28day": {
+            "morning": 690.5,
+            "afternoon": 2179.6,
+            "evening": 2405.5,
+            "night": 509.8
+          },
+          "yesterday_transition": {
+            "morning": 2073.0,
+            "afternoon": 5119.0,
+            "evening": 7201.0,
+            "night": 9.0
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.3,
+            "weekend": 0.3,
+            "difference": 0.0
+          },
+          "circadian_28day": {
+            "morning": 0.0,
+            "afternoon": 0.2,
+            "evening": 0.2,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 0.7,
+            "evening": 0.8,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 1802.7,
+            "weekend": 754.3,
+            "difference": -1048.4
+          },
+          "circadian_28day": {
+            "morning": 82.4,
+            "afternoon": 119.5,
+            "evening": 85.9,
+            "night": 65.0
+          },
+          "yesterday_transition": {
+            "morning": 78.3,
+            "afternoon": 59.2,
+            "evening": 82.3,
+            "night": 6.9
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  },
+  {
+    "user_id": "INS-W_994",
+    "ema_date": "2021-06-16 00:00:00",
+    "true_anxiety": 0,
+    "true_depression": 0,
+    "aggregated_features": {
+      "user_id": "INS-W_994",
+      "ema_date": "2021-06-16T00:00:00",
+      "aggregation_mode": "compass",
+      "window_days": 28,
+      "statistical_features": {
+        "Location - total distance": {
+          "mean": 28844.2,
+          "std": 61408.8,
+          "min": 281.5,
+          "max": 243974.1
+        },
+        "Location - time at home": {
+          "mean": 967.7,
+          "std": 592.5,
+          "min": 0.0,
+          "max": 1439.9
+        },
+        "Location - entropy": {
+          "mean": 0.2,
+          "std": 0.4,
+          "min": 0.0,
+          "max": 1.3
+        },
+        "Screen - sum duration unlock": {
+          "mean": 369.1,
+          "std": 104.3,
+          "min": 205.7,
+          "max": 696.8
+        },
+        "Screen - average duration unlock": {
+          "mean": 3.0,
+          "std": 1.1,
+          "min": 1.6,
+          "max": 6.3
+        },
+        "Call - sum duration incoming": {
+          "mean": 678.0,
+          "std": 610.7,
+          "min": 44.0,
+          "max": 1968.0
+        },
+        "Call - sum duration outgoing": {
+          "mean": 1020.6,
+          "std": 700.0,
+          "min": 56.0,
+          "max": 2854.0
+        },
+        "Bluetooth - unique devices others": {
+          "mean": 2.3,
+          "std": 1.4,
+          "min": 0.0,
+          "max": 5.0
+        },
+        "Steps - sum steps": {
+          "mean": 5843.2,
+          "std": 3197.0,
+          "min": 1590.0,
+          "max": 14402.0
+        },
+        "Steps - count episodes sedentary bout": {
+          "mean": 62.6,
+          "std": 16.3,
+          "min": 34.0,
+          "max": 107.0
+        },
+        "Steps - sum duration sedentary bout": {
+          "mean": 1285.0,
+          "std": 63.1,
+          "min": 1131.0,
+          "max": 1387.0
+        },
+        "Steps - count episodes active bout": {
+          "mean": 61.9,
+          "std": 16.3,
+          "min": 33.0,
+          "max": 106.0
+        },
+        "Steps - sum duration active bout": {
+          "mean": 155.0,
+          "std": 63.1,
+          "min": 53.0,
+          "max": 309.0
+        },
+        "Sleep - sum duration asleep unified main": {
+          "mean": 390.3,
+          "std": 59.3,
+          "min": 279.0,
+          "max": 539.0
+        },
+        "Sleep - sum duration awake unified main": {
+          "mean": 18.7,
+          "std": 9.1,
+          "min": 8.0,
+          "max": 48.0
+        }
+      },
+      "structural_features": {
+        "Location - total distance": {
+          "past_2weeks_slope": -0.04,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.06,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Location - time at home": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.07,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Location - entropy": {
+          "past_2weeks_slope": -0.08,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 0.07,
+          "recent_2weeks_direction": "increasing"
+        },
+        "Screen - sum duration unlock": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Screen - average duration unlock": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Call - sum duration incoming": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.11,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Call - sum duration outgoing": {
+          "past_2weeks_slope": -0.08,
+          "past_2weeks_direction": "decreasing",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Bluetooth - unique devices others": {
+          "past_2weeks_slope": 0.01,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.07,
+          "recent_2weeks_direction": "decreasing"
+        },
+        "Steps - sum steps": {
+          "past_2weeks_slope": -0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.03,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes sedentary bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration sedentary bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.0,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - count episodes active bout": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Steps - sum duration active bout": {
+          "past_2weeks_slope": -0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.02,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration asleep unified main": {
+          "past_2weeks_slope": 0.0,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": 0.01,
+          "recent_2weeks_direction": "stable"
+        },
+        "Sleep - sum duration awake unified main": {
+          "past_2weeks_slope": 0.02,
+          "past_2weeks_direction": "stable",
+          "recent_2weeks_slope": -0.01,
+          "recent_2weeks_direction": "stable"
+        }
+      },
+      "semantic_features": {
+        "Sleep duration": {
+          "pattern": {
+            "weekday": 1859.0,
+            "weekend": 879.0,
+            "difference": -980.0
+          }
+        },
+        "Physical activity": {
+          "pattern": {
+            "weekday": 23630.5,
+            "weekend": 16890.0,
+            "difference": -6740.5
+          },
+          "circadian_28day": {
+            "morning": 737.0,
+            "afternoon": 2234.7,
+            "evening": 2378.1,
+            "night": 493.4
+          },
+          "yesterday_transition": {
+            "morning": 578.0,
+            "afternoon": 2029.0,
+            "evening": 1555.0,
+            "night": 178.0
+          }
+        },
+        "Location entropy": {
+          "pattern": {
+            "weekday": 0.3,
+            "weekend": 0.6,
+            "difference": 0.3
+          },
+          "circadian_28day": {
+            "morning": 0.0,
+            "afternoon": 0.2,
+            "evening": 0.3,
+            "night": 0.0
+          },
+          "yesterday_transition": {
+            "morning": 0.0,
+            "afternoon": 0.0,
+            "evening": 0.6,
+            "night": 0.0
+          }
+        },
+        "Phone usage": {
+          "pattern": {
+            "weekday": 1802.7,
+            "weekend": 666.3,
+            "difference": -1136.4
+          },
+          "circadian_28day": {
+            "morning": 89.5,
+            "afternoon": 122.5,
+            "evening": 93.9,
+            "night": 63.2
+          },
+          "yesterday_transition": {
+            "morning": 92.5,
+            "afternoon": 152.4,
+            "evening": 140.3,
+            "night": 56.0
+          }
+        }
+      },
+      "temporal_descriptors": {}
+    }
+  }
+]

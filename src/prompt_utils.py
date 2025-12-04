@@ -21,9 +21,9 @@ def build_experiment_prefix(n_shot: int, strategy: str, *, dataset: str = None,
     Examples:
         - globem_compass_zeroshot_none_direct_seed42
         - globem_compass_4shot_crossrandom_cot_seed42
-        - globem_compass_4shot_crossretrieval_cot_seed999
+        - globem_compass_4shot_crossretrieval_cot_seed42
         - globem_compass_4shot_personalrecent_cot_seed42
-        - globem_compass_4shot_hybridblend_self_feedback_seed42
+        - globem_compass_4shot_personalrecent_selffeedback_seed42
     """
     dataset = dataset or config.DATASET_NAME
     sensor_format = sensor_format or config.DEFAULT_TARGET

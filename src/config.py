@@ -13,29 +13,61 @@ Modify these values to change system behavior without touching code.
 DEFAULT_OUTPUT_DIR = './results'
 
 # Dataset paths (relative to project root)
-GLOBEM_BASE_PATH = '../dataset/Globem'
-CES_BASE_PATH = '../dataset/CES'
+# Note: Dataset paths now managed in DATASET_CONFIGS
 
-DEFAULT_INSTITUTION = 'INS-W_2'
-SAMPLING_USER = 28
+# Dataset selection: 'globem', 'ces', or 'mentaliot'
+DATASET_TYPE = 'mentaliot'  # Change to 'ces' or 'mentaliot' to use different datasets
 
-# Dataset selection: 'globem' or 'ces'
-DATASET_TYPE = 'globem'  # Change to 'ces' or 'mentaliot' to use different datasets
+# ============================================================================
+# DATASET METADATA
+# ============================================================================
 
-# Multi-institution testset configuration (GLOBEM)
-USE_MULTI_INSTITUTION_TESTSET = True  # Set to True to use multi-institution testset
-MULTI_INSTITUTION_CONFIG = {
-    'INS-W_2': 65,
-    'INS-W_3': 28,
-    'INS-W_4': 45
+# Centralized dataset configuration - eliminates hardcoding
+DATASET_CONFIGS = {
+    'globem': {
+        'name': 'GLOBEM',
+        'base_path': '../dataset/Globem',
+        'testset_file': '../dataset/Globem/globem_testset.csv',
+        'trainset_file': '../dataset/Globem/globem_trainset.csv',
+        'aggregated_file': '../dataset/Globem/aggregated_globem.csv',
+        'daily_features_file': '../dataset/Globem/daily_features_globem.csv',  # For ML and DTW
+        'use_cols_path': './config/globem_use_cols.json',
+        'labels': ['phq4_anxiety_EMA', 'phq4_depression_EMA'],  # NO stress
+        'similarity_method': 'dtw',  # 'dtw' or 'cosine'
+        'has_pre_aggregated': True,  # Features pre-aggregated
+        'has_daily_features': True,  # Daily features available for DTW/ML
+    },
+    'ces': {
+        'name': 'CES',
+        'base_path': '../dataset/CES',
+        'testset_file': '../dataset/CES/ces_testset.csv',
+        'trainset_file': '../dataset/CES/ces_trainset.csv',
+        'aggregated_file': '../dataset/CES/aggregated_ces.csv',
+        'use_cols_path': './config/ces_use_cols.json',
+        'labels': ['phq4_anxiety_EMA', 'phq4_depression_EMA', 'stress'],  # WITH stress
+        'similarity_method': 'dtw',  # 'dtw' or 'cosine'
+        'has_pre_aggregated': True,  # Features pre-computed
+    },
+    'mentaliot': {
+        'name': 'MentalIoT',
+        'base_path': '../dataset/MentalIoT',
+        'testset_file': '../dataset/MentalIoT/mentaliot_testset.csv',
+        'trainset_file': '../dataset/MentalIoT/mentaliot_trainset.csv',
+        'aggregated_file': '../dataset/MentalIoT/aggregated_mentaliot.csv',
+        'use_cols_path': './config/mentaliot_use_cols.json',
+        'labels': ['phq2_result_binary', 'gad2_result_binary', 'stress_result_binary'],  # WITH stress
+        'similarity_method': 'cosine',  # 'dtw' or 'cosine'
+        'has_pre_aggregated': True,  # Features pre-computed
+    }
 }
-MIN_EMA_PER_USER = 10  # Minimum EMAs required per user (GLOBEM)
-SAMPLES_PER_USER = 3  # Number of last EMA samples per user for testset (GLOBEM)
 
-# CES testset configuration
-CES_N_USERS = 60  # Number of users to sample for CES testset
-CES_MIN_EMA_PER_USER = 9  # Minimum EMAs required per user (to allow 4 ICL + 5 test)
-CES_SAMPLES_PER_USER = 5  # Number of samples per user for testset
+# Get current dataset config
+CURRENT_DATASET_CONFIG = DATASET_CONFIGS[DATASET_TYPE]
+
+# Note: Testset configurations now in prepare_*_data.py scripts
+# GLOBEM: prepare_globem_data.py
+# CES: prepare_ces_data.py (if exists)
+# MentalIoT: prepare_mentaliot_data.py
 
 # CES TimeRAG quarterly chunking parameters
 CES_TIMERAG_MIN_SAMPLES_THRESHOLD = 20  # Min samples to trigger clustering
@@ -102,11 +134,7 @@ DEFAULT_THRESHOLDS = {
 # Default number of ICL examples
 DEFAULT_N_SHOT = 4
 
-# Default ICL source strategy
-DEFAULT_ICL_SOURCE = 'hybrid'  # Options: 'personalized', 'generalized', 'hybrid'
-
-# ICL example selection method
-DEFAULT_SELECTION_METHOD = 'random'  # Options: 'random', 'similarity' (not implemented)
+# Note: ICL strategy specified via --strategy argument (cross_random, cross_retrieval, personal_recent, hybrid)
 
 # Minimum historical labels required for test set samples
 # This ensures personalized ICL always has sufficient examples
@@ -152,9 +180,6 @@ SELF_CONSISTENCY_TEMPERATURE = 0.9
 # ============================================================================
 # EVALUATION
 # ============================================================================
-
-# Default batch size for evaluation
-DEFAULT_BATCH_SIZE = 30
 
 # Stratified sampling for batch evaluation
 # Now uses ALL labels for stratification (e.g., anxiety_depression: 0_0, 0_1, 1_0, 1_1)
