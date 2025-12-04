@@ -2,7 +2,7 @@ import pandas as pd
 import altair as alt
 
 # 1. 데이터 로드
-file_path = './data/Table_COMPass - reasoning_performance.csv'
+file_path = './data/Table_COMPass - reasoning_performance.csv' # no file
 df = pd.read_csv(file_path)
 
 # 2. 데이터 전처리 (결측치 처리)
